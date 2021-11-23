@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SideBar from "../src/components/sidebar/Sidebar";
+import SideBar from "../src/components/sidebar/SideBar";
 import initDash from "../src/js/charts";
 
 
