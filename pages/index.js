@@ -4,7 +4,7 @@ import initDash from "../src/js/charts";
 
 
 export default function Index() {
-    const [NavMobileToggle, setNavMobileToggle] = useState(true);
+    const [SideBarMini, setSideBarMini] = useState(true);
 
     useEffect(() => {
         initDash();
@@ -13,12 +13,12 @@ export default function Index() {
     return (
 
         <div id="wrapper">
-            {NavMobileToggle ? <SideBar /> : ""}
+            <SideBar SideBarMini={SideBarMini} />
             <div id="content-wrapper" className="d-flex flex-column">
 
                 <div id="content">
                     <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                        <button id="sidebarToggleTop" onClick={() => setNavMobileToggle(!NavMobileToggle)} className="btn btn-link d-md-none rounded-circle mr-3">
+                        <button id="sidebarToggleTop" onClick={() => setSideBarMini(!SideBarMini)} className="btn btn-link d-md-none rounded-circle mr-3">
                             <i className="fa fa-bars"></i>
                         </button>
 

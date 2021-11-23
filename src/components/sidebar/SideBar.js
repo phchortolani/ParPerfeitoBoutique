@@ -1,14 +1,14 @@
 import { useState } from "react";
 
-export default function SideBar() {
+export default function SideBar(props) {
 
-    const [SideBarMini, setSideBarMini] = useState(false);
+    const [SideBarMini, setSideBarMini] = useState(true);
     const [AccordionCadastros, setAccordionCadastros] = useState(false);
 
     return (
 
 
-        <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion " + (SideBarMini ? "toggled" : "")} id="accordionSidebar">
+        <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion " + (SideBarMini && props.SideBarMini ? "toggled" : "")} id="accordionSidebar">
             <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
                 <div className="sidebar-brand-text mx-3">Par Perfeito</div>
             </a>
@@ -49,11 +49,11 @@ export default function SideBar() {
                     <span>Venda</span></a>
             </li>
 
-            <li className="nav-item">
+            {/*    <li className="nav-item">
                 <a className="nav-link" href="tables.html">
                     <i className="fas fa-fw fa-table"></i>
                     <span>Tables</span></a>
-            </li>
+            </li> */}
 
             <hr className="sidebar-divider d-none d-md-block" />
 
