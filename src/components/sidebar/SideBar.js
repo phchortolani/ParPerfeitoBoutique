@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-export default function SideBar(props) {
+export default function SideBar() {
 
-    const [SideBarMini, setSideBarMini] = useState(props.fechado);
+    const [SideBarMini, setSideBarMini] = useState(false);
     const [AccordionCadastros, setAccordionCadastros] = useState(false);
 
     return (
