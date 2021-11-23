@@ -4,7 +4,7 @@ import initDash from "../src/js/charts";
 
 
 export default function Index() {
-    const [NavMobileToggle, setNavMobileToggle] = useState(false);
+    const [NavMobileToggle, setNavMobileToggle] = useState(true);
 
     useEffect(() => {
         initDash();
