@@ -20,6 +20,7 @@ export default function Index() {
                         {ActualPanel == "Painel" ? <ControlPanel /> : ""}
                         {ActualPanel == "Categorias" ? <Categorias /> : ""}
                         {ActualPanel == "Produtos" ? <Produtos /> : ""}
+                        {ActualPanel == "Vendas" ? <Produtos /> : ""}
                     </div>
                 </div>
             </div>

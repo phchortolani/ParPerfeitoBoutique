@@ -3,18 +3,14 @@ import AddCatg from "./Categorias/AddCatg";
 import TableCatg from "./Categorias/TableCatg";
 
 export default function Categorias() {
-
-    return (<div>
-        <DefaultCard title="Categorias">
-            <div className="row">
-                <div className="col-md-3 border p-3">
-                    <AddCatg />
-                </div>
-                <div className="col-md-9 p-0 p-md-0 pl-md-2 pt-2">
-                    <TableCatg />
-                </div>
-            </div>
-        </DefaultCard>
-    </div>
+    return (
+        <div className="row">
+            <DefaultCard title="Adicionar categoria" class="col-md-3">
+                <AddCatg />
+            </DefaultCard>
+            <DefaultCard title="Lista de categorias" class="col-md-9">
+                <TableCatg />
+            </DefaultCard>
+        </div>
     )
 }

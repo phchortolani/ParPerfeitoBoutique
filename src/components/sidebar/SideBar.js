@@ -19,7 +19,7 @@ export default function SideBar(props) {
             <li className="nav-item active">
                 <a className="nav-link" onClick={() => updateMenu("Painel")}>
                     <i className="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Painel</span></a>
+                    <span>Controle</span></a>
             </li>
             <hr className="sidebar-divider" />
 
@@ -36,7 +36,7 @@ export default function SideBar(props) {
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Cadastros disponíveis</h6>
                         <a className="collapse-item" onClick={() => updateMenu("Categorias")} href="#">Categorias</a>
-                        <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a>
+                   {/*      <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a> */}
                         <a className="collapse-item" onClick={() => updateMenu("Produtos")} href="#">Produtos</a>
                     </div>
                 </div>
@@ -47,9 +47,9 @@ export default function SideBar(props) {
             </div>
 
             <li className="nav-item">
-                <a className="nav-link" onClick={() => updateMenu("Venda")} href="#">
-                    <i className="fas fa-fw fa-chart-area"></i>
-                    <span>Venda</span></a>
+                <a className="nav-link" onClick={() => updateMenu("Vendas")} href="#">
+                    <i className="fas fa-fw fa-cash-register"></i>
+                    <span>Vendas</span></a>
             </li>
 
             {/*    <li className="nav-item">
