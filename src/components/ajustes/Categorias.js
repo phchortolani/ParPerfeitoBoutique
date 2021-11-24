@@ -19,7 +19,7 @@ export default function Categorias() {
                         <button type="button" className="btn btn-sm btn-primary">Adicionar</button>
                     </div>
                     <div className="col-md-9 p-0 p-md-0 pl-md-2 pt-2">
-                        <table className="table table-bordered shadow-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
+                        <table className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
                             <thead>
                                 <tr>
                                     <th scope="col">Código</th>
