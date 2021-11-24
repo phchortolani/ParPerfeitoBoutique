@@ -39,7 +39,7 @@ export default function Categorias() {
                                             <span className="icon text-white-50">
                                                 <i className="fas fa-barcode"></i>
                                             </span>
-                                            <span className="text ">Imprimir</span>
+                                            <span className="text d-none d-md-block">Imprimir</span>
                                         </a>
                                     </td>
                                     <td className="text-center align-middle p-0 "><a className="fas fa-times btn btn-sm btn-outline-danger"></a></td>
@@ -48,12 +48,12 @@ export default function Categorias() {
                                     <th scope="row">2999</th>
                                     <td>Brincos</td>
                                     <td>R$ 9,99</td>
-                                    <td className="text-center align-middle p-0">
+                                    <td className="text-center align-middle p-1">
                                         <a href="#" className="btn btn-sm btn-info btn-icon-split">
                                             <span className="icon text-white-50">
                                                 <i className="fas fa-barcode"></i>
                                             </span>
-                                            <span className="text">Imprimir</span>
+                                            <span className="text d-none d-md-block">Imprimir</span>
                                         </a>
                                     </td>
                                     <td className="text-center align-middle p-0 "><a className="fas fa-times btn btn-sm btn-outline-danger"></a></td>
