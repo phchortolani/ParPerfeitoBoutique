@@ -5,7 +5,6 @@ export default function SideBar(props) {
     const [SideBarMini, setSideBarMini] = useState(true);
     const [AccordionCadastros, setAccordionCadastros] = useState(false);
 
-
     function updateMenu(menu) {
         props.SetActualPanel(menu)
         setAccordionCadastros(false);

@@ -16,7 +16,7 @@ export default function Index() {
             <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content">
                     <Nav SetSideBarMini={setSideBarMini} SideBarMini={SideBarMini} />
-                    <div className="container-fluid">
+                    <div className="container-fluid pl-1 pr-1 pl-md-4 pr-md-4">
                         {ActualPanel == "Painel" ? <ControlPanel /> : ""}
                         {ActualPanel == "Categorias" ? <Categorias /> : ""}
                     </div>

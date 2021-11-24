@@ -1,6 +1,8 @@
 import DefaultCard from "../cards/DefaultCard";
+const firstRender = true;
 
 export default function Categorias() {
+  
     return (<>
         <h1 className="h3 mb-1 text-gray-800">Categorias</h1>
         <p className="mb-3">Aqui é possível adicionar categorias para separação de valores e produtos.</p>
@@ -17,14 +19,14 @@ export default function Categorias() {
                         <button type="button" className="btn btn-sm btn-primary">Adicionar</button>
                     </div>
                     <div className="col-md-9 p-0 p-md-0 pl-md-2 pt-2">
-                        <table className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
+                        <table className="table table-bordered shadow-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
                             <thead>
                                 <tr>
                                     <th scope="col">Código</th>
                                     <th scope="col">Descricao</th>
                                     <th scope="col">Valor</th>
                                     <th scope="col" className="text-center ">Etiqueta</th>
-                                    <th scope="col" className="text-center ">Remover</th>
+                                    <th scope="col" className="text-center ">Ação</th>
                                 </tr>
                             </thead>
                             <tbody>
