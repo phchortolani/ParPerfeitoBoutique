@@ -5,16 +5,20 @@ export default function SideBar(props) {
     const [SideBarMini, setSideBarMini] = useState(true);
     const [AccordionCadastros, setAccordionCadastros] = useState(false);
 
+
+    function updateMenu(menu) {
+        props.SetActualPanel(menu)
+        setAccordionCadastros(false);
+    }
+
     return (
-
-
         <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion " + (SideBarMini && props.SideBarMini ? "toggled" : "")} id="accordionSidebar">
             <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
                 <div className="sidebar-brand-text mx-3">Par Perfeito</div>
             </a>
             <hr className="sidebar-divider my-0" />
             <li className="nav-item active">
-                <a className="nav-link" href="index.html">
+                <a className="nav-link" onClick={() => updateMenu("Painel")}>
                     <i className="fas fa-fw fa-tachometer-alt"></i>
                     <span>Painel</span></a>
             </li>
@@ -32,9 +36,9 @@ export default function SideBar(props) {
                 <div id="collapseTwo" className={"collapse " + (AccordionCadastros ? "show" : "")} aria-labelledby="headingTwo" data-bs-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Cadastros disponíveis</h6>
-                        <a className="collapse-item" href="cards.html">Categorias</a>
-                        <a className="collapse-item" href="buttons.html">Usuários</a>
-                        <a className="collapse-item" href="cards.html">Mercadorias</a>
+                        <a className="collapse-item" onClick={() => updateMenu("Categorias")} href="#">Categorias</a>
+                        <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a>
+                        <a className="collapse-item" onClick={() => updateMenu("Mercadorias")} href="#">Mercadorias</a>
                     </div>
                 </div>
             </li>
@@ -44,7 +48,7 @@ export default function SideBar(props) {
             </div>
 
             <li className="nav-item">
-                <a className="nav-link" href="charts.html">
+                <a className="nav-link" onClick={() => updateMenu("Venda")} href="#">
                     <i className="fas fa-fw fa-chart-area"></i>
                     <span>Venda</span></a>
             </li>
