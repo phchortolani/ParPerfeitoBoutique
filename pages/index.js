@@ -4,7 +4,7 @@ import Produtos from "../src/components/ajustes/Produtos";
 import ControlPanel from "../src/components/dashboard/ControlPanel";
 import Nav from "../src/components/navbar/Nav";
 import SideBar from "../src/components/sidebar/SideBar";
-import Caixa from "../src/components/vendas/caixa";
+import Caixa from "../src/components/vendas/Caixa";
 
 
 export default function Index() {
