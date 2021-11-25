@@ -1,4 +1,4 @@
-export default function addProdutos() {
+export default function AddProdutos() {
     return (<>
         <div className="row">
             <div className="col-md-2">
