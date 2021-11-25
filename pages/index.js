@@ -6,14 +6,14 @@ import Nav from "../src/components/navbar/Nav";
 import SideBar from "../src/components/sidebar/SideBar";
 import Caixa from "../src/components/vendas/Caixa";
 
-
+let lastPanel = "Painel";
 export default function Index() {
     const [SideBarMini, setSideBarMini] = useState(true);
     const [ActualPanel, setActualPanel] = useState("Painel");
 
     return (
         <div id="wrapper">
-            <SideBar SideBarMini={SideBarMini} SetActualPanel={setActualPanel} />
+            <SideBar SideBarMini={SideBarMini} SetActualPanel={setActualPanel} SetSideBarMini={setSideBarMini} />
             <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content">
                     <Nav SetSideBarMini={setSideBarMini} SideBarMini={SideBarMini} />
