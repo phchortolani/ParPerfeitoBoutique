@@ -8,7 +8,7 @@ export default function SideBar(props) {
     function updateMenu(menu) {
         props.SetActualPanel(menu);
         setAccordionCadastros(false);
-        props.SetSideBarMini(!props.SideBarMini);
+        props.SetSideBarMini(true);
     }
 
     return (
@@ -47,7 +47,7 @@ export default function SideBar(props) {
                 Serviços
             </div>
 
-            <li onClick={() => props.SetSideBarMini(!props.SideBarMini)} className="nav-item">
+            <li onClick={() => props.SetSideBarMini(true)} className="nav-item">
                 <a className="nav-link" onClick={() => updateMenu("Vendas")}>
                     <i className="fas fa-fw fa-cash-register"></i>
                     <span>Vendas</span></a>
