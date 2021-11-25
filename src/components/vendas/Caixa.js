@@ -14,6 +14,5 @@ export default function Caixa() {
         <DefaultCard title="Pagamento" icoTitle="fas fa-cash-register" class="col-md-4">
             <Pagamento />
         </DefaultCard>
-
     </div>)
 }
