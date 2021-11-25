@@ -36,7 +36,7 @@ export default function SideBar(props) {
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Cadastros disponíveis</h6>
                         <a className="collapse-item" onClick={() => updateMenu("Categorias")} href="#">Categorias</a>
-                   {/*      <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a> */}
+                        {/*      <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a> */}
                         <a className="collapse-item" onClick={() => updateMenu("Produtos")} href="#">Produtos</a>
                     </div>
                 </div>
@@ -47,7 +47,7 @@ export default function SideBar(props) {
             </div>
 
             <li className="nav-item">
-                <a className="nav-link" onClick={() => updateMenu("Vendas")} href="#">
+                <a className="nav-link" onClick={() => updateMenu("Vendas")}>
                     <i className="fas fa-fw fa-cash-register"></i>
                     <span>Vendas</span></a>
             </li>

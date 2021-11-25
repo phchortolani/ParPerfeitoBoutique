@@ -4,6 +4,7 @@ import Produtos from "../src/components/ajustes/Produtos";
 import ControlPanel from "../src/components/dashboard/ControlPanel";
 import Nav from "../src/components/navbar/Nav";
 import SideBar from "../src/components/sidebar/SideBar";
+import Caixa from "../src/components/vendas/caixa";
 
 
 export default function Index() {
@@ -20,7 +21,7 @@ export default function Index() {
                         {ActualPanel == "Painel" ? <ControlPanel /> : ""}
                         {ActualPanel == "Categorias" ? <Categorias /> : ""}
                         {ActualPanel == "Produtos" ? <Produtos /> : ""}
-                        {ActualPanel == "Vendas" ? <Produtos /> : ""}
+                        {ActualPanel == "Vendas" ? <Caixa /> : ""}
                     </div>
                 </div>
             </div>

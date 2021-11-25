@@ -6,7 +6,7 @@ import TableProd from "./Produtos/TableProd";
 export default function Produtos() {
     return (
         <div className="row">
-            <DefaultCard title="Adicionar Produto" class="col-md-3">
+            <DefaultCard title="Adicionar produto" class="col-md-3">
                 <AddProd />
             </DefaultCard>
             <DefaultCard title="Lista de produtos" class="col-md-9">
