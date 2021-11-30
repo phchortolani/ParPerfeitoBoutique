@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/Auth2Context";
 import { parseCookies } from "nookies";
-import svglogo from './../../.././ParPerfeitoBoutique/public/Par_Perfeito.svg';
+import Par_Perfeito from './../../public/Par_Perfeito.svg';
 
 export default function login() {
     const [usuario, setUsuario] = useState('');
@@ -20,7 +20,7 @@ export default function login() {
     }
 
     return (<div className="login">
-        <img src={svglogo} className="w-100"></img>
+        <img src={Par_Perfeito} className="w-100"></img>
         <hr />
         <form >
             <input onChange={(e) => setUsuario(e.target.value)} autoComplete="username" className="loginbtns form-control mb-3" type="text" name="u" placeholder="Usuário" required="required" />
