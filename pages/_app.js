@@ -1,10 +1,10 @@
 import Head from "next/head";
-//import 'bootstrap/dist/css/bootstrap.css'
 import './../src/css/custom.css'
+import { AuthProvider } from '../context/Auth2Context';
 
 function MyApp({ Component, pageProps }) {
     return (
-        <>
+        <AuthProvider>
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <title>Par Perfeito | Controle de Estoque</title>
@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }) {
                 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossOrigin="anonymous" />
             </Head>
             <Component {...pageProps} />
-        </>
+        </AuthProvider>
     );
 }
 export default MyApp;

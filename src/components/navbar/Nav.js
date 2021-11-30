@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
+import { AuthContext } from '../../../context/Auth2Context';
 
 export default function Nav(props) {
     const [OpenNotific, setOpenNotific] = useState(false);
     const [LoginOption, setLoginOption] = useState(false);
-
+    const { login, signOut } = useContext(AuthContext);
 
     return (
         <>
@@ -63,7 +64,7 @@ export default function Nav(props) {
 
                     <li className="nav-item dropdown no-arrow">
                         <a onClick={() => setLoginOption(!LoginOption)} className={"nav-link " + (LoginOption ? "" : "dropdown-toggle")} href="#" id="userDropdown">
-                            <span className="mr-2 d-none d-lg-inline text-gray-600 small">Marcia</span>
+                            <span className="mr-2 d-none d-lg-inline text-gray-600 small">{login}</span>
                             <img className="img-profile rounded-circle"
                                 src="https://www.unifacef.com.br/wp-content/uploads/2018/08/semfoto.png" />
                         </a>
@@ -77,7 +78,7 @@ export default function Nav(props) {
                                 Configurações
                             </a>
                             <div className="dropdown-divider"></div>
-                            <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                            <a onClick={() => signOut()} className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                 <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Sair
                             </a>
