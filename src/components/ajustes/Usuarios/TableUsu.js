@@ -1,6 +1,24 @@
-export default function TableUsu(props) {
+import axios from "axios";
+import { useState } from "react";
+let UltimoUsuarioExluido = "";
+
+export default function TableUsu(props, refresh) {
+    const [excluirLoad, setExcluirLoad] = useState(false);
+
+    async function DeleteUser(username) {
+        setExcluirLoad(true);
+        UltimoUsuarioExluido = username;
+        var ret = await axios.post('/api/deleteone', { table: "usuarios", where: { usuario: username } });
+
+        if (ret.data.result) {
+            props.removeFromList(username);
+            setExcluirLoad(false);
+        }
+    }
+
     return (<>
-        {props.list ? <table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
+
+        {props.list ? <table className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
             <thead>
                 <tr>
                     <th scope="col" className="fitCol">Usuário</th>
@@ -12,24 +30,27 @@ export default function TableUsu(props) {
             </thead>
             <tbody>
                 {props.list.map((e, i) => {
-                    return <tr key={i}>
+                    return <tr className="animated--grow-in" key={i}>
                         <th scope="row">{e.usuario}</th>
                         <td>{e.nome}</td>
                         <td>{e.email}</td>
-                        <td>
-                            <select defaultValue={e.tipo} className="form-control form-control-sm">
-                                <option value="administrador">Administrador</option>
-                                <option value="colaborador">Colaborador</option>
-                            </select>
-                        </td>
-                        <td className="text-center align-middle p-0 ">
-                            <a style={{ fontSize: 'x-small' }} href="#" className="btn btn-sm btn-secondary">
-                                <i className="fas fa-edit"></i>
-                            </a>
-                        </td>
-                        <td className="text-center align-middle p-0 ">
-                            <a className="fas fa-times btn btn-sm text-danger"></a>
-                        </td>
+
+                        {e.usuario == "phchortolani" ? <td>Full access</td> : <>
+
+                            {excluirLoad && e.usuario == UltimoUsuarioExluido ? <td colSpan="3" className="text-danger text-center">Excluindo <span style={{ height: "17px", width: "17px" }} className="spinner-border"></span></td> :
+                                <>
+                                    <td>{e.tipo}</td>
+
+                                    <td className="text-center align-middle p-0 ">
+                                        <a style={{ fontSize: 'x-small' }} href="#" className="btn btn-sm btn-secondary">
+                                            <i className="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                    <td className="text-center align-middle p-0 ">
+                                        <a onClick={() => DeleteUser(e.usuario)} className="fas fa-times btn btn-sm text-danger"></a>
+                                    </td></>
+                            }
+                        </>}
                     </tr>
                 })}
             </tbody>

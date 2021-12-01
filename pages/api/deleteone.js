@@ -7,12 +7,12 @@ export default async (request, response) => {
         return;
     }
 
-    const { obj, table } = request.body;
+    const { table, where = {} } = request.body;
 
-    if (obj && table) {
+    if (table) {
         const db = await connectToDataBase(process.env.MONGODB_URI);
 
-        const retorno = await db.collection(table).findOne(obj);
+        const retorno = await db.collection(table).deleteOne(where);
 
         response.json({
             result: retorno ? retorno : null

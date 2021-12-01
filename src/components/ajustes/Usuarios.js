@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Usuarios() {
 
+    const [refresh, setRefresh] = useState(0);
     const [List, setList] = useState();
     const [firstRender, setFirstRender] = useState(true);
 
@@ -20,26 +21,29 @@ export default function Usuarios() {
     }
     getList();
 
-
     function addlist(user) {
         let tempList = List;
         tempList.push(user);
         setList(tempList);
+        setRefresh(refresh + 1);
     }
 
-    const table = () => {
-        console.log("renderizou");
-        return <TableUsu list={List} />;
+    function removeFromList(username) {
+        let arraytemp = List;
+        const index = arraytemp.findIndex((e) => e.usuario == username);
+        arraytemp.splice(index, 1);
+        setList(arraytemp);
+        setRefresh(refresh + 1);
     }
-    
+
     return (
-        
+
         <div className="row">
-            <DefaultCard title="Cadastro de usuário" class="col-md-4">
+            <DefaultCard title="Cadastro de usuário" class="col-md-3" >
                 <AddUsu addIntoList={addlist} />
             </DefaultCard>
-            <DefaultCard title="Lista de usuários" class="col-md-8">
-                {table()}
+            <DefaultCard title="Lista de usuários" class="col-md-9" cardBodyClass="ListasAjustes">
+                <TableUsu removeFromList={removeFromList} refresh={refresh} list={List} />
             </DefaultCard>
         </div>
 

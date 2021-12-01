@@ -10778,7 +10778,7 @@ a:focus {
         font-size: 2rem
     }
 
-  /*   .sidebar.toggled .sidebar-brand .sidebar-brand-text {
+    /*   .sidebar.toggled .sidebar-brand .sidebar-brand-text {
         display: none
     } */
 
@@ -11519,7 +11519,7 @@ body.sidebar-toggled footer.sticky-footer {
 }
 
 
-.fitCol{
+.fitCol {
     white-space: nowrap;
     width: 1%;
 }
@@ -11533,9 +11533,9 @@ body.sidebar-toggled footer.sticky-footer {
     height: 300px;
 }
 
-.blur{
-  filter: blur(2px);
-  overflow: hidden;
+.blur {
+    filter: blur(2px);
+    overflow: hidden;
 }
 
 .login h1 {
@@ -11543,4 +11543,9 @@ body.sidebar-toggled footer.sticky-footer {
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     letter-spacing: 1px;
     text-align: center;
+}
+
+.ListasAjustes {
+    overflow-y: auto;
+    max-height: 70vh;
 }
