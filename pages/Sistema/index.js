@@ -7,6 +7,7 @@ import SideBar from "../../src/components/sidebar/SideBar";
 import Caixa from "../../src/components/vendas/Caixa";
 import { parseCookies } from "nookies";
 import jwt from "jsonwebtoken";
+import Usuarios from "../../src/components/ajustes/Usuarios";
 
 export async function getServerSideProps(ctx) {
 
@@ -42,6 +43,7 @@ export default function Index() {
                         {ActualPanel == "Categorias" ? <Categorias /> : ""}
                         {ActualPanel == "Produtos" ? <Produtos /> : ""}
                         {ActualPanel == "Vendas" ? <Caixa /> : ""}
+                        {ActualPanel == "Usuários" ? <Usuarios /> : ""}
                     </div>
                 </div>
             </div>

@@ -39,6 +39,7 @@ export default function SideBar(props) {
                         <a className="collapse-item" onClick={() => updateMenu("Categorias")} href="#">Categorias</a>
                         {/*      <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a> */}
                         <a className="collapse-item" onClick={() => updateMenu("Produtos")} href="#">Produtos</a>
+                        <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a>
                     </div>
                 </div>
             </li>
