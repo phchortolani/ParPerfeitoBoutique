@@ -10,17 +10,19 @@ export const AuthProvider = (props) => {
     const [login, setLogin] = useState(undefined);
     const [isMobile, setisMobile] = useState(false);
     const isAuthenticated = !!login;
+    const [tipoUsuario, setTipoUsuario] = useState();
 
     useEffect(() => {
         const { token } = parseCookies();
         setisMobile(window.innerWidth <= 768);
         if (token) {
             var user = jwt.decode(token);
+            setTipoUsuario(user.tipo);
             setLogin(user.username);
             if (Router.asPath == "/login") {
                 Router.push("./Sistema");
             }
-        } 
+        }
     }, []);
 
     async function signIn(user, pass) {
@@ -43,7 +45,7 @@ export const AuthProvider = (props) => {
     }
 
     return (
-        <AuthContext.Provider value={{ signIn, isAuthenticated, login, signOut, isMobile }}>
+        <AuthContext.Provider value={{ signIn, isAuthenticated, login, signOut, isMobile, tipoUsuario }}>
             {props.children}
         </AuthContext.Provider>
     )

@@ -1,9 +1,11 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useContext } from "react";
 let UltimoUsuarioExluido = "";
+import { AuthContext } from "../../../../context/Auth2Context";
 
 export default function TableUsu(props, refresh) {
     const [excluirLoad, setExcluirLoad] = useState(false);
+    const { login, tipoUsuario } = useContext(AuthContext);
 
     async function DeleteUser(username) {
         setExcluirLoad(true);
@@ -40,12 +42,12 @@ export default function TableUsu(props, refresh) {
                                 <>
                                     <td>{e.tipo}</td>
                                     <td className="text-center align-middle p-0 ">
-                                        <a onClick={() => { props.editUser(e) }} style={{ fontSize: 'x-small' }} href="#" className="btn btn-sm btn-outline-secondary border-0">
+                                        <a onClick={() => { props.editUser(e) }} style={{ fontSize: 'x-small' }} href="#" className={"btn btn-sm btn-outline-secondary border-0  " + (tipoUsuario == "colaborador" ? "disabled" : "")}>
                                             <i className="fas fa-edit"></i>
                                         </a>
                                     </td>
                                     <td className="text-center align-middle p-0 ">
-                                        <a onClick={() => DeleteUser(e.usuario)} className="fas fa-times btn btn-sm text-danger"></a>
+                                        <a onClick={() => DeleteUser(e.usuario)} className={"fas fa-times btn btn-sm text-danger " + (login == e.usuario || tipoUsuario == "colaborador" ? "disabled" : "")}></a>
                                     </td></>
                             }
                         </>}
