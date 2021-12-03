@@ -15,16 +15,15 @@ export default function TableUsu(props, refresh) {
             setExcluirLoad(false);
         }
     }
-
     return (<>
 
-        {props.list ? <table className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
+        {props.list ? <table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
             <thead>
                 <tr>
                     <th scope="col" className="fitCol">Usuário</th>
                     <th scope="col">Nome</th>
                     <th scope="col">E-mail</th>
-                    <th scope="col">Tipo</th>
+                    <th scope="col" className="fitCol">Tipo</th>
                     <th scope="col" colSpan="2" className="text-center">Ações</th>
                 </tr>
             </thead>
@@ -40,9 +39,8 @@ export default function TableUsu(props, refresh) {
                             {excluirLoad && e.usuario == UltimoUsuarioExluido ? <td colSpan="3" className="text-danger text-center">Excluindo <span style={{ height: "17px", width: "17px" }} className="spinner-border"></span></td> :
                                 <>
                                     <td>{e.tipo}</td>
-
                                     <td className="text-center align-middle p-0 ">
-                                        <a style={{ fontSize: 'x-small' }} href="#" className="btn btn-sm btn-secondary">
+                                        <a onClick={() => { props.editUser(e) }} style={{ fontSize: 'x-small' }} href="#" className="btn btn-sm btn-outline-secondary border-0">
                                             <i className="fas fa-edit"></i>
                                         </a>
                                     </td>

@@ -9,9 +9,11 @@ export default function Usuarios() {
     const [refresh, setRefresh] = useState(0);
     const [List, setList] = useState();
     const [firstRender, setFirstRender] = useState(true);
+    const [edit, setEditUser] = useState(false);
+    const [usuarioEdit, setUsuarioEdit] = useState();
 
-    async function getList() {
-        if (firstRender) {
+    async function getList(listaraposeditar) {
+        if (firstRender || listaraposeditar) {
             setFirstRender(false);
             var ret = await axios.post('/api/listTable', { table: "usuarios" });
             if (ret.data.result) {
@@ -35,16 +37,30 @@ export default function Usuarios() {
         setList(arraytemp);
         setRefresh(refresh + 1);
     }
+    function editUser(user) {
+        setUsuarioEdit(user)
+        setEditUser(!edit);
+        if(edit) getList(true);
+    }
 
     return (
 
         <div className="row">
-            <DefaultCard title="Cadastro de usuário" class="col-md-3" >
-                <AddUsu addIntoList={addlist} />
-            </DefaultCard>
-            <DefaultCard title="Lista de usuários" class="col-md-9" cardBodyClass="ListasAjustes">
-                <TableUsu removeFromList={removeFromList} refresh={refresh} list={List} />
-            </DefaultCard>
+            {edit ? <>
+                <DefaultCard title={"Editar:  " + usuarioEdit?.usuario} class="col-md-12" >
+                    <AddUsu addIntoList={addlist} editar={usuarioEdit} editUser={editUser} />
+                </DefaultCard>
+            </> :
+                <>
+                    <DefaultCard title="Cadastro de usuário" class="col-md-3" >
+                        <AddUsu addIntoList={addlist} />
+                    </DefaultCard>
+                    <DefaultCard title="Lista de usuários" class="col-md-9" cardBodyClass="ListasAjustes">
+                        <TableUsu removeFromList={removeFromList} refresh={refresh} list={List} editUser={editUser} />
+                    </DefaultCard>
+                </>
+            }
+
         </div>
 
     )
