@@ -41,7 +41,7 @@ export async function getServerSideProps(ctx) {
     if (token) {
         return {
             redirect: {
-                destination: '/Dashboard',
+                destination: '/Sistema',
                 permanent: false
             }
         }
