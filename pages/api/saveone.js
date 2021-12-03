@@ -10,22 +10,24 @@ export default async (request, response) => {
                 const collection = db.collection(table);
 
                 if (update) {
-                    await collection.updateOne({ usuario: obj.usuario }, { $set: obj }, (err, res) => {
-                        if (err) throw err;
-                    });
+                    await collection.updateOne({ usuario: obj.usuario }, { $set: obj });
                 } else {
                     await collection.insertOne(obj);
                 }
-
                 response.send({
                     result: true
                 });
 
+
             } catch {
-                response.send(null);
+                response.send({
+                    result: false
+                });
             }
         } else {
-            response.send(null);
+            response.send({
+                result: "Erro de obj ou table"
+            });
         }
     }
 

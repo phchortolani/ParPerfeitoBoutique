@@ -23,7 +23,9 @@ export default function AddUsu(props) {
     const [loading, setLoading] = useState(false);
     const encrypt = require("md5");
 
-    async function SaveOrUpdate() {
+    async function Update() {
+
+
         let tempobj = {
             usuario: user.usuario != "" ? user.usuario : props.editar.usuario,
             senha: user.senha != "" ? user.senha : props.editar.senha,
@@ -34,41 +36,56 @@ export default function AddUsu(props) {
             criadoPor: login,
             dataModificacao: props.editar ? new Date() : ""
         }
+
         let erroslist = [];
         for (var prop in tempobj) {
             if (tempobj[prop] == "") {
                 erroslist.push(prop);
             }
         }
+
         if (erroslist.length == 0) setLoading(true);
         setValidatelist(erroslist);
 
-        if (props.editar) {
-            setUser({ ...user, dataModificacao: new Date() });
-            if (erroslist.length == 0) {
-                await axios.post('/api/saveone', { obj: tempobj, table: "usuarios", update: true });
-                props.editUser(user);
-            }
+        if (erroslist.length == 0) {
+            var ret = await axios.post('/api/saveone', { obj: tempobj, table: "usuarios", update: true });
+            console.log(ret);
+            if (ret.data.result) props.editUser(user);
+            setValidateErros("Não foi possível alterar");
 
         } else {
-            setUser({ ...user, dataCriacao: new Date() });
-            var ret = await axios.post('/api/findone', { obj: { usuario: user.usuario }, table: "usuarios" });
+            setValidateErros("Preencha todos os campos obrigatórios.")
+        }
+        setLoading(false);
+    }
 
-            if (ret.data.result) {
-                setValidateErros(`O usuário ${ret.data.result.usuario} já existe.`);
-                setValidatelist('usuario');
-            } else {
-                if (erroslist.length == 0) {
-                    await axios.post('/api/saveone', { obj: user, table: "usuarios" });
-                    props.addIntoList(user);
-                    setUser(defaultUser);
-                    setClearList(!ClearList);
-                }
+    async function Save() {
+
+        let erroslist = [];
+        for (var prop in user) {
+            if (user[prop] == "") {
+                erroslist.push(prop);
             }
         }
+        if (erroslist.length == 0) setLoading(true);
+        setValidatelist(erroslist);
 
-        if (erroslist.length > 0) {
-            setValidateErros("Preencha todos os campos obrigatórios.")
+        setUser({ ...user, dataCriacao: new Date() });
+        var ret = await axios.post('/api/findone', { obj: { usuario: user.usuario }, table: "usuarios" });
+
+        if (ret.data.result) {
+            setValidateErros(`O usuário ${ret.data.result.usuario} já existe.`);
+            setValidatelist('usuario');
+        } else {
+            if (erroslist.length == 0) {
+                await axios.post('/api/saveone', { obj: user, table: "usuarios" });
+                props.addIntoList(user);
+                setUser(defaultUser);
+                setClearList(!ClearList);
+            } else {
+                setValidateErros("Preencha todos os campos obrigatórios.")
+            }
+
         }
 
         setLoading(false);
@@ -121,7 +138,7 @@ export default function AddUsu(props) {
             {
                 loading ? <button type="button" className="btn btn-primary btn-sm" disabled> {props.editar ? "Alterando" : "Cadastrando"} <span style={{ height: "17px", width: "17px" }} className="spinner-border"></span></button>
                     :
-                    <button onClick={() => { SaveOrUpdate() }} type="button" className="btn btn-primary btn-sm">{props.editar ? "Alterar" : "Cadastrar"}</button>
+                    <button onClick={() => { (props.editar ? Update() : Save()) }} type="button" className="btn btn-primary btn-sm">{props.editar ? "Alterar" : "Cadastrar"}</button>
             }
 
             {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}

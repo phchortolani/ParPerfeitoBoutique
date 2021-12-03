@@ -40,7 +40,7 @@ export default function Usuarios() {
     function editUser(user) {
         setUsuarioEdit(user)
         setEditUser(!edit);
-        if(edit) getList(true);
+        getList(true);
     }
 
     return (
