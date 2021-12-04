@@ -34,7 +34,7 @@ export const AuthProvider = (props) => {
 
         if (ret.data.login) {
             Router.push("./Sistema");
-        } else return "Usuário não encontrado.";
+        } else return "Nome de usuário ou senha incorreta";
 
     }
 

@@ -46,11 +46,11 @@ export default function Usuarios() {
     return (
 
         <div className="row">
-            {edit ? <>
+            {edit ?
                 <DefaultCard title={"Editar:  " + usuarioEdit?.usuario} class="col-md-12" >
                     <AddUsu addIntoList={addlist} editar={usuarioEdit} editUser={editUser} />
                 </DefaultCard>
-            </> :
+                :
                 <>
                     <DefaultCard title="Cadastro de usuário" class="col-md-3" >
                         <AddUsu addIntoList={addlist} />

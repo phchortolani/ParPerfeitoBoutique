@@ -1,11 +1,9 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../../../context/Auth2Context";
+import { useState } from "react";
 
 export default function SideBar(props) {
 
     const [SideBarMini, setSideBarMini] = useState(true);
     const [AccordionCadastros, setAccordionCadastros] = useState(false);
-    const { tipoUsuario } = useContext(AuthContext);
 
     function updateMenu(menu) {
         props.SetActualPanel(menu);
@@ -19,12 +17,12 @@ export default function SideBar(props) {
                 <div className="sidebar-brand-text mx-3">Par Perfeito</div>
             </a>
             <hr className="sidebar-divider my-0" />
-            
-            {tipoUsuario == "administrador" ? <li className="nav-item active">
+
+            <li className="nav-item active">
                 <a className="nav-link" onClick={() => updateMenu("Painel")}>
                     <i className="fas fa-fw fa-tachometer-alt"></i>
                     <span>Controle</span></a>
-            </li> : ""}
+            </li>
 
             <hr className="sidebar-divider" />
 

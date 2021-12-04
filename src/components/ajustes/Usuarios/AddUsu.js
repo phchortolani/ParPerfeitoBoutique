@@ -13,7 +13,7 @@ export default function AddUsu(props) {
         email: "",
         tipo: "",
         criadoPor: login,
-        dataModificacao: null
+        dataModificacao: ""
     }
 
     const [user, setUser] = useState(defaultUser);
@@ -24,8 +24,6 @@ export default function AddUsu(props) {
     const encrypt = require("md5");
 
     async function Update() {
-
-
         let tempobj = {
             usuario: user.usuario != "" ? user.usuario : props.editar.usuario,
             senha: user.senha != "" ? user.senha : props.editar.senha,
@@ -33,7 +31,8 @@ export default function AddUsu(props) {
             nome: user.nome != "" ? user.nome : props.editar.nome,
             email: user.email != "" ? user.email : props.editar.email,
             tipo: user.tipo != "" ? user.tipo : props.editar.tipo,
-            criadoPor: login,
+            criadoPor: props.editar.criadoPor,
+            modificadoPor: login,
             dataModificacao: props.editar ? new Date() : ""
         }
 
@@ -49,7 +48,6 @@ export default function AddUsu(props) {
 
         if (erroslist.length == 0) {
             var ret = await axios.post('/api/saveone', { obj: tempobj, table: "usuarios", update: true });
-            console.log(ret);
             if (ret.data.result) props.editUser(user);
             setValidateErros("Não foi possível alterar");
 
