@@ -1,4 +1,5 @@
 export default function TableCatg(props) {
+ 
     return (<table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
         <thead>
             <tr>

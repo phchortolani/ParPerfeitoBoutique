@@ -8,8 +8,19 @@ export default function Categorias() {
     const [list, setList] = useState({ data: [] });
 
     function atualizalista(lista) {
-        setList({ data: lista });
+        let listaordernada = orderByCodigo(lista);
+        setList({ data: listaordernada });
     }
+
+    function orderByCodigo(items) {
+        return items.sort(function (a, b) {
+            if (a.codigo > b.codigo) return 1;
+            if (a.codigo < b.codigo) return -1;
+            // a must be equal to b
+            return 0;
+        });
+    }
+
     return (
         <div className="row">
             <DefaultCard title="Adicionar categoria" class="col-md-3">

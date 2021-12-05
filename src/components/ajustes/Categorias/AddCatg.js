@@ -12,21 +12,27 @@ export default function AddCatg(props) {
 
     async function InsertCateg() {
         lista.push(categoria);
-        defaultCateg.codigo++;
+
+        for (let i = 1; i < Number.MAX_SAFE_INTEGER; i++) {
+            if (!searchCategoria(i)?.codigo) {
+                defaultCateg.codigo = i;
+                break;
+            }
+        }
         setCategoria({ ...defaultCateg });
-        props.sendToList(sortList(lista));
+        props.sendToList(lista);
     }
     async function RemoveCateg(codCateg) {
         let categIndex = searchCategoria(codCateg, true);
         lista.splice(categIndex, 1);
         setCategoria(defaultCateg);
         setshowRemove(false);
-        props.sendToList(sortList(lista));
+        props.sendToList(lista);
     }
     async function QueryCateg(codCateg) {
         let categ = searchCategoria(codCateg);
         if (categ) setCategoria(categ);
-        else setCategoria({ ...defaultCateg, codigo: codCateg });
+        else setCategoria({ ...defaultCateg, codigo: parseInt(codCateg) });
         setshowRemove(categ != undefined ? true : false);
     }
     function searchCategoria(codigo, index) {
@@ -34,28 +40,18 @@ export default function AddCatg(props) {
         return lista.find((e) => e.codigo == codigo);
     }
 
-    function AlterCateg(cod) {
-        let categIndex = searchCategoria(cod, true);
+    function AlterCateg() {
+        let categIndex = searchCategoria(categoria.codigo, true);
         lista.splice(categIndex, 1);
+
         lista.push(categoria);
-        props.sendToList(sortList(lista));
+        props.sendToList(lista);
         defaultCateg.codigo++;
         setCategoria({ ...defaultCateg });
 
     }
 
 
-    function sortList(list) {
-        return list.sort(function (a, b) {
-            if (a.codigo > b.codigo) {
-                return 1;
-            }
-            if (a.codigo < b.codigo) {
-                return -1;
-            }
-            return 0;
-        });
-    }
 
 
 
@@ -77,7 +73,7 @@ export default function AddCatg(props) {
                 </span>
                 <span className="text">Remover</span>
             </a> : ""}
-            <a onClick={(e) => showRemove ? AlterCateg(e) : InsertCateg()} className="btn btn-primary btn-sm btn-icon-split">
+            <a onClick={() => showRemove ? AlterCateg() : InsertCateg()} className="btn btn-primary btn-sm btn-icon-split">
                 <span className="icon text-white-50">
                     <i className="fas fa-save"></i>
                 </span>
