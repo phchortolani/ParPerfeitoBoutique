@@ -12,12 +12,12 @@ export default function TableCatg(props) {
         </thead>
         <tbody>
             {props.list.length > 0 ? props.list.map((e, i) => {
-                return <tr key={i}>
+                return <tr className="animated--grow-in" key={i}>
                     <th scope="row">{e.codigo}</th>
                     <td>{e.descricao}</td>
                     <td>{e.valorPadrao}</td>
                     <td className="text-center">
-                        90
+                        0
                     </td>
                     <td className="text-center align-middle p-0 ">
                         <a style={{ fontSize: 'x-small' }} href="#" className="btn btn-sm btn-info btn-icon-split">

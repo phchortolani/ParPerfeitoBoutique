@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 let lista = [];
 
@@ -10,17 +11,44 @@ let defaultCateg = {
 export default function AddCatg(props) {
     const [categoria, setCategoria] = useState(defaultCateg);
     const [showRemove, setshowRemove] = useState(false);
+    const [validatelist, setValidatelist] = useState([]);
+    const [validateerros, setValidateErros] = useState('');
 
     async function InsertCateg() {
-        lista.push(categoria);
-        for (let i = 1; i < Number.MAX_SAFE_INTEGER; i++) {
-            if (!searchCategoria(i)?.codigo) {
-                defaultCateg.codigo = i;
-                break;
+
+        let erroslist = [];
+        for (var prop in categoria) {
+
+            if (prop != "quantidade") {
+                if (categoria[prop] == "") {
+                    erroslist.push(prop);
+                }
             }
         }
-        setCategoria({ ...defaultCateg });
-        props.sendToList(lista);
+        setValidatelist(erroslist);
+
+        if (erroslist.length == 0) {
+            var ret = await axios.post('/api/saveone', { obj: categoria, table: "categorias" });
+            if (ret) {
+                lista.push(categoria);
+                for (let i = 1; i < Number.MAX_SAFE_INTEGER; i++) {
+                    if (!searchCategoria(i)?.codigo) {
+                        defaultCateg.codigo = i;
+                        break;
+                    }
+                }
+                setCategoria({ ...defaultCateg });
+                props.sendToList(lista);
+            }
+            else {
+                setValidateErros("Ocorreu um erro ao salvar.")
+            }
+
+        } else {
+            setValidateErros("Preencha todos os campos obrigatórios.")
+        }
+
+
     }
     async function RemoveCateg(codCateg) {
         let categIndex = searchCategoria(codCateg, true);
@@ -53,13 +81,19 @@ export default function AddCatg(props) {
     return (
         <div>
             <label htmlFor="codigo">Código</label>
-            <input type="number" onBlur={(e) => QueryCateg(e.target.value)} value={categoria.codigo} id="codigo" onChange={(e) => { setCategoria({ ...categoria, codigo: e.target.value }) }} className="form-control form-control-sm  mb-3 " />
+            <input type="number" onBlur={(e) => QueryCateg(e.target.value)}
+                value={categoria.codigo} id="codigo"
+                onChange={(e) => { setCategoria({ ...categoria, codigo: e.target.value }) }}
+                className={"form-control form-control-sm  mb-3 " + (validatelist.includes(("codigo")) ? "border-danger" : "")} />
 
             <label htmlFor="desc">Descrição</label>
-            <input type="text" id="desc" onChange={(e) => { setCategoria({ ...categoria, descricao: e.target.value }) }} value={categoria?.descricao} className="form-control form-control-sm  mb-3 " />
+            <input type="text" id="desc"
+                onChange={(e) => { setCategoria({ ...categoria, descricao: e.target.value }) }}
+                value={categoria?.descricao} className={"form-control form-control-sm  mb-3 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
 
             <label htmlFor="valor">Valor padrão</label>
-            <input type="text" value={categoria?.valorPadrao} id="valor" onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className="form-control form-control-sm  mb-3 " />
+            <input type="text" value={categoria?.valorPadrao} id="valor"
+                onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className={"form-control form-control-sm  mb-3 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} />
             <hr />
             <div className="d-flex justify-content-between">
                 {showRemove ? <a onClick={() => RemoveCateg()} className="btn btn-danger btn-sm btn-icon-split">
@@ -75,6 +109,7 @@ export default function AddCatg(props) {
                     <span className="text">{showRemove ? "Alterar" : "Adicionar"}</span>
                 </a>
             </div>
+            {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
         </div>
     )
 }
