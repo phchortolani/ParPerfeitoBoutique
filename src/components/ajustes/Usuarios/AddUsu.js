@@ -11,9 +11,7 @@ export default function AddUsu(props) {
         dataCriacao: new Date(),
         nome: "",
         email: "",
-        tipo: "",
-        criadoPor: login,
-        dataModificacao: ""
+        tipo: ""
     }
 
     const [user, setUser] = useState(defaultUser);
@@ -47,7 +45,7 @@ export default function AddUsu(props) {
         setValidatelist(erroslist);
 
         if (erroslist.length == 0) {
-            var ret = await axios.post('/api/saveone', { obj: tempobj, table: "usuarios", update: true });
+            var ret = await axios.post('/api/saveone', { obj: tempobj, table: "usuarios", login: login, update: true });
             if (ret.data.result) props.editUser(user);
             setValidateErros("Não foi possível alterar");
 
@@ -76,7 +74,7 @@ export default function AddUsu(props) {
             setValidatelist('usuario');
         } else {
             if (erroslist.length == 0) {
-                await axios.post('/api/saveone', { obj: user, table: "usuarios" });
+                await axios.post('/api/saveone', { obj: user, table: "usuarios", login: login });
                 props.addIntoList(user);
                 setUser(defaultUser);
                 setClearList(!ClearList);

@@ -1,24 +1,26 @@
 import { connectToDataBase } from '../../config/mongodb';
 
 export default async (request, response) => {
+
+
     if (request.body) {
-        const { obj, table, update } = request.body;
-        if (obj && table) {
+        const { obj, table, login, update } = request.body;
+        if (obj && table && login) {
             try {
                 const db = await connectToDataBase(process.env.MONGODB_URI);
 
                 const collection = db.collection(table);
 
                 if (update) {
-                    await collection.updateOne({ usuario: obj.usuario }, { $set: obj });
+                    let objeto = { ...obj, alteradoPor: login, dataModificacao: new Date() };
+                    await collection.updateOne({ usuario: obj.usuario }, { $set: objeto });
                 } else {
-                    await collection.insertOne(obj);
+                    let objeto = { ...obj, criadoPor: login, dataCriacao: new Date(), dataModificacao: "", alteradoPor: "" };
+                    await collection.insertOne(objeto);
                 }
                 response.send({
                     result: true
                 });
-
-
             } catch {
                 response.send({
                     result: false
@@ -26,7 +28,7 @@ export default async (request, response) => {
             }
         } else {
             response.send({
-                result: "Erro de obj ou table"
+                result: "Erro de obj, table ou login"
             });
         }
     }

@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useState } from "react";
+import { AuthContext } from "../../../../context/Auth2Context";
+import { useState, useContext } from "react";
 let lista = [];
 
 let defaultCateg = {
@@ -9,10 +10,16 @@ let defaultCateg = {
     quantidade: 0
 }
 export default function AddCatg(props) {
+
     const [categoria, setCategoria] = useState(defaultCateg);
     const [showRemove, setshowRemove] = useState(false);
     const [validatelist, setValidatelist] = useState([]);
     const [validateerros, setValidateErros] = useState('');
+    const { login } = useContext(AuthContext);
+
+    lista = props.lista;
+
+    if (lista.lenght > 0) defaultCateg.codigo = lista[lista.lenght].codigo;
 
     async function InsertCateg() {
 
@@ -28,7 +35,7 @@ export default function AddCatg(props) {
         setValidatelist(erroslist);
 
         if (erroslist.length == 0) {
-            var ret = await axios.post('/api/saveone', { obj: categoria, table: "categorias" });
+            var ret = await axios.post('/api/saveone', { obj: categoria, table: "categorias", login: login });
             if (ret) {
                 lista.push(categoria);
                 for (let i = 1; i < Number.MAX_SAFE_INTEGER; i++) {
@@ -51,11 +58,17 @@ export default function AddCatg(props) {
 
     }
     async function RemoveCateg(codCateg) {
-        let categIndex = searchCategoria(codCateg, true);
-        lista.splice(categIndex, 1);
-        setCategoria(defaultCateg);
-        setshowRemove(false);
-        props.sendToList(lista);
+        var ret = await axios.post('/api/deleteone', { table: "categorias", where: { codigo: codCateg } });
+        if (ret) {
+            let categIndex = searchCategoria(codCateg, true);
+            lista.splice(categIndex, 1);
+            setCategoria(defaultCateg);
+            setshowRemove(false);
+            props.sendToList(lista);
+        } else {
+            console.log(ret);
+        }
+
     }
     async function QueryCateg(codCateg) {
         if (codCateg == 0) return setCategoria(defaultCateg);
@@ -69,13 +82,39 @@ export default function AddCatg(props) {
         return lista.find((e) => e.codigo == codigo);
     }
 
-    function AlterCateg() {
-        let categIndex = searchCategoria(categoria.codigo, true);
-        lista.splice(categIndex, 1);
-        lista.push(categoria);
-        props.sendToList(lista);
-        defaultCateg.codigo++;
-        setCategoria({ ...defaultCateg });
+    async function AlterCateg() {
+
+        let erroslist = [];
+        for (var prop in categoria) {
+
+            if (prop != "quantidade" && prop != "dataModificacao" && prop != "alteradoPor") {
+                if (categoria[prop] == "") {
+                    erroslist.push(prop);
+                }
+            }
+        }
+        setValidatelist(erroslist);
+
+        if (erroslist.length == 0) {
+            var ret = await axios.post('/api/saveone', { obj: categoria, table: "categorias", login: login, update: true });
+            if (ret) {
+                let categIndex = searchCategoria(categoria.codigo, true);
+                lista.splice(categIndex, 1);
+                lista.push(categoria);
+                props.sendToList(lista);
+                defaultCateg.codigo++;
+                setCategoria({ ...defaultCateg });
+            }
+            else {
+                setValidateErros("Ocorreu um erro ao salvar.")
+            }
+
+        } else {
+            setValidateErros("Preencha todos os campos obrigatórios.")
+        }
+
+
+
     }
 
     return (
