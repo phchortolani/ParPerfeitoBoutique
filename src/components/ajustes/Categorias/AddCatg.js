@@ -1,10 +1,11 @@
 import axios from "axios";
 import { AuthContext } from "../../../../context/Auth2Context";
 import { useState, useContext } from "react";
+import Loading from "../../load/Loading";
 let lista = [];
 
 let defaultCateg = {
-    codigo: 1,
+    codigo: 0,
     descricao: "",
     valorPadrao: "",
     quantidade: 0
@@ -16,13 +17,18 @@ export default function AddCatg(props) {
     const [validatelist, setValidatelist] = useState([]);
     const [validateerros, setValidateErros] = useState('');
     const { login } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
+    const [loadingRemove, setLoadingRemove] = useState(false);
 
     lista = props.lista;
 
-    if (lista.lenght > 0) defaultCateg.codigo = lista[lista.lenght].codigo;
+    if (lista.length > 0 && defaultCateg.codigo == 0) {
+        SelectNextCod();
+        setCategoria(defaultCateg);
+    }
 
     async function InsertCateg() {
-
+        setLoading(true);
         let erroslist = [];
         for (var prop in categoria) {
 
@@ -38,12 +44,7 @@ export default function AddCatg(props) {
             var ret = await axios.post('/api/saveone', { obj: categoria, table: "categorias", login: login });
             if (ret) {
                 lista.push(categoria);
-                for (let i = 1; i < Number.MAX_SAFE_INTEGER; i++) {
-                    if (!searchCategoria(i)?.codigo) {
-                        defaultCateg.codigo = i;
-                        break;
-                    }
-                }
+                SelectNextCod();
                 setCategoria({ ...defaultCateg });
                 props.sendToList(lista);
             }
@@ -55,23 +56,34 @@ export default function AddCatg(props) {
             setValidateErros("Preencha todos os campos obrigatórios.")
         }
 
-
+        setLoading(false);
     }
-    async function RemoveCateg(codCateg) {
-        var ret = await axios.post('/api/deleteone', { table: "categorias", where: { codigo: codCateg } });
+    async function RemoveCateg() {
+        setLoadingRemove(true);
+        var ret = await axios.post('/api/deleteone', { table: "categorias", where: { codigo: categoria.codigo } });
         if (ret) {
-            let categIndex = searchCategoria(codCateg, true);
+            let categIndex = searchCategoria(categoria.codigo, true);
             lista.splice(categIndex, 1);
+            SelectNextCod();
             setCategoria(defaultCateg);
             setshowRemove(false);
             props.sendToList(lista);
         } else {
             console.log(ret);
         }
+        setLoadingRemove(false);
+    }
 
+    function SelectNextCod() {
+        for (let i = 1; i < Number.MAX_SAFE_INTEGER; i++) {
+            if (!searchCategoria(i)?.codigo) {
+                defaultCateg.codigo = i;
+                break;
+            }
+        }
     }
     async function QueryCateg(codCateg) {
-        if (codCateg == 0) return setCategoria(defaultCateg);
+        if (codCateg == 0) return setCategoria({ ...defaultCateg, codigo: 1 });
         let categ = searchCategoria(codCateg);
         if (categ) setCategoria(categ);
         else setCategoria({ ...defaultCateg, codigo: parseInt(codCateg) });
@@ -83,7 +95,7 @@ export default function AddCatg(props) {
     }
 
     async function AlterCateg() {
-
+        setLoading(true);
         let erroslist = [];
         for (var prop in categoria) {
 
@@ -102,19 +114,12 @@ export default function AddCatg(props) {
                 lista.splice(categIndex, 1);
                 lista.push(categoria);
                 props.sendToList(lista);
-                defaultCateg.codigo++;
+                SelectNextCod();
                 setCategoria({ ...defaultCateg });
             }
-            else {
-                setValidateErros("Ocorreu um erro ao salvar.")
-            }
-
-        } else {
-            setValidateErros("Preencha todos os campos obrigatórios.")
-        }
-
-
-
+            else setValidateErros("Ocorreu um erro ao salvar.");
+        } else setValidateErros("Preencha todos os campos obrigatórios.");
+        setLoading(false);
     }
 
     return (
@@ -123,29 +128,29 @@ export default function AddCatg(props) {
             <input type="number" onBlur={(e) => QueryCateg(e.target.value)}
                 value={categoria.codigo} id="codigo"
                 onChange={(e) => { setCategoria({ ...categoria, codigo: e.target.value }) }}
-                className={"form-control form-control-sm  mb-3 " + (validatelist.includes(("codigo")) ? "border-danger" : "")} />
+                className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("codigo")) ? "border-danger" : "")} />
 
             <label htmlFor="desc">Descrição</label>
             <input type="text" id="desc"
                 onChange={(e) => { setCategoria({ ...categoria, descricao: e.target.value }) }}
-                value={categoria?.descricao} className={"form-control form-control-sm  mb-3 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
+                value={categoria?.descricao} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
 
             <label htmlFor="valor">Valor padrão</label>
             <input type="text" value={categoria?.valorPadrao} id="valor"
-                onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className={"form-control form-control-sm  mb-3 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} />
+                onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} />
             <hr />
             <div className="d-flex justify-content-between">
-                {showRemove ? <a onClick={() => RemoveCateg()} className="btn btn-danger btn-sm btn-icon-split">
+                {showRemove ? <a onClick={() => RemoveCateg()} className={"btn btn-danger btn-sm btn-icon-split " + (loadingRemove || loading ? "disabled" : "")}>
                     <span className="icon text-white-50">
-                        <i className="fas fa-trash-alt"></i>
+                        {loadingRemove ? <Loading /> : <i className="fas fa-trash-alt"></i>}
                     </span>
-                    <span className="text">Remover</span>
+                    <span className="text">{loadingRemove ? "Removendo" : "Remover"}</span>
                 </a> : ""}
-                <a onClick={() => showRemove ? AlterCateg() : InsertCateg()} className="btn btn-primary btn-sm btn-icon-split">
+                <a onClick={() => showRemove ? AlterCateg() : InsertCateg()} className={"btn btn-primary btn-sm btn-icon-split " + (loading || loadingRemove ? "disabled" : "")}>
                     <span className="icon text-white-50">
-                        <i className="fas fa-save"></i>
+                        {loading ? <Loading /> : <i className="fas fa-save"></i>}
                     </span>
-                    <span className="text">{showRemove ? "Alterar" : "Adicionar"}</span>
+                    <span className="text">{showRemove ? (loading ? "Alterando" : "Alterar") : (loading ? "Adicionando" : "Adicionar")}</span>
                 </a>
             </div>
             {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
