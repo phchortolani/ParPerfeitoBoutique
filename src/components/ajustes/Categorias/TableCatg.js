@@ -15,7 +15,7 @@ export default function TableCatg(props) {
                 return <tr className="animated--grow-in" key={i}>
                     <th scope="row">{e.codigo}</th>
                     <td>{e.descricao}</td>
-                    <td>{e.valorPadrao}</td>
+                    <td>R$ {e.valorPadrao}</td>
                     <td className="text-center">
                         {e.quantidade}
                     </td>
