@@ -5,7 +5,7 @@ export default function TableCatg(props) {
             <tr>
                 <th scope="col" className="fitCol">Código</th>
                 <th scope="col">Descricao</th>
-                <th scope="col fitCol">Valor</th>
+                <th scope="col fitCol">Valor Padrão</th>
                 <th scope="col" className="text-center" style={{ width: "6rem" }}>Quantidade</th>
                 {/*  <th scope="col" className="text-center">Etiqueta</th> */}
             </tr>

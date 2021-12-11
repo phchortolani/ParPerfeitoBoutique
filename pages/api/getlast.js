@@ -7,13 +7,12 @@ export default async (request, response) => {
         return;
     }
 
-    const { obj, table } = request.body;
+    const { table, where = {} } = request.body;
 
-    if (obj && table) {
+    if (table) {
         const db = await connectToDataBase(process.env.MONGODB_URI);
 
-        const retorno = await db.collection(table).findOne(obj);
-        console.log(retorno);
+        const retorno = await db.collection(table).find(where).sort({ '_id': -1 }).limit(1).toArray();
 
         response.json({
             result: retorno ? retorno : null
@@ -21,7 +20,7 @@ export default async (request, response) => {
     }
     else {
         response.json({
-            result: "Erro de obj ou table"
+            result: "Table error"
         })
     }
 }

@@ -11,9 +11,7 @@ export default async (request, response) => {
 
     if (table) {
         const db = await connectToDataBase(process.env.MONGODB_URI);
-
         const retorno = await db.collection(table).find(where).toArray();
-          
         response.json({
             result: retorno ? retorno : null
         })

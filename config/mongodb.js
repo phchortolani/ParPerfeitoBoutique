@@ -1,4 +1,4 @@
-import { MongoClient} from 'mongodb';
+import { MongoClient } from 'mongodb';
 import url from 'url';
 
 let cacheDb = undefined;

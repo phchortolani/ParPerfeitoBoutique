@@ -1,8 +1,6 @@
 import { connectToDataBase } from '../../config/mongodb';
 
 export default async (request, response) => {
-
-
     if (request.body) {
         const { obj, table, login, update } = request.body;
         if (obj && table && login) {
@@ -13,7 +11,16 @@ export default async (request, response) => {
 
                 if (update) {
                     let objeto = { ...obj, alteradoPor: login, dataModificacao: new Date() };
-                    await collection.updateOne({ usuario: obj.usuario }, { $set: objeto });
+
+                    if (table != "usuarios") {
+                        delete objeto.dataCriacao;
+                        delete objeto._id;
+                        await collection.updateOne({ codigo: obj.codigo }, { $set: objeto });
+                    }
+                    else {
+                        await collection.updateOne({ usuario: obj.usuario }, { $set: objeto });
+                    }
+
                 } else {
                     let objeto = { ...obj, criadoPor: login, dataCriacao: new Date(), dataModificacao: "", alteradoPor: "" };
                     await collection.insertOne(objeto);

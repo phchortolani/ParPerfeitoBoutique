@@ -7,7 +7,7 @@ let lista = [];
 let defaultCateg = {
     codigo: 0,
     descricao: "",
-    valorPadrao: "",
+    valorPadrao: 0,
     quantidade: 0
 }
 export default function AddCatg(props) {
@@ -41,7 +41,8 @@ export default function AddCatg(props) {
         setValidatelist(erroslist);
 
         if (erroslist.length == 0) {
-            var ret = await axios.post('/api/saveone', { obj: categoria, table: "categorias", login: login });
+            let tempObj = { ...categoria, valorPadrao: parseFloat(categoria.valorPadrao) }
+            var ret = await axios.post('/api/saveone', { obj: tempObj, table: "categorias", login: login });
             if (ret) {
                 lista.push(categoria);
                 SelectNextCod();
@@ -108,13 +109,14 @@ export default function AddCatg(props) {
         setValidatelist(erroslist);
 
         if (erroslist.length == 0) {
-            var ret = await axios.post('/api/saveone', { obj: categoria, table: "categorias", login: login, update: true });
+            var ret = await axios.post('/api/saveone', { obj: { ...categoria, valorPadrao: parseFloat(categoria.valorPadrao) }, table: "categorias", login: login, update: true });
             if (ret) {
                 let categIndex = searchCategoria(categoria.codigo, true);
                 lista.splice(categIndex, 1);
                 lista.push(categoria);
                 props.sendToList(lista);
                 SelectNextCod();
+                setshowRemove(false);
                 setCategoria({ ...defaultCateg });
             }
             else setValidateErros("Ocorreu um erro ao salvar.");
@@ -136,16 +138,17 @@ export default function AddCatg(props) {
                 value={categoria?.descricao} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
 
             <label htmlFor="valor">Valor padrão</label>
-            <input type="text" value={categoria?.valorPadrao} id="valor"
-                onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} />
+            <input type="number" value={categoria?.valorPadrao == 0 ? "" : categoria?.valorPadrao} id="valor"
+                onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} placeholder="R$" />
             <hr />
             <div className="d-flex justify-content-between">
-                {showRemove ? <a onClick={() => RemoveCateg()} className={"btn btn-danger btn-sm btn-icon-split " + (loadingRemove || loading ? "disabled" : "")}>
+                {categoria?.quantidade == 0 && showRemove ? <a onClick={() => RemoveCateg()} className={"btn btn-danger btn-sm btn-icon-split " + (loadingRemove || loading ? "disabled" : "")}>
                     <span className="icon text-white-50">
                         {loadingRemove ? <Loading /> : <i className="fas fa-trash-alt"></i>}
                     </span>
                     <span className="text">{loadingRemove ? "Removendo" : "Remover"}</span>
                 </a> : ""}
+
                 <a onClick={() => showRemove ? AlterCateg() : InsertCateg()} className={"btn btn-primary btn-sm btn-icon-split " + (loading || loadingRemove ? "disabled" : "")}>
                     <span className="icon text-white-50">
                         {loading ? <Loading /> : <i className="fas fa-save"></i>}
@@ -154,6 +157,7 @@ export default function AddCatg(props) {
                 </a>
             </div>
             {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
+            {categoria?.quantidade > 0 ? <p className="text-info badge d-flex pt-2 pb-2">Só é possível excluir com a quantidade 0. </p> : ""}
         </div>
     )
 }
