@@ -13,7 +13,6 @@ export default async (request, response) => {
         const db = await connectToDataBase(process.env.MONGODB_URI);
 
         const retorno = await db.collection(table).findOne(obj);
-        console.log(retorno);
 
         response.json({
             result: retorno ? retorno : null

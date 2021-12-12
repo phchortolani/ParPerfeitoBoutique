@@ -8,9 +8,16 @@ import Loading from "../load/Loading";
 export default function Categorias() {
 
     const [list, setList] = useState({ data: [] });
+    const [produtos, setProdutos] = useState({ data: [] });
     const [firstRender, setFirstRender] = useState(true);
     const [loadingList, setLoadingList] = useState(false);
 
+    async function getProdutos() {
+        var ret = await axios.post('/api/listTable', { table: "produtos" });
+        if (ret.data.result) {
+            setProdutos({ data: ret.data.result });
+        }
+    }
 
     async function getList() {
         setLoadingList(true);
@@ -20,6 +27,7 @@ export default function Categorias() {
 
             setList({ data: orderByCodigo(ret.data.result) });
         }
+        getProdutos();
         setLoadingList(false);
     }
 
@@ -35,14 +43,16 @@ export default function Categorias() {
             return 0;
         });
     }
-    if (firstRender) getList();
+    if (firstRender) {
+        getList();
+    }
     return (
         <div className="row">
             <DefaultCard title="Adicionar categoria" class="col-md-3">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddCatg lista={list.data} sendToList={atualizalista} />}
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddCatg lista={list.data} produtos={produtos.data} sendToList={atualizalista} />}
             </DefaultCard>
             <DefaultCard title="Lista de categorias" class="col-md-9">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableCatg list={list.data} />}
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableCatg list={list.data} produtos={produtos.data} />}
             </DefaultCard>
         </div>
     )

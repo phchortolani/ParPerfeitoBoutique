@@ -7,8 +7,7 @@ let lista = [];
 let defaultCateg = {
     codigo: 0,
     descricao: "",
-    valorPadrao: 0,
-    quantidade: 0
+    valorPadrao: 0
 }
 export default function AddCatg(props) {
 
@@ -21,6 +20,7 @@ export default function AddCatg(props) {
     const [loadingRemove, setLoadingRemove] = useState(false);
 
     lista = props.lista;
+    let produtos = props.produtos;
 
     if (lista.length > 0 && defaultCateg.codigo == 0) {
         SelectNextCod();
@@ -31,11 +31,8 @@ export default function AddCatg(props) {
         setLoading(true);
         let erroslist = [];
         for (var prop in categoria) {
-
-            if (prop != "quantidade") {
-                if (categoria[prop] == "") {
-                    erroslist.push(prop);
-                }
+            if (categoria[prop] == "") {
+                erroslist.push(prop);
             }
         }
         setValidatelist(erroslist);
@@ -49,13 +46,9 @@ export default function AddCatg(props) {
                 setCategoria({ ...defaultCateg });
                 props.sendToList(lista);
             }
-            else {
-                setValidateErros("Ocorreu um erro ao salvar.")
-            }
+            else setValidateErros("Ocorreu um erro ao salvar.")
 
-        } else {
-            setValidateErros("Preencha todos os campos obrigatórios.")
-        }
+        } else setValidateErros("Preencha todos os campos obrigatórios.")
 
         setLoading(false);
     }
@@ -69,9 +62,8 @@ export default function AddCatg(props) {
             setCategoria(defaultCateg);
             setshowRemove(false);
             props.sendToList(lista);
-        } else {
-            console.log(ret);
-        }
+        } else console.log(ret);
+
         setLoadingRemove(false);
     }
 
@@ -84,11 +76,14 @@ export default function AddCatg(props) {
         }
     }
     async function QueryCateg(codCateg) {
-        if (codCateg == 0) return setCategoria({ ...defaultCateg, codigo: 1 });
+        if (codCateg <= 0) return setCategoria({ ...defaultCateg, codigo: 1 });
         let categ = searchCategoria(codCateg);
         if (categ) setCategoria(categ);
         else setCategoria({ ...defaultCateg, codigo: parseInt(codCateg) });
-        setshowRemove(categ != undefined ? true : false);
+
+        let prod = produtos.find((e) => e.codCategoria == codCateg);
+
+        setshowRemove(categ != undefined && !prod ? true : false);
     }
     function searchCategoria(codigo, index) {
         if (index) return lista.findIndex((e) => e.codigo == codigo);
@@ -99,8 +94,7 @@ export default function AddCatg(props) {
         setLoading(true);
         let erroslist = [];
         for (var prop in categoria) {
-
-            if (prop != "quantidade" && prop != "dataModificacao" && prop != "alteradoPor") {
+            if (prop != "dataModificacao" && prop != "alteradoPor") {
                 if (categoria[prop] == "") {
                     erroslist.push(prop);
                 }
@@ -142,7 +136,7 @@ export default function AddCatg(props) {
                 onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} placeholder="R$" />
             <hr />
             <div className="d-flex justify-content-between">
-                {categoria?.quantidade == 0 && showRemove ? <a onClick={() => RemoveCateg()} className={"btn btn-danger btn-sm btn-icon-split " + (loadingRemove || loading ? "disabled" : "")}>
+                {showRemove ? <a onClick={() => RemoveCateg()} className={"btn btn-danger btn-sm btn-icon-split " + (loadingRemove || loading ? "disabled" : "")}>
                     <span className="icon text-white-50">
                         {loadingRemove ? <Loading /> : <i className="fas fa-trash-alt"></i>}
                     </span>
@@ -157,7 +151,6 @@ export default function AddCatg(props) {
                 </a>
             </div>
             {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
-            {categoria?.quantidade > 0 ? <p className="text-info badge d-flex pt-2 pb-2">Só é possível excluir com a quantidade 0. </p> : ""}
         </div>
     )
 }
