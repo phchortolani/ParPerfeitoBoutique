@@ -47,7 +47,7 @@ export default function TableProd(props) {
     return (<>
         <Modal open={modalPrint.isOpen} title={modalPrint.title} closeModal={() => setModalPrint({ ...modalPrint, isOpen: false })}>
             <div className="text-center">
-                <div id="codigodebarra">
+                <div id="codigodebarra" className="d-flex">
                     <svg className="barcode"
                         jsbarcode-format="CODE128"
                         jsbarcode-value={modalPrint.children.codigo + '-' + modalPrint.children.descricao}
