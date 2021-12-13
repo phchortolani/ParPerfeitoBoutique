@@ -5,7 +5,7 @@ import { AuthContext } from "../../../../context/Auth2Context";
 let defaultProd = {
     codigo: 0,
     descricao: "",
-    valor: "",
+    valor: 0,
     quantidade: "",
     codCategoria: ""
 }
@@ -82,7 +82,7 @@ export default function AddProd(props) {
         <label htmlFor="desc">Descrição</label>
         <input value={Produto?.descricao} onChange={(e) => setProduto({ ...Produto, descricao: e.target.value })} type="text" id="desc" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
 
-        <label htmlFor="cate">Categoria</label>
+        <label  data-aos="zoom-in" htmlFor="cate">Categoria</label>
         <select id="cate" value={Produto?.codCategoria} onChange={(e) => CategoriaOnChange(e)} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("codCategoria")) ? "border-danger" : "")} >
             <option value="">Selecione...</option>
             {props.categorias.length > 0 ? props.categorias.map((e, i) => {
@@ -91,7 +91,7 @@ export default function AddProd(props) {
         </select>
 
         <label htmlFor="valor">Valor</label>
-        <input value={Produto?.valor} onChange={(e) => setProduto({ ...Produto, valor: e.target.value })} type="text" id="valor" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valor")) ? "border-danger" : "")} placeholder="R$" />
+        <input value={Produto?.valor == 0 ? "" : Produto?.valor} onChange={(e) => setProduto({ ...Produto, valor: e.target.value })} type="number" id="valor" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valor")) ? "border-danger" : "")} placeholder="R$" />
 
 
         <label htmlFor="qt">Quantidade</label>

@@ -1,12 +1,22 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Modal from "../../modal/Modal";
 
 export default function TableProd(props) {
-    const [LoadingRemove, setLoadingRemove] = useState(false);
+    const [modalPrint, setModalPrint] = useState({
+        isOpen: false,
+        title: "",
+        children: ""
+    });
+
 
     function searchCategoria(codigo, index) {
         if (index) return props.categorias.data.findIndex((e) => e.codigo == codigo);
         return props.categorias.data.find((e) => e.codigo == codigo);
+    }
+
+    function openModal(produto) {
+        setModalPrint({ isOpen: true, title: `Código de Barra: ${produto.codigo} - ${produto.descricao} `, children: produto });
     }
 
     async function ExcludeProd(codigo) {
@@ -20,7 +30,37 @@ export default function TableProd(props) {
         setLoadingRemove(false);
     }
 
+    function printPageArea() {
+        var printContent = document.getElementById('codigodebarra');
+        var WinPrint = window.open('', '', 'width=900,height=650');
+        WinPrint.document.write(printContent.innerHTML);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+    }
+
+    useEffect(() => {
+        JsBarcode(".barcode").init();
+
+    }, [modalPrint])
     return (<>
+        <Modal open={modalPrint.isOpen} title={modalPrint.title} closeModal={() => setModalPrint({ ...modalPrint, isOpen: false })}>
+            <div className="text-center">
+                <div id="codigodebarra">
+                    <svg className="barcode"
+                        jsbarcode-format="CODE128"
+                        jsbarcode-value={modalPrint.children.codigo + '-' + modalPrint.children.descricao}
+                        jsbarcode-textmargin="0"
+                        jsbarcode-fontoptions="bold">
+                    </svg>
+                </div>
+                <hr />
+                <button className="btn btn-sm btn-primary" onClick={() => printPageArea()}>Imprimir</button>
+            </div>
+
+        </Modal>
+
         <table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
             <thead>
                 <tr>
@@ -36,17 +76,17 @@ export default function TableProd(props) {
             <tbody>
                 {props.list.length > 0 ? props.list.map((e, i) => {
                     return <tr key={i}>
-                        <th scope="row">{e.codigo}</th>
+                        <th scope="row" className="text-center"> <a className="btn py-0 btn-sm btn-link font-weight-bolder text-decoration-none" >{e.codigo}</a> </th>
                         <td>{e.descricao}</td>
                         <td>R$ {e.valor}</td>
                         <td>
                             {searchCategoria(e.codCategoria)?.descricao}
                         </td>
-                        <td>
-                            <input className="form-control form-control-sm border-left-success" defaultValue={e.quantidade} />
+                        <td className="text-center">
+                            <span className={"badge text-white px-md-2 bg-" + (e.quantidade <= 0 ? "danger" : e.quantidade <= 10 ? "warning" : "success")}>{e.quantidade} </span>
                         </td>
                         <td className="text-center align-middle p-0 ">
-                            <a style={{ fontSize: 'x-small' }} href="#" className="btn btn-sm btn-info btn-icon-split">
+                            <a style={{ fontSize: 'x-small' }} onClick={() => openModal(e)} href="#" className="btn btn-sm btn-info btn-icon-split">
                                 <span className="icon text-white-50">
                                     <i className="fas fa-print"></i>
                                 </span>
