@@ -9,6 +9,7 @@ let defaultCateg = {
     descricao: "",
     valorPadrao: 0
 }
+
 const AddCatg = (props, ref) => {
 
     const [categoria, setCategoria] = useState(defaultCateg);
