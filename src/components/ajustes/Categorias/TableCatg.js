@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 
 export default function TableCatg(props) {
     let produtos = props.produtos;

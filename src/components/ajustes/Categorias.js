@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import DefaultCard from "../cards/DefaultCard";
 import AddCatg from "./Categorias/AddCatg";
 import TableCatg from "./Categorias/TableCatg";
@@ -21,7 +21,7 @@ export default function Categorias() {
     }
 
     function refreshQueryCateg(codCateg) {
-        addRef.current.QueryCateg(codCateg);
+        addRef.current?.QueryCateg(codCateg);
     }
 
     async function getList() {
