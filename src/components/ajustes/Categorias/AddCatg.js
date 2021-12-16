@@ -1,6 +1,6 @@
 import axios from "axios";
 import { AuthContext } from "../../../../context/Auth2Context";
-import { useState, useContext } from "react";
+import { useState, useContext, forwardRef, useImperativeHandle } from "react";
 import Loading from "../../load/Loading";
 let lista = [];
 
@@ -9,7 +9,7 @@ let defaultCateg = {
     descricao: "",
     valorPadrao: 0
 }
-export default function AddCatg(props) {
+const AddCatg = (props, ref) => {
 
     const [categoria, setCategoria] = useState(defaultCateg);
     const [showRemove, setshowRemove] = useState(false);
@@ -26,6 +26,13 @@ export default function AddCatg(props) {
         SelectNextCod();
         setCategoria(defaultCateg);
     }
+
+    useImperativeHandle(ref, () => {
+        return {
+            QueryCateg
+        }
+    })
+
 
     async function InsertCateg() {
         setLoading(true);
@@ -76,7 +83,11 @@ export default function AddCatg(props) {
         }
     }
     async function QueryCateg(codCateg) {
-        if (codCateg <= 0) return setCategoria({ ...defaultCateg, codigo: 1 });
+        if (codCateg <= 0) {
+            SelectNextCod();
+            setCategoria(defaultCateg);
+            return QueryCateg(defaultCateg.codigo)
+        }
         let categ = searchCategoria(codCateg);
         if (categ) setCategoria(categ);
         else setCategoria({ ...defaultCateg, codigo: parseInt(codCateg) });
@@ -147,10 +158,12 @@ export default function AddCatg(props) {
                     <span className="icon text-white-50">
                         {loading ? <Loading /> : <i className="fas fa-save"></i>}
                     </span>
-                    <span className="text">{showRemove ? (loading ? "Alterando" : "Alterar") : (loading ? "Adicionando" : "Adicionar")}</span>
+                    <span className="text">{showRemove ? (loading ? "Alterando" : "Alterar") : (loading ? "Adicionando" : searchCategoria(categoria.codigo) ? "Alterar" : "Adicionar")}</span>
                 </a>
             </div>
             {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
         </div>
     )
 }
+
+export default forwardRef(AddCatg);

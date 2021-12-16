@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Loading from "../../load/Loading";
 import Modal from "../../modal/Modal";
 
 export default function TableProd(props) {
@@ -9,6 +10,8 @@ export default function TableProd(props) {
         children: ""
     });
 
+    let codigoExcluir = "";
+    const [LoadingRemove, setLoadingRemove] = useState({ loading: false, codigo: 0 });
 
     function searchCategoria(codigo, index) {
         if (index) return props.categorias.data.findIndex((e) => e.codigo == codigo);
@@ -20,14 +23,14 @@ export default function TableProd(props) {
     }
 
     async function ExcludeProd(codigo) {
-        setLoadingRemove(true);
+        setLoadingRemove({ loading: true, codigo: codigo });
         var ret = await axios.post('/api/deleteone', { table: "produtos", where: { codigo: codigo } });
         if (ret) {
             props.removeFromList(codigo);
         } else {
             console.log(ret);
         }
-        setLoadingRemove(false);
+        setLoadingRemove({ loading: false, codigo: 0 });
     }
 
     function printPageArea() {
@@ -58,7 +61,6 @@ export default function TableProd(props) {
                 <hr />
                 <button className="btn btn-sm btn-primary" onClick={() => printPageArea()}>Imprimir</button>
             </div>
-
         </Modal>
 
         <table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
@@ -82,20 +84,23 @@ export default function TableProd(props) {
                         <td>
                             {searchCategoria(e.codCategoria)?.descricao}
                         </td>
-                        <td className="text-center">
-                            <span className={"badge text-white px-md-2 bg-" + (e.quantidade <= 0 ? "danger" : e.quantidade <= 10 ? "warning" : "success")}>{e.quantidade} </span>
-                        </td>
-                        <td className="text-center align-middle p-0 ">
-                            <a style={{ fontSize: 'x-small' }} onClick={() => openModal(e)} href="#" className="btn btn-sm btn-info btn-icon-split">
-                                <span className="icon text-white-50">
-                                    <i className="fas fa-print"></i>
-                                </span>
-                                {/*                                 <span className="text d-none d-md-block">Imprimir</span>
-*/}                            </a>
-                        </td>
-                        <td className="text-center align-middle p-0 ">
-                            <a onClick={() => ExcludeProd(e.codigo)} className="fas fa-times btn btn-sm text-danger"></a>
-                        </td>
+
+                        {LoadingRemove.loading && e.codigo == LoadingRemove.codigo ? <td colSpan="3" className="text-center" ><span className="text-danger badge"><Loading /> Excluindo </span> </td> : <>
+                            <td className="text-center">
+                                <span className={"badge text-white px-md-2 bg-" + (e.quantidade <= 0 ? "danger" : e.quantidade <= 10 ? "warning" : "success")}>{e.quantidade} </span>
+                            </td>
+                            <td className="text-center align-middle p-0 ">
+                                <a style={{ fontSize: 'x-small' }} onClick={() => openModal(e)} href="#" className="btn btn-sm btn-info btn-icon-split">
+                                    <span className="icon text-white-50">
+                                        <i className="fas fa-print"></i>
+                                    </span>
+                                </a>
+                            </td>
+                            <td className="text-center align-middle p-0 ">
+                                <a onClick={() => ExcludeProd(e.codigo)} className="fas fa-times btn btn-sm text-danger"></a>
+                            </td>
+                        </>}
+
                     </tr>
 
                 }) : <tr><td colSpan="5"><div className="p-1 text-center">Nenhum produto cadastrado</div></td></tr>}

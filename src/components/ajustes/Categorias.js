@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import DefaultCard from "../cards/DefaultCard";
 import AddCatg from "./Categorias/AddCatg";
 import TableCatg from "./Categorias/TableCatg";
@@ -11,12 +11,17 @@ export default function Categorias() {
     const [produtos, setProdutos] = useState({ data: [] });
     const [firstRender, setFirstRender] = useState(true);
     const [loadingList, setLoadingList] = useState(false);
+    const addRef = useRef(null);
 
     async function getProdutos() {
         var ret = await axios.post('/api/listTable', { table: "produtos" });
         if (ret.data.result) {
             setProdutos({ data: ret.data.result });
         }
+    }
+
+    function refreshQueryCateg(codCateg) {
+        addRef.current.QueryCateg(codCateg);
     }
 
     async function getList() {
@@ -48,11 +53,11 @@ export default function Categorias() {
     }
     return (
         <div className="row">
-            <DefaultCard title="Adicionar categoria" class="col-md-3">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddCatg lista={list.data} produtos={produtos.data} sendToList={atualizalista} />}
+            <DefaultCard title="Adicionar categoria" class="col-md-3"  icoTitle="fas fa-plus">
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddCatg ref={addRef} lista={list.data} produtos={produtos.data} sendToList={atualizalista} />}
             </DefaultCard>
-            <DefaultCard title="Lista de categorias" class="col-md-9">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableCatg list={list.data} produtos={produtos.data} />}
+            <DefaultCard title="Lista de categorias" class="col-md-9"  icoTitle="fas fa-tag">
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableCatg list={list.data} refreshQueryCateg={refreshQueryCateg} produtos={produtos.data} />}
             </DefaultCard>
         </div>
     )

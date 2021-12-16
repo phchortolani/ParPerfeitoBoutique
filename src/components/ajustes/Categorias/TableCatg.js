@@ -1,5 +1,15 @@
+import { useEffect } from "react";
+import { useState } from "react/cjs/react.development";
+
 export default function TableCatg(props) {
     let produtos = props.produtos;
+    const [categSelecionada, setCategSelecionada] = useState(0);
+
+    function editarCateg(cod) {
+        if (categSelecionada == cod) cod = 0;
+        setCategSelecionada(cod);
+        props.refreshQueryCateg(cod)
+    }
 
     function ObterQtd(codigo) {
         let total = 0;
@@ -22,8 +32,8 @@ export default function TableCatg(props) {
         </thead>
         <tbody>
             {props.list.length > 0 ? props.list.map((e, i) => {
-                return <tr className="animated--grow-in" key={i}>
-                    <th scope="row">{e.codigo}</th>
+                return <tr style={{cursor:"pointer"}} onClick={() => editarCateg(e.codigo)} className={"animated--grow-in " + (categSelecionada == e.codigo ? "shadow text-primary" : "")} key={i}>
+                    <th scope="row" className="text-center"> <a className="btn py-0 btn-sm btn-link font-weight-bolder text-decoration-none" >{e.codigo}</a> </th>
                     <td>{e.descricao}</td>
                     <td>R$ {e.valorPadrao}</td>
                     <td className="text-center">

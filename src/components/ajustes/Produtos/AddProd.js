@@ -82,7 +82,7 @@ export default function AddProd(props) {
         <label htmlFor="desc">Descrição</label>
         <input value={Produto?.descricao} onChange={(e) => setProduto({ ...Produto, descricao: e.target.value })} type="text" id="desc" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
 
-        <label  data-aos="zoom-in" htmlFor="cate">Categoria</label>
+        <label htmlFor="cate">Categoria</label>
         <select id="cate" value={Produto?.codCategoria} onChange={(e) => CategoriaOnChange(e)} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("codCategoria")) ? "border-danger" : "")} >
             <option value="">Selecione...</option>
             {props.categorias.length > 0 ? props.categorias.map((e, i) => {
