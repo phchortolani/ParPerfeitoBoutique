@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 
-export default function FilterProd() {
+export default function FilterProd(props) {
     const [criterio, setCriterio] = useState(true);
     return (<>
         <div className="row">
@@ -10,8 +10,7 @@ export default function FilterProd() {
                     <label htmlFor="cat">Categoria</label>
                     <select id="cat" className="form-control form-control-sm border-left-primary" >
                         <option >Todas</option>
-                        <option >Brincos</option>
-                        <option >Sapatilhas</option>
+                        {props.categorias ? props.categorias?.map((e, i) => { return <option key={i} value={e.descricao}>{e.descricao}</option> }) : ""}
                     </select>
                 </div>
             </div>

@@ -64,7 +64,7 @@ export default function Produtos() {
                 {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProd sentTolist={addTolist} categorias={categorias.data} />}
             </DefaultCard>
             <DefaultCard title="Lista de produtos" class="col-md-9">
-                <FilterProd />
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd categorias={categorias.data} />}
                 <hr />
                 {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableProd categorias={categorias} removeFromList={removeFromList} list={list.data} />}
             </DefaultCard>
