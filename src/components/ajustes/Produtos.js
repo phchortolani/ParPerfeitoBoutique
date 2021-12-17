@@ -2,7 +2,7 @@ import DefaultCard from "../cards/DefaultCard";
 import AddProd from "./Produtos/AddProd";
 import FilterProd from "./Produtos/FilterProd";
 import TableProd from "./Produtos/TableProd";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
 import Loading from "../load/Loading";
 
@@ -12,7 +12,9 @@ export default function Produtos() {
     const [firstRender, setFirstRender] = useState(true);
     const [loadingList, setLoadingList] = useState(false);
     const [categorias, setCategorias] = useState({ data: [] });
-
+    
+    const addProdRef = useRef(null);
+    
     async function getCateg() {
         let ret = await axios.post('/api/listTable', { table: "categorias" });
         if (ret.data.result) {
@@ -32,7 +34,8 @@ export default function Produtos() {
         setLoadingList(false);
     }
 
-    function addTolist(obj) {
+    function addTolist(obj, update = false) {
+        if(update) removeFromList(obj.codigo);
         let arraytemp = list.data;
         arraytemp.push(obj)
         let listaordernada = orderByCodigo(arraytemp);
@@ -44,6 +47,10 @@ export default function Produtos() {
         arraytemp.splice(arraytemp.findIndex((e) => e.codigo == cod), 1);
         let listaordernada = orderByCodigo(arraytemp);
         setList({ data: listaordernada });
+    }
+
+    function editProd(produto){
+        addProdRef.current?.editProd(produto);
     }
 
     function orderByCodigo(items) {
@@ -61,12 +68,12 @@ export default function Produtos() {
     return (
         <div className="row">
             <DefaultCard title="Adicionar produto" class="col-md-3">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProd sentTolist={addTolist} categorias={categorias.data} />}
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProd ref={addProdRef} sentTolist={addTolist} categorias={categorias.data} />}
             </DefaultCard>
             <DefaultCard title="Lista de produtos" class="col-md-9">
                 {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd categorias={categorias.data} />}
                 <hr />
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableProd categorias={categorias} removeFromList={removeFromList} list={list.data} />}
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableProd  categorias={categorias} editProd={editProd} removeFromList={removeFromList} list={list.data} />}
             </DefaultCard>
         </div>)
 }

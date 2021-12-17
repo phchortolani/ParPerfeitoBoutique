@@ -9,8 +9,8 @@ export default function TableProd(props) {
         title: "",
         children: ""
     });
+    const [ProdSelecionado, setProdSelecionado] = useState();
 
-    let codigoExcluir = "";
     const [LoadingRemove, setLoadingRemove] = useState({ loading: false, codigo: 0 });
 
     function searchCategoria(codigo, index) {
@@ -33,6 +33,12 @@ export default function TableProd(props) {
         setLoadingRemove({ loading: false, codigo: 0 });
     }
 
+    function editProd(produto) {
+        if (produto.codigo == ProdSelecionado?.codigo) produto = null;
+        setProdSelecionado(produto);
+        props.editProd(produto);
+    }
+
     function printPageArea() {
         var printContent = document.getElementById('codigodebarra');
         var WinPrint = window.open('', '', 'width=900,height=650');
@@ -45,8 +51,8 @@ export default function TableProd(props) {
 
     useEffect(() => {
         JsBarcode(".barcode").init();
-
     }, [modalPrint])
+  
     return (<>
         <Modal open={modalPrint.isOpen} title={modalPrint.title} closeModal={() => setModalPrint({ ...modalPrint, isOpen: false })}>
             <div className="text-center">
@@ -77,8 +83,8 @@ export default function TableProd(props) {
             </thead>
             <tbody>
                 {props.list.length > 0 ? props.list.map((e, i) => {
-                    return <tr key={i}>
-                        <th scope="row" className="text-center"> <a className="btn py-0 btn-sm btn-link font-weight-bolder text-decoration-none" >{e.codigo}</a> </th>
+                    return <tr className={"animated--grow-in " + (ProdSelecionado?.codigo == e.codigo ? "shadow text-primary" : "")} key={i}>
+                        <th onClick={() => editProd(e)} scope="row" className="text-center"> <a className="btn py-0 btn-sm btn-link font-weight-bolder text-decoration-none" >{e.codigo}</a> </th>
                         <td>{e.descricao}</td>
                         <td>R$ {e.valor}</td>
                         <td>

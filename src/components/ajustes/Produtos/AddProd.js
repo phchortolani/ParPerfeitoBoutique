@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useContext } from 'react';
+import { useState, useContext, forwardRef, useImperativeHandle } from 'react';
 import { AuthContext } from "../../../../context/Auth2Context";
 
 let defaultProd = {
@@ -10,10 +10,11 @@ let defaultProd = {
     codCategoria: ""
 }
 
-export default function AddProd(props) {
+const AddProd = (props, ref) => {
     const [Produto, setProduto] = useState(defaultProd);
     const [validatelist, setValidatelist] = useState([{}]);
     const [validateerros, setValidateErros] = useState('');
+    const [updateProd, setUpdateProd] = useState(false);
     const { login } = useContext(AuthContext);
 
     function InputsIsValid() {
@@ -28,7 +29,7 @@ export default function AddProd(props) {
         setValidatelist(erroslist);
         if (erroslist.length > 0) {
             setValidateErros("Preencha todos os campos obrigatórios.")
-        } else SaveProd();
+        } else updateProd ? updateProduto() : SaveProd();
     }
 
     function searchCategoria(codigo, index) {
@@ -41,8 +42,29 @@ export default function AddProd(props) {
         setProduto({ ...Produto, codCategoria: e.target.value, valor: categ.valorPadrao })
     }
 
+
+    useImperativeHandle(ref, () => {
+        return {
+            editProd
+        }
+    })
+
+    function editProd(Produto) {
+        setUpdateProd(Produto ? true : false);
+        setProduto(Produto ? Produto : defaultProd);
+    }
+
     function RemoveCategFromCod(codProduto) {
         return parseInt(`${codProduto}`.split("").reverse().join("").substring(0, Produto.codCategoria.length).split("").reverse().join(""));
+    }
+
+    async function updateProduto() {
+        let ret = await axios.post('/api/saveone', { obj: Produto, table: "produtos", login: login, update: true });
+        if (ret.data.result) {
+            setProduto(defaultProd);
+            setUpdateProd(false);
+            props.sentTolist(Produto, true);
+        }
     }
 
     async function SaveProd() {
@@ -101,3 +123,5 @@ export default function AddProd(props) {
         {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
     </>)
 }
+
+export default forwardRef(AddProd);
