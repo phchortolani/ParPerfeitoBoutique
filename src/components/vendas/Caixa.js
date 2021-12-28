@@ -22,17 +22,37 @@ export default function Caixa() {
         setLoadingList(false);
     }
 
+    function EditQt(item, qt) {
+        if (qt <= 0) qt = 1;
+        let temp = cart.data;
+        let index = cart.data.findIndex((e) => e.item.codigo == item.codigo);
+        if (index != null || index != undefined) {
+            temp[index] = { item: item, qt: qt };
+            setCart({ data: temp });
+        }
+
+
+
+    }
+
     function addRemoveCart(cod, addToCart) {
         if (addToCart) {
             var prod = produtos.data.find((e => e.codigo == cod));
             if (prod) {
                 let temp = cart.data;
-                temp.push(prod);
+                let quant = 1;
+                const itemexistente = cart.data.find(e => e.item.codigo == cod);
+                if (itemexistente) {
+                    let index = cart.data.findIndex(e => e.item.codigo == cod);
+                    quant += Number(itemexistente.qt);
+                    temp[index] = { item: itemexistente.item, qt: quant };
+                } else temp.push({ item: prod, qt: quant });
                 setCart({ data: temp });
+
             }
         } else {
             let temp = cart.data;
-            temp.splice(temp.findIndex((e) => e.codigo == cod), 1);
+            temp.splice(temp.findIndex((e) => e.item.codigo == cod), 1);
             setCart({ data: temp });
         }
     }
@@ -44,7 +64,7 @@ export default function Caixa() {
         <div className="row">
             <div className="col-md-8">
                 <DefaultCard title="Selecionados" cardBodyClass="p-0" icoTitle="fas fa-box-open">
-                    <TableSelecionados RemoveItem={addRemoveCart} cart={cart.data} />
+                    {cart.data.length > 0 ? <TableSelecionados RemoveItem={addRemoveCart} cart={cart.data} EditQt={EditQt} /> : <p className="text-center text-uppercase text-monospace">Aguardando produtos</p>}
                 </DefaultCard>
             </div>
             <div className="col-md-4">
@@ -52,7 +72,7 @@ export default function Caixa() {
                     {LoadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProdutos AddItem={addRemoveCart} produtos={produtos.data} />}
                 </DefaultCard>
                 <DefaultCard title="Pagamento" icoTitle="fas fa-cash-register" cardBodyClass="p-2">
-                    <Pagamento />
+                    <Pagamento cart={cart.data} />
                 </DefaultCard>
             </div>
         </div>

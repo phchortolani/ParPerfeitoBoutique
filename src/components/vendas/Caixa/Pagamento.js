@@ -1,4 +1,7 @@
-export default function Pagamento() {
+export default function Pagamento(props) {
+
+    let total = props.cart.reduce((anterior, atual) => anterior + atual.item.valor * atual.qt, 0);
+
     return (<>
         <label htmlFor="pgt">Meio de pagamento</label>
         <select name="pgt" className="form-control form-control-sm mb-3" id="pgt">
@@ -14,7 +17,7 @@ export default function Pagamento() {
 
         <hr />
         <h6 className="text-center text-gray-900">Desconto: R$ 0</h6>
-        <h4 className="text-center text-gray-900">Total: R$ 45,96</h4>
+        <h4 className="text-center text-gray-900">Total: {total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</h4>
         <hr />
 
         <div className="d-flex justify-content-between">
