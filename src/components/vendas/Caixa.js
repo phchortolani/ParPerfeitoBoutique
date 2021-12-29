@@ -30,11 +30,11 @@ export default function Caixa() {
             temp[index] = { item: item, qt: qt };
             setCart({ data: temp });
         }
-
-
-
     }
 
+    function clearCart() {
+        setCart({ data: [] });
+    }
     function addRemoveCart(cod, addToCart) {
         if (addToCart) {
             var prod = produtos.data.find((e => e.codigo == cod));
@@ -71,9 +71,10 @@ export default function Caixa() {
                 <DefaultCard title="Produtos" icoTitle="fas fa-shopping-cart" cardBodyClass="p-2">
                     {LoadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProdutos AddItem={addRemoveCart} produtos={produtos.data} />}
                 </DefaultCard>
-                <DefaultCard title="Pagamento" icoTitle="fas fa-cash-register" cardBodyClass="p-2">
-                    <Pagamento cart={cart.data} />
-                </DefaultCard>
+                {cart.data.length > 0 ? <DefaultCard title="Pagamento" icoTitle="fas fa-cash-register" cardBodyClass="p-2">
+                    <Pagamento clearCart={clearCart} cart={cart.data} />
+                </DefaultCard> : ""}
+
             </div>
         </div>
     )

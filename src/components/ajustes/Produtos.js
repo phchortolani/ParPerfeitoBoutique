@@ -5,6 +5,7 @@ import TableProd from "./Produtos/TableProd";
 import { useRef, useState } from "react";
 import axios from "axios";
 import Loading from "../load/Loading";
+import Cupons from "./Produtos/Cupons";
 
 export default function Produtos() {
 
@@ -12,9 +13,9 @@ export default function Produtos() {
     const [firstRender, setFirstRender] = useState(true);
     const [loadingList, setLoadingList] = useState(false);
     const [categorias, setCategorias] = useState({ data: [] });
-    
+
     const addProdRef = useRef(null);
-    
+
     async function getCateg() {
         let ret = await axios.post('/api/listTable', { table: "categorias" });
         if (ret.data.result) {
@@ -35,7 +36,7 @@ export default function Produtos() {
     }
 
     function addTolist(obj, update = false) {
-        if(update) removeFromList(obj.codigo);
+        if (update) removeFromList(obj.codigo);
         let arraytemp = list.data;
         arraytemp.push(obj)
         let listaordernada = orderByCodigo(arraytemp);
@@ -49,7 +50,7 @@ export default function Produtos() {
         setList({ data: listaordernada });
     }
 
-    function editProd(produto){
+    function editProd(produto) {
         addProdRef.current?.editProd(produto);
     }
 
@@ -71,9 +72,17 @@ export default function Produtos() {
                 {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProd ref={addProdRef} sentTolist={addTolist} categorias={categorias.data} />}
             </DefaultCard>
             <DefaultCard title="Lista de produtos" class="col-md-9">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd categorias={categorias.data} />}
+                <div className="row">
+                    <div className="col-md-10">
+                        {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd categorias={categorias.data} />}
+                    </div>
+                    <div className="col-md-2 align-self-md-center pt-3">
+                        <Cupons />
+                    </div>
+                </div>
+
                 <hr />
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableProd  categorias={categorias} editProd={editProd} removeFromList={removeFromList} list={list.data} />}
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableProd categorias={categorias} editProd={editProd} removeFromList={removeFromList} list={list.data} />}
             </DefaultCard>
         </div>)
 }
