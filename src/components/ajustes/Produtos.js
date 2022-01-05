@@ -77,7 +77,7 @@ export default function Produtos() {
                         {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd categorias={categorias.data} />}
                     </div>
                     <div className="col-md-2 align-self-md-center pt-3">
-                        <Cupons />
+                        <Cupons categorias={categorias.data} />
                     </div>
                 </div>
 

@@ -1,5 +1,8 @@
 export default function Modal(props) {
     let centralizado = !props.onTop;
+    let stl = {
+        overflowY: props.overflowY ? "auto" : "hidden"
+    }
     return (
         <div className={"modal fade " + (props.open ? "show d-block" : "")} tabIndex="-1" style={{ backdropFilter: "brightness(0.5)", }} role="dialog" aria-labelledby={props.title} aria-hidden="false">
             <div className={"modal-dialog animated--grow-in " + (centralizado ? "modal-dialog-centered" : "")} role="document">
@@ -10,7 +13,7 @@ export default function Modal(props) {
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div className="modal-body ">
+                    <div style={stl} className="modal-body ">
                         {props.children}
                     </div>
                 </div>

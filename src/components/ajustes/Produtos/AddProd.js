@@ -20,7 +20,7 @@ const AddProd = (props, ref) => {
     function InputsIsValid() {
         let erroslist = [];
         for (var prop in Produto) {
-            if (prop != "codigo") {
+            if (prop != "codigo" && prop != "dataModificacao" && prop != "alteradoPor") {
                 if (Produto[prop] == "") {
                     erroslist.push(prop);
                 }
@@ -28,6 +28,7 @@ const AddProd = (props, ref) => {
         }
         setValidatelist(erroslist);
         if (erroslist.length > 0) {
+            console.log(erroslist);
             setValidateErros("Preencha todos os campos obrigatórios.")
         } else updateProd ? updateProduto() : SaveProd();
     }
@@ -100,6 +101,19 @@ const AddProd = (props, ref) => {
 
     }
 
+    function AlterarInputValor(value) {
+        let semcaracteres = Number(value.replace(/[\D]+/g, ''));
+        setProduto({ ...Produto, valor: formatReal(semcaracteres) })
+    }
+
+    function formatReal(int) {
+        var tmp = int + '';
+        tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
+        if (tmp.length > 6)
+            tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+        return tmp;
+    }
+
     return (<>
         <label htmlFor="desc">Descrição</label>
         <input value={Produto?.descricao} onChange={(e) => setProduto({ ...Produto, descricao: e.target.value })} type="text" id="desc" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
@@ -113,7 +127,7 @@ const AddProd = (props, ref) => {
         </select>
 
         <label htmlFor="valor">Valor</label>
-        <input value={Produto?.valor == 0 ? "" : Produto?.valor} onChange={(e) => setProduto({ ...Produto, valor: e.target.value })} type="number" id="valor" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valor")) ? "border-danger" : "")} placeholder="R$" />
+        <input value={Produto?.valor == 0 ? "" : Produto?.valor} onChange={(e) => AlterarInputValor(e.target.value)} maxLength={10} type="text" id="valor" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valor")) ? "border-danger" : "")} placeholder="R$" />
 
 
         <label htmlFor="qt">Quantidade</label>
