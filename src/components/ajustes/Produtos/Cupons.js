@@ -222,6 +222,7 @@ export default function Cupons(props) {
                 </div>
                 {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
                 <hr />
+                
                 <h5 className="text-primary">Cupons ativos</h5>
                 <hr />
                 <div style={{ maxHeight: "20vh" }}>
