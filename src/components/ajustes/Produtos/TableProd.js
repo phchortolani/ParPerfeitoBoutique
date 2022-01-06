@@ -52,7 +52,7 @@ export default function TableProd(props) {
     useEffect(() => {
         JsBarcode(".barcode").init();
     }, [modalPrint])
-  
+
     return (<>
         <Modal open={modalPrint.isOpen} title={modalPrint.title} closeModal={() => setModalPrint({ ...modalPrint, isOpen: false })}>
             <div className="text-center">
@@ -86,11 +86,10 @@ export default function TableProd(props) {
                     return <tr className={"animated--grow-in " + (ProdSelecionado?.codigo == e.codigo ? "shadow text-primary" : "")} key={i}>
                         <th onClick={() => editProd(e)} scope="row" className="text-center"> <a className="btn py-0 btn-sm btn-link font-weight-bolder text-decoration-none" >{e.codigo}</a> </th>
                         <td>{e.descricao}</td>
-                        <td>R$ {e.valor}</td>
+                        <td>{e.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</td>
                         <td>
                             {searchCategoria(e.codCategoria)?.descricao}
                         </td>
-
                         {LoadingRemove.loading && e.codigo == LoadingRemove.codigo ? <td colSpan="3" className="text-center" ><span className="text-danger badge"><Loading /> Excluindo </span> </td> : <>
                             <td className="text-center">
                                 <span className={"badge text-white px-md-2 bg-" + (e.quantidade <= 0 ? "danger" : e.quantidade <= 10 ? "warning" : "success")}>{e.quantidade} </span>
@@ -106,9 +105,7 @@ export default function TableProd(props) {
                                 <a onClick={() => ExcludeProd(e.codigo)} className="fas fa-times btn btn-sm text-danger"></a>
                             </td>
                         </>}
-
                     </tr>
-
                 }) : <tr><td colSpan="5"><div className="p-1 text-center">Nenhum produto cadastrado</div></td></tr>}
 
             </tbody>

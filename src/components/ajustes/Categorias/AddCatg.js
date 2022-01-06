@@ -46,7 +46,7 @@ const AddCatg = (props, ref) => {
         setValidatelist(erroslist);
 
         if (erroslist.length == 0) {
-            let tempObj = { ...categoria, valorPadrao: parseFloat(categoria.valorPadrao) }
+            let tempObj = { ...categoria, valorPadrao: formataDecimal(categoria.valorPadrao) }
             var ret = await axios.post('/api/saveone', { obj: tempObj, table: "categorias", login: login });
             if (ret) {
                 lista.push(categoria);
@@ -115,19 +115,37 @@ const AddCatg = (props, ref) => {
         setValidatelist(erroslist);
 
         if (erroslist.length == 0) {
-            var ret = await axios.post('/api/saveone', { obj: { ...categoria, valorPadrao: parseFloat(categoria.valorPadrao) }, table: "categorias", login: login, update: true });
+            var ret = await axios.post('/api/saveone', { obj: { ...categoria, valorPadrao: formataDecimal(categoria.valorPadrao) }, table: "categorias", login: login, update: true });
             if (ret) {
-                let categIndex = searchCategoria(categoria.codigo, true);
-                lista.splice(categIndex, 1);
-                lista.push(categoria);
-                props.sendToList(lista);
+                await props.getList();
                 SelectNextCod();
                 setshowRemove(false);
                 setCategoria({ ...defaultCateg });
             }
             else setValidateErros("Ocorreu um erro ao salvar.");
-        } else setValidateErros("Preencha todos os campos obrigatórios.");
+        } else {
+            setValidateErros("Preencha todos os campos obrigatórios.");
+            console.log(erroslist);
+        }
         setLoading(false);
+    }
+
+    function AlterarInputValor(value) {
+        let semcaracteres = Number(value.replace(/[\D]+/g, ''));
+        setCategoria({ ...categoria, valorPadrao: formatReal(semcaracteres) })
+    }
+
+    function formatReal(int) {
+        var tmp = int + '';
+        tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
+        if (tmp.length > 6)
+            tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+        return tmp;
+    }
+    function formataDecimal(valorStg) {
+        let valorpuro = valorStg.toString().replace(".", '');
+        valorpuro = valorpuro.replace(",", ".");
+        return parseFloat(valorpuro);
     }
 
     return (
@@ -144,8 +162,10 @@ const AddCatg = (props, ref) => {
                 value={categoria?.descricao} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("descricao")) ? "border-danger" : "")} />
 
             <label htmlFor="valor">Valor padrão</label>
-            <input type="number" value={categoria?.valorPadrao == 0 ? "" : categoria?.valorPadrao} id="valor"
+            {/*  <input type="number" value={categoria?.valorPadrao == 0 ? "" : categoria?.valorPadrao} id="valor"
                 onChange={(e) => { setCategoria({ ...categoria, valorPadrao: e.target.value }) }} className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} placeholder="R$" />
+            */}
+            <input value={categoria?.valorPadrao == 0 ? "" : categoria?.valorPadrao} onChange={(e) => AlterarInputValor(e.target.value)} maxLength={10} type="text" id="valorPadrao" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valorPadrao")) ? "border-danger" : "")} placeholder="R$" />
             <hr />
             <div className="d-flex justify-content-between">
                 {showRemove ? <a onClick={() => RemoveCateg()} className={"btn btn-danger btn-sm btn-icon-split " + (loadingRemove || loading ? "disabled" : "")}>

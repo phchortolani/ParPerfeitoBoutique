@@ -40,7 +40,8 @@ const AddProd = (props, ref) => {
 
     function CategoriaOnChange(e) {
         let categ = searchCategoria(e.target.value);
-        setProduto({ ...Produto, codCategoria: e.target.value, valor: categ.valorPadrao })
+
+        setProduto({ ...Produto, codCategoria: categ ? e.target.value : "", valor: categ ? formatReal(categ.valorPadrao.toString().replace(".", "")) : "" })
     }
 
 
@@ -52,7 +53,13 @@ const AddProd = (props, ref) => {
 
     function editProd(Produto) {
         setUpdateProd(Produto ? true : false);
-        setProduto(Produto ? Produto : defaultProd);
+        setProduto(Produto ? { ...Produto, valor: formatReal(Produto.valor.toString().replace(".", "")) } : defaultProd);
+    }
+
+    function formataDecimal(valorStg) {
+        let valorpuro = valorStg.toString().replace(".", '');
+        valorpuro = valorpuro.replace(",", ".");
+        return parseFloat(valorpuro);
     }
 
     function RemoveCategFromCod(codProduto) {
@@ -60,41 +67,32 @@ const AddProd = (props, ref) => {
     }
 
     async function updateProduto() {
-        let ret = await axios.post('/api/saveone', { obj: Produto, table: "produtos", login: login, update: true });
+        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor) }, table: "produtos", login: login, update: true });
         if (ret.data.result) {
             setProduto(defaultProd);
             setUpdateProd(false);
-            props.sentTolist(Produto, true);
+            await props.getList();
         }
     }
 
     async function SaveProd() {
         let RetultimoProd = await axios.post('/api/getlast', { table: "produtos", where: { codCategoria: Number(Produto.codCategoria) } });
+
         if (RetultimoProd) {
             let ultimoCod = RetultimoProd.data?.result[0]?.codigo ?? 0;
             ultimoCod = RemoveCategFromCod(ultimoCod);
-
             let tempProduto = {
                 ...Produto,
                 codigo: parseInt(`${Produto.codCategoria}${(ultimoCod + 1)}`),
                 codCategoria: parseInt(Produto.codCategoria),
                 quantidade: parseInt(Produto.quantidade),
-                valor: parseFloat(Produto.valor)
+                valor: formataDecimal(Produto.valor)
             };
 
             let ret = await axios.post('/api/saveone', { obj: tempProduto, table: "produtos", login: login });
-            if (ret.data.result) {
-                let cat = searchCategoria(tempProduto.codCategoria);
-                let retUpdateCateg = await axios.post('/api/saveone', { obj: { ...cat, quantidade: cat.quantidade + tempProduto.quantidade }, table: "categorias", login: login, update: true });
-                if (retUpdateCateg) {
-                    setProduto(defaultProd);
-                    props.sentTolist(tempProduto);
-                }
-                else setValidateErros("Ocorreu um erro ao salvar - Não foi possível atualizar categoria.")
-            }
-            else {
-                setValidateErros("Ocorreu um erro ao salvar.")
-            }
+
+            if (ret.data.result) await props.getList();
+            else setValidateErros("Ocorreu um erro ao salvar");
         } else {
             setValidateErros("Erro ao obter o ultimo codigo")
         }

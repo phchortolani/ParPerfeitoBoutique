@@ -14,12 +14,16 @@ export default function TableCatg(props) {
         let total = 0;
         produtos.forEach((e) => {
             if (e.codCategoria == codigo) {
-                total += e.quantidade;
+                total += Number(e.quantidade);
             }
         });
         return total;
     }
-
+    function formataDecimal(valorStg) {
+        let valorpuro = valorStg.toString().replace(".", '');
+        valorpuro = valorpuro.replace(",", ".");
+        return parseFloat(valorpuro);
+    }
     return (<table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" width="100%" cellSpacing="0" role="grid" >
         <thead>
             <tr>
@@ -31,10 +35,10 @@ export default function TableCatg(props) {
         </thead>
         <tbody>
             {props.list.length > 0 ? props.list.map((e, i) => {
-                return <tr style={{cursor:"pointer"}} onClick={() => editarCateg(e.codigo)} className={"animated--grow-in " + (categSelecionada == e.codigo ? "shadow text-primary" : "")} key={i}>
+                return <tr style={{ cursor: "pointer" }} onClick={() => editarCateg(e.codigo)} className={"animated--grow-in " + (categSelecionada == e.codigo ? "shadow text-primary" : "")} key={i}>
                     <th scope="row" className="text-center"> <a className="btn py-0 btn-sm btn-link font-weight-bolder text-decoration-none" >{e.codigo}</a> </th>
                     <td>{e.descricao}</td>
-                    <td>R$ {e.valorPadrao}</td>
+                    <td>{e.valorPadrao.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</td>
                     <td className="text-center">
                         {produtos ? ObterQtd(e.codigo) : 0}
                     </td>

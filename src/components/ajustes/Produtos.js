@@ -69,7 +69,7 @@ export default function Produtos() {
     return (
         <div className="row">
             <DefaultCard title="Adicionar produto" class="col-md-3">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProd ref={addProdRef} sentTolist={addTolist} categorias={categorias.data} />}
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProd ref={addProdRef} sentTolist={addTolist} getList={getList} categorias={categorias.data} />}
             </DefaultCard>
             <DefaultCard title="Lista de produtos" class="col-md-9">
                 <div className="row">

@@ -54,7 +54,7 @@ export default function Categorias() {
     return (
         <div className="row">
             <DefaultCard title="Adicionar categoria" class="col-md-3"  icoTitle="fas fa-plus">
-                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddCatg ref={addRef} lista={list.data} produtos={produtos.data} sendToList={atualizalista} />}
+                {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddCatg ref={addRef} lista={list.data} produtos={produtos.data} getList={getList} sendToList={atualizalista} />}
             </DefaultCard>
             <DefaultCard title="Lista de categorias" class="col-md-9"  icoTitle="fas fa-tag">
                 {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableCatg list={list.data} refreshQueryCateg={refreshQueryCateg} produtos={produtos.data} />}
