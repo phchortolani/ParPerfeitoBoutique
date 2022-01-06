@@ -44,8 +44,12 @@ export const AuthProvider = (props) => {
         Router.push("./");
     }
 
+    async function getTypeUser() {
+       return tipoUsuario;
+    }
+
     return (
-        <AuthContext.Provider value={{ signIn, isAuthenticated, login, signOut, isMobile, tipoUsuario }}>
+        <AuthContext.Provider value={{ signIn, isAuthenticated, login, signOut, isMobile, tipoUsuario, getTypeUser }}>
             {props.children}
         </AuthContext.Provider>
     )

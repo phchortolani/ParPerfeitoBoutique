@@ -53,7 +53,7 @@ const AddCatg = (props, ref) => {
                 lista.push(categoria);
                 SelectNextCod();
                 setCategoria({ ...defaultCateg });
-                props.sendToList(lista);
+                props.getList();
             }
             else setValidateErros("Ocorreu um erro ao salvar.")
 

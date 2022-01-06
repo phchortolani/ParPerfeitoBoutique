@@ -17,12 +17,15 @@ export default function SideBar(props) {
                 <div className="sidebar-brand-text mx-3">Par Perfeito</div>
             </a>
             <hr className="sidebar-divider my-0" />
-
-            <li className="nav-item active">
-                <a className="nav-link" onClick={() => updateMenu("Painel")}>
-                    <i className="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Controle</span></a>
-            </li>
+            {
+                props.Permissao == "administrador" ?
+                    <li className="nav-item active">
+                        <a className="nav-link" onClick={() => updateMenu("Painel")}>
+                            <i className="fas fa-fw fa-tachometer-alt"></i>
+                            <span>Controle</span></a>
+                    </li>
+                    : ""
+            }
 
             <hr className="sidebar-divider" />
 
@@ -40,7 +43,10 @@ export default function SideBar(props) {
                         <h6 className="collapse-header">Cadastros disponíveis</h6>
                         <a className="collapse-item" onClick={() => updateMenu("Categorias")} href="#">Categorias</a>
                         <a className="collapse-item" onClick={() => updateMenu("Produtos")} href="#">Produtos</a>
-                        <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a>
+                        {props.Permissao == "administrador" ? <>
+                            <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a>
+                        </> : ""}
+
                     </div>
                 </div>
             </li>
