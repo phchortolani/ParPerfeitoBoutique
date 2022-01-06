@@ -12,7 +12,7 @@ export default function Nav(props) {
                 <button id="sidebarToggleTop" onClick={() => props.SetSideBarMini(!props.SideBarMini)} className="btn btn-link d-md-none rounded-circle mr-3">
                     <i className="fa fa-bars"></i>
                 </button>
-                <ul className="navbar-nav ml-auto">
+                <ul className="navbar-nav ml-auto">{/* 
                     <li className="nav-item dropdown no-arrow mx-1">
                         <a onClick={() => { setOpenNotific(!OpenNotific) }} className={"nav-link " + (OpenNotific ? "" : "dropdown-toggle")} href="#" id="alertsDropdown">
                             <i className="fas fa-bell fa-fw"></i>
@@ -58,7 +58,7 @@ export default function Nav(props) {
                             </a>
                             <a className="dropdown-item text-center small text-gray-500" href="#">Mostrar todas as notificações</a>
                         </div>
-                    </li>
+                    </li> */}
 
                     <div className="topbar-divider d-none d-sm-block"></div>
 
