@@ -19,6 +19,7 @@ const AddCatg = (props, ref) => {
     const { login } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [loadingRemove, setLoadingRemove] = useState(false);
+    const [edit, setEdit] = useState(false);
 
     lista = props.lista;
     let produtos = props.produtos;
@@ -90,7 +91,10 @@ const AddCatg = (props, ref) => {
             return QueryCateg(defaultCateg.codigo)
         }
         let categ = searchCategoria(codCateg);
-        if (categ) setCategoria(categ);
+        if (categ) {
+            setEdit(true);
+            setCategoria({ ...categ, valorPadrao: formatReal(categ.valorPadrao.toString().replace(".", "")) });
+        }
         else setCategoria({ ...defaultCateg, codigo: parseInt(codCateg) });
 
         let prod = produtos.find((e) => e.codCategoria == codCateg);
@@ -175,7 +179,7 @@ const AddCatg = (props, ref) => {
                     <span className="text">{loadingRemove ? "Removendo" : "Remover"}</span>
                 </a> : ""}
 
-                <a onClick={() => showRemove ? AlterCateg() : InsertCateg()} className={"btn btn-primary btn-sm btn-icon-split " + (loading || loadingRemove ? "disabled" : "")}>
+                <a onClick={() => edit ? AlterCateg() : InsertCateg()} className={"btn btn-primary btn-sm btn-icon-split " + (loading || loadingRemove ? "disabled" : "")}>
                     <span className="icon text-white-50">
                         {loading ? <Loading /> : <i className="fas fa-save"></i>}
                     </span>
