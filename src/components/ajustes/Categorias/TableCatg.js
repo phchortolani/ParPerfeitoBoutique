@@ -19,11 +19,7 @@ export default function TableCatg(props) {
         });
         return total;
     }
-    function formataDecimal(valorStg) {
-        let valorpuro = valorStg.toString().replace(".", '');
-        valorpuro = valorpuro.replace(",", ".");
-        return parseFloat(valorpuro);
-    }
+
     return (<table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" width="100%" cellSpacing="0" role="grid" >
         <thead>
             <tr>

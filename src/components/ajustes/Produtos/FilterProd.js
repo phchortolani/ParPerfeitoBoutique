@@ -9,7 +9,7 @@ export default function FilterProd(props) {
                 <div className="mb-1">
                     <label htmlFor="cat">Categoria</label>
                     <select id="cat" className="form-control form-control-sm border-left-primary" >
-                        <option >Todas</option>
+                        <option>Todas</option>
                         {props.categorias ? props.categorias?.map((e, i) => { return <option key={i} value={e.descricao}>{e.descricao}</option> }) : ""}
                     </select>
                 </div>
