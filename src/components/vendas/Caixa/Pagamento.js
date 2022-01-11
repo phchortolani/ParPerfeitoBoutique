@@ -1,10 +1,16 @@
+import axios from "axios";
 import { useState } from "react";
 
 export default function Pagamento(props) {
 
-    const [tipoPgt, setTipoPgt] = useState("");
-    const [valorPago, setvalorPago] = useState(0);
-    const [possuiVoucher, setpossuiVoucher] = useState(false);
+    const [valorPago, setvalorPago] = useState({
+        debito: 0,
+        credito: 0,
+        dinheiro: 0,
+        boleto: 0,
+        pix: 0
+    });
+    const [Voucher, setVoucher] = useState(null);
 
     const [formaPagamento, setFormaPagamento] = useState({
         debito: false,
@@ -14,18 +20,54 @@ export default function Pagamento(props) {
         pix: false
     })
 
-    let total = props.cart.reduce((anterior, atual) => anterior + atual.item.valor * atual.qt, 0);
+    let totalCarrinho = props.cart.reduce((anterior, atual) => anterior + atual.item.valor * atual.qt, 0);
+    let total = totalCarrinho;
+
     let troco = 0;
-    if (total && valorPago) total -= formataDecimal(valorPago);
-    if (total < 0 && valorPago) {
+    let desconto = 0;
+    let msgVoucher = "";
+
+    if (total) {
+        if (formaPagamento.debito) total -= formataDecimal(valorPago.debito);
+        if (formaPagamento.credito) total -= formataDecimal(valorPago.credito);
+        if (formaPagamento.dinheiro) total -= formataDecimal(valorPago.dinheiro);
+        if (formaPagamento.boleto) total -= formataDecimal(valorPago.boleto);
+        if (formaPagamento.pix) total -= formataDecimal(valorPago.pix);
+    }
+    if (Voucher) {
+        if (Voucher.tipoPorcentagem) {
+            desconto = (Voucher.valorDesconto * totalCarrinho / 100);
+            total -= desconto;
+        }
+        else {
+            if (totalCarrinho >= Voucher.valorDesconto) {
+                total -= desconto = Voucher.valorDesconto;
+            } else msgVoucher = "O total é inferior ao desconto.";
+
+        }
+    }
+
+    if (total < 0) {
         troco = total * -1;
         total = 0;
     }
 
-    function CalculaValorPago(valor) {
+    function CalculaValorPago(valor, tipo) {
         let getmoney = Number(valor.replace(/[\D]+/g, ''));
-        setvalorPago(formatReal(getmoney));
+        let obj = { ...valorPago, [tipo]: formatReal(getmoney) };
+        setvalorPago(obj);
     }
+
+    async function checkVoucher(e) {
+        if (e.trim().length > 0) {
+            var ret = await axios.post('/api/checkVoucher', { codigoVoucher: e });
+            if (ret.data.result) {
+                return setVoucher(ret.data.result);
+            }
+        }
+        setVoucher(null);
+    }
+
     function formatReal(int) {
         var tmp = int + '';
         tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
@@ -44,7 +86,6 @@ export default function Pagamento(props) {
         props.clearCart();
     }
 
-
     return (<>
         <div className="row">
             <div className="col-6">
@@ -58,7 +99,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input type="text" className={"form-control form-control-sm " + (formaPagamento.debito ? "border-primary shadow-sm" : "disabled")} />
+                        <input value={valorPago.debito} type="text" onChange={(e) => CalculaValorPago(e.target.value, "debito")} className={"form-control form-control-sm " + (formaPagamento.debito ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Crédito</label>
@@ -70,7 +111,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input type="text" className={"form-control form-control-sm " + (formaPagamento.credito ? "border-primary shadow-sm" : "disabled")} />
+                        <input value={valorPago.credito} type="text" onChange={(e) => CalculaValorPago(e.target.value, "credito")} className={"form-control form-control-sm " + (formaPagamento.credito ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Dinheiro</label>
@@ -82,7 +123,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input value={valorPago} onChange={(e) => CalculaValorPago(e.target.value)} maxLength={10} id="vlrpago" className={"form-control form-control-sm " + (formaPagamento.dinheiro ? "border-primary shadow-sm" : "disabled")} />
+                        <input value={valorPago.dinheiro} onChange={(e) => CalculaValorPago(e.target.value, "dinheiro")} maxLength={10} id="vlrpago" className={"form-control form-control-sm " + (formaPagamento.dinheiro ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
             </div>
@@ -96,7 +137,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input type="text" className={"form-control form-control-sm " + (formaPagamento.boleto ? "border-primary shadow-sm" : "disabled")} />
+                        <input value={valorPago.boleto} type="text" onChange={(e) => CalculaValorPago(e.target.value, "boleto")} className={"form-control form-control-sm " + (formaPagamento.boleto ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Pix</label>
@@ -108,40 +149,25 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input type="text" className={"form-control form-control-sm " + (formaPagamento.pix ? "border-primary shadow-sm" : "disabled")} />
+                        <input value={valorPago.pix} type="text" onChange={(e) => CalculaValorPago(e.target.value, "pix")} className={"form-control form-control-sm " + (formaPagamento.pix ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Voucher</label>
                 <div className="row">
-                    <div className="col-md-3">
-                        <label className="switch">
-                            <input type="checkbox" />
-                            <span className="slider round"></span>
-                        </label>
-                    </div>
-                    <div className="col-md-9">
-                        <input type="text" className="form-control form-control-sm" placeholder="Código" />
+                    <div className="col-md-12">
+                        <input type="text" onBlur={(e) => checkVoucher(e.target.value)} maxLength={10} className={"form-control  form-control-sm " + (Voucher ? "text-success border-success shadow-sm" : "")} />
+                        <span className="text-danger pl-0 badge">{msgVoucher != "" ? msgVoucher : ""}</span>
                     </div>
                 </div>
             </div>
         </div>
-
-        {/*        <label htmlFor="pgt">Meios de pagamento</label>
-        <select name="pgt" value={tipoPgt} onChange={(e) => setTipoPgt(e.target.value)} defaultValue={tipoPgt} className="form-control form-control-sm mb-1" id="pgt">
-            <option value="">Selecione...</option>
-            <option value="Credito">Crédito</option>
-            <option value="Debito">Débito</option>
-            <option value="Dinheiro">Dinheiro</option>
-        </select> */}
-        {
-            tipoPgt == "Dinheiro" ? <>
-                <label htmlFor="vlrpago">Valor Pago</label>
-                <input value={valorPago} onChange={(e) => CalculaValorPago(e.target.value)} maxLength={10} id="vlrpago" className="form-control form-control-sm" />
-            </> : ""
-        }
         <hr />
-        <h6 className="text-center text-gray-900">Desconto: R$ 0</h6>
-        {troco > 0 && formaPagamento.dinheiro ? <h5 className="text-center text-gray-900">Troco: {troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5> : ""}
+
+        {desconto ? <>
+            <h6 className="text-center text-gray-900">Sub-total: {totalCarrinho.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })} </h6>
+            <h6 className="text-center"><span>Desconto: {Voucher.codigo}</span> <span className="text-success"> - {desconto.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span> </h6></> : ""}
+
+        {troco > 0 ? <h5 className="text-center text-gray-900">Troco: {troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5> : ""}
         <h4 className="text-center text-gray-900">Total: {total.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h4>
         <hr />
 
