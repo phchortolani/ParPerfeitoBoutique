@@ -86,6 +86,49 @@ export default function Pagamento(props) {
         props.clearCart();
     }
 
+    function Finalizar() {
+
+        /*  var printContent = document.getElementById('teste'); */
+        Swal.fire({
+            title: 'Confirmar venda',
+            /*  html: printContent.innerHTML, */
+            html: "<b>Imprimir: </b><a href='#' class='text-decoration-none'>Recibo - (não fiscal)</a>",
+            icon: 'question',
+            showCancelButton: true,
+            cancelButtonColor: '#e74a3b',
+            confirmButtonColor: '#1cc88a',
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Limpar();
+
+                
+                    MsgFinalizado();
+
+                }
+            })
+
+    }
+
+    function MsgFinalizado() {
+        const Toast = Swal.mixin({
+            toast: false,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 1700,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                /* toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer) */
+            }
+        })
+        Toast.fire({
+            icon: 'success',
+            title: 'Venda efetuada!'
+        })
+    }
+
     return (<>
         <div className="row">
             <div className="col-6">
@@ -99,7 +142,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input value={valorPago.debito} type="text" onChange={(e) => CalculaValorPago(e.target.value, "debito")} className={"form-control form-control-sm " + (formaPagamento.debito ? "border-primary shadow-sm" : "disabled")} />
+                        <input value={valorPago.debito} maxLength={10} type="text" onChange={(e) => CalculaValorPago(e.target.value, "debito")} className={"form-control form-control-sm " + (formaPagamento.debito ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Crédito</label>
@@ -111,7 +154,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input value={valorPago.credito} type="text" onChange={(e) => CalculaValorPago(e.target.value, "credito")} className={"form-control form-control-sm " + (formaPagamento.credito ? "border-primary shadow-sm" : "disabled")} />
+                        <input maxLength={10} value={valorPago.credito} type="text" onChange={(e) => CalculaValorPago(e.target.value, "credito")} className={"form-control form-control-sm " + (formaPagamento.credito ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Dinheiro</label>
@@ -123,7 +166,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input value={valorPago.dinheiro} onChange={(e) => CalculaValorPago(e.target.value, "dinheiro")} maxLength={10} id="vlrpago" className={"form-control form-control-sm " + (formaPagamento.dinheiro ? "border-primary shadow-sm" : "disabled")} />
+                        <input maxLength={10} value={valorPago.dinheiro} onChange={(e) => CalculaValorPago(e.target.value, "dinheiro")} maxLength={10} id="vlrpago" className={"form-control form-control-sm " + (formaPagamento.dinheiro ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
             </div>
@@ -137,7 +180,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input value={valorPago.boleto} type="text" onChange={(e) => CalculaValorPago(e.target.value, "boleto")} className={"form-control form-control-sm " + (formaPagamento.boleto ? "border-primary shadow-sm" : "disabled")} />
+                        <input maxLength={10} value={valorPago.boleto} type="text" onChange={(e) => CalculaValorPago(e.target.value, "boleto")} className={"form-control form-control-sm " + (formaPagamento.boleto ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Pix</label>
@@ -149,7 +192,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input value={valorPago.pix} type="text" onChange={(e) => CalculaValorPago(e.target.value, "pix")} className={"form-control form-control-sm " + (formaPagamento.pix ? "border-primary shadow-sm" : "disabled")} />
+                        <input maxLength={10} value={valorPago.pix} type="text" onChange={(e) => CalculaValorPago(e.target.value, "pix")} className={"form-control form-control-sm " + (formaPagamento.pix ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
                 <label>Voucher</label>
@@ -185,7 +228,8 @@ export default function Pagamento(props) {
                     </span>
                     <span className="text">Reservar</span>
                 </a>
-                <a className="btn btn-success btn-sm btn-icon-split">
+
+                <a onClick={() => Finalizar()} className={"btn btn-success btn-sm btn-icon-split " + (total == 0 ? "" : "disabled")}>
                     <span className="icon text-white-50">
                         <i className="fas fa-check"></i>
                     </span>
