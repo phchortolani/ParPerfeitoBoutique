@@ -61,6 +61,7 @@ const AddProd = (props, ref) => {
     })
 
     function editProd(Produto) {
+
         setUpdateProd(Produto ? true : false);
         let valor = String(Produto?.valor).includes(".") ? Produto?.valor : Produto?.valor.toFixed(2);
         let valorDeCompra = String(Produto?.valorDeCompra).includes(".") ? Produto?.valorDeCompra : Produto?.valorDeCompra.toFixed(2);
@@ -78,7 +79,7 @@ const AddProd = (props, ref) => {
     }
 
     async function updateProduto() {
-        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor), valorDeCompra: formataDecimal(Produto.valorDeCompra) }, table: "produtos", login: login, update: true });
+        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor), valorDeCompra: formataDecimal(Produto.valorDeCompra), quantidade: parseInt(Produto.quantidade) }, table: "produtos", login: login, update: true });
         if (ret.data.result) {
             setProduto(defaultProd);
             setUpdateProd(false);

@@ -1,8 +1,10 @@
+import { AuthContext } from "../../../../context/Auth2Context";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 export default function Pagamento(props) {
 
+    const { login } = useContext(AuthContext);
     const [valorPago, setvalorPago] = useState({
         debito: 0,
         credito: 0,
@@ -86,7 +88,7 @@ export default function Pagamento(props) {
         props.clearCart();
     }
 
-    function Finalizar() {
+    async function Finalizar() {
 
         /*  var printContent = document.getElementById('teste'); */
         Swal.fire({
@@ -101,11 +103,33 @@ export default function Pagamento(props) {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                Limpar();                
-                    MsgFinalizado();
-                }
-            })
+                BaixaNoEstoque(props.cart);
+                Limpar();
+                MsgFinalizado();
+            }
+        })
 
+    }
+
+    async function BaixaNoEstoque(carrinho) {
+
+        let venda = {
+            itens: carrinho,
+            pagamentos: valorPago,
+            desconto: desconto,
+            valorVenda: totalCarrinho,
+            troco: troco,
+            total: total
+        }
+        var vendaSave = await axios.post('/api/saveone', { obj: venda, table: "vendas", login: login });
+
+        if (vendaSave.data.result) {
+            await carrinho.forEach(e => {
+                var ret = axios.post('/api/saveone', { obj: { ...e.item, quantidade: e.item.quantidade - parseInt(e.qt) }, table: "produtos", login: login, update: true });
+            });
+        }
+
+        await props.GetList();
     }
 
     function MsgFinalizado() {

@@ -24,7 +24,7 @@ export default function Caixa() {
 
     function EditQt(item, qt) {
         if (qt <= 0) qt = 1;
-        if (qt > item.quantidade) qt = item.quantidade;
+        if (qt > item.quantidade) qt = parseInt(item.quantidade);
         let temp = cart.data;
         let index = cart.data.findIndex((e) => e.item.codigo == item.codigo);
         if (index != null || index != undefined) {
@@ -46,11 +46,19 @@ export default function Caixa() {
                 if (itemexistente) {
                     let index = cart.data.findIndex(e => e.item.codigo == cod);
                     quant += Number(itemexistente.qt);
-                    if (quant > prod.quantidade) quant = prod.quantidade;
+                    if (quant > prod.quantidade) quant = parseInt(prod.quantidade);
                     temp[index] = { item: itemexistente.item, qt: quant };
-                } else temp.push({ item: prod, qt: quant });
-                setCart({ data: temp });
 
+                } else {
+                    if (parseInt(prod.quantidade) > 0) temp.push({ item: prod, qt: quant });
+                    else return Swal.fire(
+                        'Atenção!',
+                        `O produto ${prod.codigo} - ${prod.descricao} está em falta, reponha o estoque!`,
+                        'warning'
+                    );
+                }
+
+                setCart({ data: temp });
             }
         } else {
             let temp = cart.data;
@@ -60,6 +68,7 @@ export default function Caixa() {
     }
 
     if (firstRender) getList();
+
 
     return (
 
@@ -74,7 +83,7 @@ export default function Caixa() {
                     {LoadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProdutos AddItem={addRemoveCart} produtos={produtos.data} />}
                 </DefaultCard>
                 {cart.data.length > 0 ? <DefaultCard title="Pagamento" icoTitle="fas fa-cash-register" cardBodyClass="p-2">
-                    <Pagamento clearCart={clearCart} cart={cart.data} />
+                    <Pagamento clearCart={clearCart} GetList={getList} cart={cart.data} />
                 </DefaultCard> : ""}
 
             </div>
