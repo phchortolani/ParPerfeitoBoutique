@@ -101,11 +101,8 @@ export default function Pagamento(props) {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                Limpar();
-
-                
+                Limpar();                
                     MsgFinalizado();
-
                 }
             })
 
@@ -206,8 +203,8 @@ export default function Pagamento(props) {
         </div>
         <hr />
 
+        <h6 className="text-center text-gray-900">Sub-total: {totalCarrinho.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })} </h6>
         {desconto ? <>
-            <h6 className="text-center text-gray-900">Sub-total: {totalCarrinho.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })} </h6>
             <h6 className="text-center"><span>Desconto: {Voucher.codigo}</span> <span className="text-success"> - {desconto.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span> </h6></> : ""}
 
         {troco > 0 ? <h5 className="text-center text-gray-900">Troco: {troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5> : ""}

@@ -53,7 +53,12 @@ const AddProd = (props, ref) => {
 
     function editProd(Produto) {
         setUpdateProd(Produto ? true : false);
-        setProduto(Produto ? { ...Produto, valor: formatReal(Produto.valor.toString().replace(".", "")) } : defaultProd);
+
+        console.log(Produto?.valor);
+        let valor = String(Produto?.valor).includes(".")  ?   Produto?.valor: Produto?.valor.toFixed(2);
+        setProduto(Produto ? { ...Produto, valor: formatReal(valor.toString().replace(".", "")) } : defaultProd);
+
+
     }
 
     function formataDecimal(valorStg) {

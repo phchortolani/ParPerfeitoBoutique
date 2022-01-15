@@ -91,9 +91,11 @@ const AddCatg = (props, ref) => {
             return QueryCateg(defaultCateg.codigo)
         }
         let categ = searchCategoria(codCateg);
+
         if (categ) {
             setEdit(true);
-            setCategoria({ ...categ, valorPadrao: formatReal(categ.valorPadrao.toString().replace(".", "")) });
+            let valor = String(categ.valorPadrao).includes(".") ? categ.valorPadrao : categ.valorPadrao.toFixed(2);
+            setCategoria({ ...categ, valorPadrao: formatReal(valor.toString().replace(".", "")) });
         }
         else setCategoria({ ...defaultCateg, codigo: parseInt(codCateg) });
 
@@ -101,6 +103,7 @@ const AddCatg = (props, ref) => {
 
         setshowRemove(categ != undefined && !prod ? true : false);
     }
+
     function searchCategoria(codigo, index) {
         if (index) return lista.findIndex((e) => e.codigo == codigo);
         return lista.find((e) => e.codigo == codigo);

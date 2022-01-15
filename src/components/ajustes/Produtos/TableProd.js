@@ -49,6 +49,15 @@ export default function TableProd(props) {
         WinPrint.close();
     }
 
+    function Regex(stg) {
+        console.log(stg);
+        if (stg) {
+            stg = stg.toLowerCase();
+            stg = stg.replace("ã", "a").replace("ô", "o").replace("õ", "o");
+            return stg.replace(/[^a-zA-Z ]/g, "");
+        }
+        else return stg;
+    }
     useEffect(() => {
         JsBarcode(".barcode").init();
     }, [modalPrint])
@@ -59,7 +68,7 @@ export default function TableProd(props) {
                 <div id="codigodebarra" className="d-flex justify-content-around">
                     <svg className="barcode"
                         jsbarcode-format="CODE128"
-                        jsbarcode-value={modalPrint.children.codigo + '-' + modalPrint.children.descricao}
+                        jsbarcode-value={modalPrint.children.codigo + '-' + Regex(modalPrint.children.descricao)}
                         jsbarcode-textmargin="0"
                         jsbarcode-fontoptions="bold">
                     </svg>
