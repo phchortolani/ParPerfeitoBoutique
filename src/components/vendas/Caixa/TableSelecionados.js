@@ -12,7 +12,7 @@ export default function TableSelecionados(props) {
 
 
     return (<>
-        <table style={{ whiteSpace: "nowrap" }} className="table text-monospace small text-uppercase table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
+        <table style={{ whiteSpace: "nowrap" }} className="table text-capitalize small text-uppercase table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
             <thead>
                 <tr>
                     <th scope="col" className="fitCol">Código</th>
