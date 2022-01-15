@@ -1,8 +1,52 @@
 
-import { useEffect } from "react";
-import InitDash from "../../js/charts"
+import { useEffect, useState } from "react";
+import InitDash from "../../js/charts";
+import axios from "axios";
+import Loading from "../load/Loading";
 export default function Graficos() {
+
+    const [graficos, setGraficos] = useState({
+        PorcentagemDoEstoque: {
+            categorias: [],
+            produtos: [],
+            loading: false
+        }
+    });
+
+    function CalculaPorcentagem(codCateg) {
+
+        if (graficos.PorcentagemDoEstoque.produtos.length > 0) {
+
+            let produtos = graficos.PorcentagemDoEstoque.produtos.filter((e) => {
+                if (e.codCategoria == Number(codCateg)) {
+                    return e;
+                }
+            });
+
+            if (produtos.length > 0) {
+                let totalEstoque = produtos.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.qtEstoque), 0);
+                let totalQuantidade = produtos.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.quantidade), 0);
+                return Math.floor(totalQuantidade / totalEstoque * 100);
+            }
+
+        }
+        return 0;
+    }
+    async function get() {
+        setGraficos({
+            PorcentagemDoEstoque: { loading: true }
+        });
+        var categorias = await axios.post('/api/listTable', { table: "categorias" });
+        var produtos = await axios.post('/api/listTable', { table: "produtos" });
+        if (categorias.data.result && produtos.data.result) {
+            setGraficos({
+                PorcentagemDoEstoque: { categorias: categorias.data.result, produtos: produtos.data.result, loading: false }
+            });
+        }
+
+    }
     useEffect(() => {
+        get();
         InitDash();
     }, []);
 
@@ -85,12 +129,25 @@ export default function Graficos() {
                             <h6 className="m-0 font-weight-bold text-primary">Porcentagem do estoque</h6>
                         </div>
                         <div className="card-body">
-                            <h4 className="small font-weight-bold">Sapatilhas <span
-                                className="float-right">100%</span></h4>
-                            <div className="progress mb-4">
-                                <div className="progress-bar bg-danger" role="progressbar" style={{ width: "100%" }}
-                                    aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
+                            {graficos.PorcentagemDoEstoque.loading ? <div className="text-center text-primary"><Loading size={55}/></div> : ""}
+                                {graficos.PorcentagemDoEstoque?.categorias?.length > 0 ?
+                                    graficos.PorcentagemDoEstoque.categorias.map((e, i) => {
+                                        let porcentagem = CalculaPorcentagem(e.codigo);
+                                        let cor = porcentagem <= 20 ? "bg-danger" :
+                                            porcentagem <= 40 ? " bg-warning" :
+                                                porcentagem <= 60 ? "bg-primary" :
+                                                    porcentagem <= 80 ? "bg-info" :
+                                                        porcentagem <= 100 ? "bg-success" : "";
+                                        return <div key={i}>
+                                            <h4 className="small font-weight-bold">{e.descricao} <span
+                                                className="float-right">{porcentagem}%</span></h4>
+                                            <div className="progress mb-4">
+                                                <div className={"progress-bar " + (cor)} role="progressbar" style={{ width: porcentagem + "%" }}
+                                                    aria-valuenow={porcentagem} aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    }) : ""}
+                                {/* 
                             <h4 className="small font-weight-bold">Acessórios <span
                                 className="float-right">40%</span></h4>
                             <div className="progress mb-4">
@@ -114,11 +171,11 @@ export default function Graficos() {
                             <div className="progress">
                                 <div className="progress-bar bg-success" role="progressbar" style={{ width: "50%" }}
                                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div> */}
                             </div>
-                        </div>
-                    </div>
+                            </div>
                 </div>
-            </div>
-        </>
-    )
+                    </div>
+                </>
+                )
 }
