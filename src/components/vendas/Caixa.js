@@ -24,6 +24,7 @@ export default function Caixa() {
 
     function EditQt(item, qt) {
         if (qt <= 0) qt = 1;
+        if (qt > item.quantidade) qt = item.quantidade;
         let temp = cart.data;
         let index = cart.data.findIndex((e) => e.item.codigo == item.codigo);
         if (index != null || index != undefined) {
@@ -45,6 +46,7 @@ export default function Caixa() {
                 if (itemexistente) {
                     let index = cart.data.findIndex(e => e.item.codigo == cod);
                     quant += Number(itemexistente.qt);
+                    if (quant > prod.quantidade) quant = prod.quantidade;
                     temp[index] = { item: itemexistente.item, qt: quant };
                 } else temp.push({ item: prod, qt: quant });
                 setCart({ data: temp });
