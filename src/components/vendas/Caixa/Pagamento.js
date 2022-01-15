@@ -115,11 +115,22 @@ export default function Pagamento(props) {
 
         let venda = {
             itens: carrinho,
-            pagamentos: valorPago,
-            desconto: desconto,
-            valorVenda: totalCarrinho,
-            troco: troco,
-            total: total
+            pagamentos: {
+                ...valorPago,
+                debito: formataDecimal(valorPago.debito),
+                credito: formataDecimal(valorPago.credito),
+                dinheiro: formataDecimal(valorPago.dinheiro),
+                boleto: formataDecimal(valorPago.boleto),
+                pix: formataDecimal(valorPago.pix)
+            },
+            desconto: Voucher ? {
+                cupom: Voucher.codigo ?? "",
+                descontado: desconto,
+                tipo: Voucher.tipoPorcentagem ? "Porcentagem" : "Reais"
+            } : "",
+            valorVenda: formataDecimal(totalCarrinho),
+            troco: parseFloat(troco),
+            total: formataDecimal(total)
         }
         var vendaSave = await axios.post('/api/saveone', { obj: venda, table: "vendas", login: login });
 

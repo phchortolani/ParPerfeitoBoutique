@@ -79,7 +79,7 @@ const AddProd = (props, ref) => {
     }
 
     async function updateProduto() {
-        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor), valorDeCompra: formataDecimal(Produto.valorDeCompra), quantidade: parseInt(Produto.quantidade) }, table: "produtos", login: login, update: true });
+        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor), valorDeCompra: formataDecimal(Produto.valorDeCompra), quantidade: parseInt(Produto.quantidade), qtEstoque: parseInt(Produto.qtEstoque) }, table: "produtos", login: login, update: true });
         if (ret.data.result) {
             setProduto(defaultProd);
             setUpdateProd(false);
