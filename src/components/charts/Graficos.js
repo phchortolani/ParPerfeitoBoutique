@@ -53,7 +53,7 @@ export default function Graficos() {
     return (
 
         <>
-            <div className="row">
+            <div className="row disabled">
                 <div className="col-xl-8 col-lg-7">
                     <div className="card shadow mb-4">
                         <div

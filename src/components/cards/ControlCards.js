@@ -47,7 +47,7 @@ export default function ControlCards(props) {
 
         <div className="row">
 
-            <div className="col-xl-3 col-md-6 mb-4">
+            <div className="col-xl-3 col-md-6 mb-4 disabled">
                 <div className="card border-left-primary shadow h-100 py-2">
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
@@ -64,7 +64,7 @@ export default function ControlCards(props) {
                 </div>
             </div>
 
-            <div className="col-xl-3 col-md-6 mb-4">
+            <div className="col-xl-3 col-md-6 mb-4 disabled">
                 <div className="card border-left-success shadow h-100 py-2">
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">

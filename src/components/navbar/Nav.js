@@ -69,11 +69,11 @@ export default function Nav(props) {
                                 src="https://www.unifacef.com.br/wp-content/uploads/2018/08/semfoto.png" />
                         </a>
                         <div className={"dropdown-menu dropdown-menu-right shadow animated--grow-in " + (LoginOption ? "show" : "")}>
-                            <a className="dropdown-item" href="#">
+                            <a className="dropdown-item disabled" href="#">
                                 <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Perfil
                             </a>
-                            <a className="dropdown-item" href="#">
+                            <a className="dropdown-item disabled" href="#">
                                 <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Configurações
                             </a>

@@ -5,7 +5,7 @@ export default function FilterProd(props) {
     const [criterio, setCriterio] = useState(true);
     return (<>
         <div className="row">
-            <div className="col-md-2">
+            <div className="col-md-2 disabled">
                 <div className="mb-1">
                     <label htmlFor="cat">Categoria</label>
                     <select id="cat" className="form-control form-control-sm border-left-primary" >
@@ -14,7 +14,7 @@ export default function FilterProd(props) {
                     </select>
                 </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 disabled">
                 <div className="row">
                     <div className="col-9">
                         <div className="mb-1">
@@ -33,7 +33,7 @@ export default function FilterProd(props) {
                     </div>
                 </div>
             </div>
-            <div className="col-md-7">
+            <div className="col-md-7 disabled">
                 <form id="search" className="d-inline form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div className="input-group">
                         <input type="text" className="form-control bg-light border-0 small" placeholder="Pesquisar" aria-label="Search" aria-describedby="basic-addon2" />
