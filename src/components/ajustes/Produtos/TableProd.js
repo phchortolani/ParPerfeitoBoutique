@@ -31,6 +31,7 @@ export default function TableProd(props) {
             console.log(ret);
         }
         setLoadingRemove({ loading: false, codigo: 0 });
+        props.editProd(null);
     }
 
     function editProd(produto) {

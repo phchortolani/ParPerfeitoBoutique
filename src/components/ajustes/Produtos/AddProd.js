@@ -8,6 +8,7 @@ let defaultProd = {
     valor: 0,
     valorDeCompra: 0,
     quantidade: "",
+    qtEstoque: "",
     codCategoria: ""
 }
 
@@ -96,6 +97,7 @@ const AddProd = (props, ref) => {
                 codigo: parseInt(`${Produto.codCategoria}${(ultimoCod + 1)}`),
                 codCategoria: parseInt(Produto.codCategoria),
                 quantidade: parseInt(Produto.quantidade),
+                qtEstoque: parseInt(Produto.qtEstoque),
                 valor: formataDecimal(Produto.valor),
                 valorDeCompra: formataDecimal(Produto.valorDeCompra)
             };
@@ -143,6 +145,8 @@ const AddProd = (props, ref) => {
 
         <label htmlFor="qt">Quantidade</label>
         <input value={Produto?.quantidade} onChange={(e) => setProduto({ ...Produto, quantidade: e.target.value })} type="number" id="qt" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("quantidade")) ? "border-danger" : "")} />
+        <label htmlFor="qt">Qtd. Total Estoque</label>
+        <input value={Produto?.qtEstoque} onChange={(e) => setProduto({ ...Produto, qtEstoque: e.target.value })} type="number" id="qt" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("qtEstoque")) ? "border-danger" : "")} />
         <hr />
         <button type="button" onClick={() => InputsIsValid()} className="btn btn-sm btn-primary">Adicionar</button>
         {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
