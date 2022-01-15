@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export default function TableSelecionados(props) {
 
     let list = orderByCodigo(props.cart);
@@ -37,7 +35,7 @@ export default function TableSelecionados(props) {
                             <input type="number" className="form-control text-center form-control-sm" onChange={(x) => props.EditQt(e, x.target.value)} value={qt} />
                         </td>
                         <td>{(e.valor * qt).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</td>
-                        <td className="text-center align-middle p-0 "><a onClick={(e) => props.RemoveItem(e.codigo)} className="fas fa-times btn btn-sm text-danger"></a></td>
+                        <td className="text-center align-middle p-0 "><a onClick={() => props.RemoveItem(e.codigo)} className="fas fa-times btn btn-sm text-danger"></a></td>
                     </tr>
                 }) : <></>}
 
