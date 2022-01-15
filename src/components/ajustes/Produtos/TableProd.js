@@ -50,7 +50,6 @@ export default function TableProd(props) {
     }
 
     function Regex(stg) {
-        console.log(stg);
         if (stg) {
             stg = stg.toLowerCase();
             stg = stg.replace("ã", "a").replace("ô", "o").replace("õ", "o");

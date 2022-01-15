@@ -6,6 +6,7 @@ let defaultProd = {
     codigo: 0,
     descricao: "",
     valor: 0,
+    valorDeCompra: 0,
     quantidade: "",
     codCategoria: ""
 }
@@ -41,7 +42,14 @@ const AddProd = (props, ref) => {
     function CategoriaOnChange(e) {
         let categ = searchCategoria(e.target.value);
 
-        setProduto({ ...Produto, codCategoria: categ ? e.target.value : "", valor: categ ? formatReal(categ.valorPadrao.toString().replace(".", "")) : "" })
+        let valor = String(categ?.valorPadrao).includes(".") ? categ?.valorPadrao : categ?.valorPadrao.toFixed(2);
+
+        setProduto(
+            {
+                ...Produto,
+                codCategoria: categ ? e.target.value : "",
+                valor: categ ? formatReal(valor.toString().replace(".", "")) : ""
+            })
     }
 
 
@@ -53,12 +61,9 @@ const AddProd = (props, ref) => {
 
     function editProd(Produto) {
         setUpdateProd(Produto ? true : false);
-
-        console.log(Produto?.valor);
-        let valor = String(Produto?.valor).includes(".")  ?   Produto?.valor: Produto?.valor.toFixed(2);
-        setProduto(Produto ? { ...Produto, valor: formatReal(valor.toString().replace(".", "")) } : defaultProd);
-
-
+        let valor = String(Produto?.valor).includes(".") ? Produto?.valor : Produto?.valor.toFixed(2);
+        let valorDeCompra = String(Produto?.valorDeCompra).includes(".") ? Produto?.valorDeCompra : Produto?.valorDeCompra.toFixed(2);
+        setProduto(Produto ? { ...Produto, valor: formatReal(valor.toString().replace(".", "")), valorDeCompra: formatReal(valorDeCompra.toString().replace(".", "")) } : defaultProd);
     }
 
     function formataDecimal(valorStg) {
@@ -72,7 +77,7 @@ const AddProd = (props, ref) => {
     }
 
     async function updateProduto() {
-        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor) }, table: "produtos", login: login, update: true });
+        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor), valorDeCompra: formataDecimal(Produto.valorDeCompra) }, table: "produtos", login: login, update: true });
         if (ret.data.result) {
             setProduto(defaultProd);
             setUpdateProd(false);
@@ -91,7 +96,8 @@ const AddProd = (props, ref) => {
                 codigo: parseInt(`${Produto.codCategoria}${(ultimoCod + 1)}`),
                 codCategoria: parseInt(Produto.codCategoria),
                 quantidade: parseInt(Produto.quantidade),
-                valor: formataDecimal(Produto.valor)
+                valor: formataDecimal(Produto.valor),
+                valorDeCompra: formataDecimal(Produto.valorDeCompra)
             };
 
             let ret = await axios.post('/api/saveone', { obj: tempProduto, table: "produtos", login: login });
@@ -104,9 +110,10 @@ const AddProd = (props, ref) => {
 
     }
 
-    function AlterarInputValor(value) {
+    function AlterarInputValor(value, valorCompra) {
         let semcaracteres = Number(value.replace(/[\D]+/g, ''));
-        setProduto({ ...Produto, valor: formatReal(semcaracteres) })
+        if (valorCompra) setProduto({ ...Produto, valorDeCompra: formatReal(semcaracteres) });
+        else setProduto({ ...Produto, valor: formatReal(semcaracteres) });
     }
 
     function formatReal(int) {
@@ -128,9 +135,10 @@ const AddProd = (props, ref) => {
                 return <option key={i} value={e.codigo}>{e.descricao}</option>
             }) : ""}
         </select>
-
-        <label htmlFor="valor">Valor</label>
-        <input value={Produto?.valor == 0 ? "" : Produto?.valor} onChange={(e) => AlterarInputValor(e.target.value)} maxLength={10} type="text" id="valor" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valor")) ? "border-danger" : "")} placeholder="R$" />
+        <label htmlFor="valorDeCompra">Valor de Compra</label>
+        <input value={Produto?.valorDeCompra == 0 ? "" : Produto?.valorDeCompra} onChange={(e) => AlterarInputValor(e.target.value, true)} maxLength={10} type="text" id="valorDeCompra" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valorDeCompra")) ? "border-danger" : "")} placeholder="R$" />
+        <label htmlFor="valor">Valor de Venda</label>
+        <input value={Produto?.valor == 0 ? "" : Produto?.valor} onChange={(e) => AlterarInputValor(e.target.value, false)} maxLength={10} type="text" id="valor" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("valor")) ? "border-danger" : "")} placeholder="R$" />
 
 
         <label htmlFor="qt">Quantidade</label>
