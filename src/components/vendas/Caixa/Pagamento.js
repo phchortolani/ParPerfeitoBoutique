@@ -128,8 +128,8 @@ export default function Pagamento(props) {
                 descontado: desconto,
                 tipo: Voucher.tipoPorcentagem ? "Porcentagem" : "Reais"
             } : "",
-            valorVenda: formataDecimal(totalCarrinho),
-            troco: parseFloat(troco),
+            valorVenda: totalCarrinho,
+            troco: parseFloat(troco.toFixed(2)),
             total: formataDecimal(total)
         }
         var vendaSave = await axios.post('/api/saveone', { obj: venda, table: "vendas", login: login });

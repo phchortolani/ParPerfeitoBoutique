@@ -23,7 +23,6 @@ export default function Produtos() {
         }
     }
 
-
     async function getList() {
         setLoadingList(true);
         setFirstRender(false);
@@ -68,10 +67,10 @@ export default function Produtos() {
     }
     return (
         <div className="row">
-            <DefaultCard title="Adicionar produto" class="col-md-3">
+            <DefaultCard title="Adicionar produto" class="col-md-3" cardBodyClass="OverFlowYMax150 p-2">
                 {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProd ref={addProdRef} sentTolist={addTolist} getList={getList} categorias={categorias.data} />}
             </DefaultCard>
-            <DefaultCard title="Lista de produtos" class="col-md-9">
+            <DefaultCard title="Lista de produtos" class="col-md-9" cardBodyClass="OverFlowYMax150">
                 <div className="row">
                     <div className="col-md-10">
                         {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd categorias={categorias.data} />}

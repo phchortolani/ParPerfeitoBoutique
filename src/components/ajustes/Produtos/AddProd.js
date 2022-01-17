@@ -150,7 +150,7 @@ const AddProd = (props, ref) => {
         <input value={Produto?.qtEstoque} onChange={(e) => setProduto({ ...Produto, qtEstoque: e.target.value })} type="number" id="qt" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("qtEstoque")) ? "border-danger" : "")} />
         <hr />
         <button type="button" onClick={() => InputsIsValid()} className="btn btn-sm btn-primary">Adicionar</button>
-        {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
+        {validatelist.length > 1 ? <p className={"text-danger badge d-flex pt-2 pl-0 pb-2"}>{validateerros}</p> : ""}
     </>)
 }
 
