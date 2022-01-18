@@ -27,11 +27,21 @@ export default function ControlCards(props) {
             let TotalEstoque = estoque.data.result.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.qtEstoque), 0);
             let TotalQuantidade = estoque.data.result.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.quantidade), 0);
 
+            let totalMes = vendas.data.result.filter((e) => {
+                if (new Date(`${e.dataCriacao}`).getMonth() == new Date().getMonth() &&
+                    new Date(`${e.dataCriacao}`).getFullYear() == new Date().getFullYear()) {
+                    return e;
+                }
+            })
+            totalMes = totalMes.reduce((previousValue, currentValue) =>
+                Number(previousValue) + Number(currentValue.valorVenda) - Number(currentValue?.desconto?.descontado ?? 0), 0
+            );
+
             vendas = vendas.data.result.filter((e) => {
                 if (new Date(`${e.dataCriacao}`).toLocaleDateString() == new Date().toLocaleDateString()) {
                     return e;
                 }
-            })
+            });
 
             let totalVenda = vendas.reduce((previousValue, currentValue) =>
                 Number(previousValue) + Number(currentValue.valorVenda) - Number(currentValue?.desconto?.descontado ?? 0), 0
@@ -51,7 +61,8 @@ export default function ControlCards(props) {
                     count: itensEmFalta.length
                 },
                 caixa: {
-                    totalhoje: totalVenda
+                    totalhoje: totalVenda,
+                    totalMes: totalMes
                 }
             });
         }
@@ -66,14 +77,14 @@ export default function ControlCards(props) {
 
         <div className="row">
 
-            <div className="col-xl-3 col-md-6 mb-4 disabled">
+            <div className="col-xl-3 col-md-6 mb-4">
                 <div className="card border-left-primary shadow h-100 py-2">
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
                                 <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                     Ganhos Mensais</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">R$ 40,000</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{cardsInfo.caixa.totalMes.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</div>
                             </div>
                             <div className="col-auto">
                                 <i className="fas fa-calendar fa-2x text-gray-300"></i>
