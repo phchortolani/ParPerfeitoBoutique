@@ -37,16 +37,30 @@ export default function Pagamento(props) {
         if (formaPagamento.pix) total -= formataDecimal(valorPago.pix);
     }
     if (Voucher) {
-        if (Voucher.tipoPorcentagem) {
-            desconto = (Voucher.valorDesconto * totalCarrinho / 100);
-            total -= desconto;
-        }
-        else {
-            if (totalCarrinho >= Voucher.valorDesconto) {
-                total -= desconto = Voucher.valorDesconto;
-            } else msgVoucher = "O total é inferior ao desconto.";
 
-        }
+        let periodoinicial = new Date(Voucher.periodoini.split("T")[0]);
+        let periodofinal = new Date(Voucher.periodofim.split("T")[0]);
+        let dataatual = new Date(new Date().toISOString().split("T")[0]);
+
+        if (periodoinicial <= dataatual && periodofinal >= dataatual) {
+            let itensDesc = totalCarrinho;
+            if (Voucher.codCategoria > 0) {
+                let itensSelecionados = props.cart?.filter((e) => { if (e.item?.codCategoria == Voucher.codCategoria) return e });
+                itensDesc = itensSelecionados.reduce((anterior, atual) => anterior + atual.item.valor * atual.qt, 0);
+            }
+
+            if (Voucher.tipoPorcentagem) {
+                desconto = (Voucher.valorDesconto * itensDesc / 100);
+                total -= desconto;
+            }
+            else {
+                if (itensDesc >= Voucher.valorDesconto) {
+                    total -= desconto = Voucher.valorDesconto;
+                } else msgVoucher = "O total é inferior ao desconto.";
+
+            }
+        } else msgVoucher = "Cupom fora de período.";
+
     }
 
     if (total < 0) {

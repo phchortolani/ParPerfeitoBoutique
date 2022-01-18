@@ -222,7 +222,7 @@ export default function Cupons(props) {
                 </div>
                 {validatelist.length > 0 ? <p className="text-danger badge d-flex pt-2 pb-2">{validateerros}</p> : ""}
                 <hr />
-                
+
                 <h5 className="text-primary">Cupons ativos</h5>
                 <hr />
                 <div style={{ maxHeight: "20vh" }}>
@@ -234,7 +234,8 @@ export default function Cupons(props) {
                                 <button onClick={() => Edit(e)} type="button" className="text-primary p-0 btn btn-sm btn-link text-decoration-none">{e.codigo}</button>
                             </div>
                             <div className="col-md-7">
-                                <span>Periodo: {new Date(e.periodoini).toLocaleDateString()} - {new Date(e.periodofim).toLocaleDateString()}</span>
+
+                                <span>Periodo: {new Date(new Date(e.periodoini).toISOString().split("T")[0]).toLocaleDateString()} - {new Date(new Date(e.periodofim).toISOString().split("T")[0]).toLocaleDateString()}</span>
                             </div>
                             <div className="col-md-5">
                                 <span>Tipo: {e.tipoPorcentagem ? "Porcentagem" : "Valor"}</span>
