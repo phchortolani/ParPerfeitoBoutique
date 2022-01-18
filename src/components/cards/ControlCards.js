@@ -5,7 +5,10 @@ export default function ControlCards(props) {
 
     const [cardsInfo, setCardsInfo] = useState({
         ganhosMensais: 0,
-        caixa: 0,
+        caixa: {
+            totalhoje: 0,
+            totalMes: 0
+        },
         estoque: {
             estoqueTotal: 0,
             quantidadeProd: 0,
@@ -19,9 +22,22 @@ export default function ControlCards(props) {
 
     async function get() {
         var estoque = await axios.post('/api/listTable', { table: "produtos" });
-        if (estoque.data.result) {
+        var vendas = await axios.post('/api/listTable', { table: "vendas" });
+        if (estoque.data.result && vendas.data.result) {
             let TotalEstoque = estoque.data.result.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.qtEstoque), 0);
             let TotalQuantidade = estoque.data.result.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.quantidade), 0);
+
+            vendas = vendas.data.result.filter((e) => {
+                if (new Date(`${e.dataCriacao}`).toLocaleDateString() == new Date().toLocaleDateString()) {
+                    return e;
+                }
+            })
+
+            let totalVenda = vendas.reduce((previousValue, currentValue) =>
+                Number(previousValue) + Number(currentValue.valorVenda) - Number(currentValue?.desconto?.descontado ?? 0), 0
+            );
+
+
             let itensEmFalta = [];
 
             estoque.data.result.forEach(e => {
@@ -33,6 +49,9 @@ export default function ControlCards(props) {
                 itensEmFalta: {
                     itens: itensEmFalta,
                     count: itensEmFalta.length
+                },
+                caixa: {
+                    totalhoje: totalVenda
                 }
             });
         }
@@ -64,14 +83,14 @@ export default function ControlCards(props) {
                 </div>
             </div>
 
-            <div className="col-xl-3 col-md-6 mb-4 disabled">
+            <div className="col-xl-3 col-md-6 mb-4 ">
                 <div className="card border-left-success shadow h-100 py-2">
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
                                 <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
                                     Caixa (Hoje)</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">R$ 5,000</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{cardsInfo.caixa.totalhoje.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</div>
                             </div>
                             <div className="col-auto">
                                 <i className="fas fa-dollar-sign fa-2x text-gray-300"></i>

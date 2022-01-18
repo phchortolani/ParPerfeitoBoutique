@@ -125,7 +125,7 @@ export default function Pagamento(props) {
             },
             desconto: Voucher ? {
                 cupom: Voucher.codigo ?? "",
-                descontado: desconto,
+                descontado: parseFloat(desconto.toFixed(2)),
                 tipo: Voucher.tipoPorcentagem ? "Porcentagem" : "Reais"
             } : "",
             valorVenda: totalCarrinho,
