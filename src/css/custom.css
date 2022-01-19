@@ -11652,7 +11652,55 @@ input:checked+.slider:before {
     border-radius: 50%;
 }
 
-.OverFlowYMax150{
+.OverFlowYMax150 {
     max-height: calc(100vh - 180px);
     overflow-y: auto;
+}
+
+/* .levitation:hover{
+    top:-4px;
+    box-shadow:0 4px 3px #999 !important;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+    animation: 1s;
+
+} */
+
+.levitation:hover {
+    /* Start the shake animation and make the animation last for 0.5 seconds */
+    animation: shake 0.3s;
+    /* When the animation is finished, start again */
+    cursor: pointer;
+    top: -3px;
+}
+
+@keyframes shake {
+    0% {
+        top: 0px
+    }
+
+    20% {
+        top: 1px
+    }
+
+    20% {
+        top: 2px
+    }
+
+    50% {
+        top: 3px
+    }
+
+    70% {
+        top: -1px
+    }
+
+    80% {
+        top: -2px
+    }
+
+    100% {
+        top: -3px
+    }
+
+
 }

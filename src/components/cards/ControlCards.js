@@ -1,13 +1,25 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import Modal from "../modal/Modal";
 
 export default function ControlCards(props) {
+
+    const [modalCards, setmodalCards] = useState({
+        isOpen: false,
+        title: "",
+        children: ""
+    });
+
+    function openModal(card) {
+        setmodalCards({ isOpen: true, title: card });
+    }
 
     const [cardsInfo, setCardsInfo] = useState({
         ganhosMensais: 0,
         caixa: {
             totalhoje: 0,
-            totalMes: 0
+            totalMes: 0,
+            itensHoje: []
         },
         estoque: {
             estoqueTotal: 0,
@@ -42,6 +54,7 @@ export default function ControlCards(props) {
                     return e;
                 }
             });
+            let totalhj = vendas;
 
             let totalVenda = vendas.reduce((previousValue, currentValue) =>
                 Number(previousValue) + Number(currentValue.valorVenda) - Number(currentValue?.desconto?.descontado ?? 0), 0
@@ -62,11 +75,31 @@ export default function ControlCards(props) {
                 },
                 caixa: {
                     totalhoje: totalVenda,
-                    totalMes: totalMes
+                    totalMes: totalMes,
+                    itensHoje: totalhj
                 }
             });
         }
 
+    }
+
+    function MostrarMaisPagamento(pagamentos) {
+        Swal.fire({
+            title: '<strong>Pagamentos</strong>',
+            icon: 'info',
+            html:
+                `<div class="text-center"><p class="mb-1">Débito: ${pagamentos.debito.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>` +
+                `<p class="mb-1">Crédito: ${pagamentos.credito.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>` +
+                `<p class="mb-1">Dinheiro: ${pagamentos.dinheiro.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>` +
+                `<p class="mb-1">Boleto: ${pagamentos.boleto.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>` +
+                `<p class="mb-1">Pix: ${pagamentos.pix.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p> </div>`
+            ,
+            showCloseButton: true,
+            focusConfirm: false,
+            confirmButtonText:
+                '<i class="fa fa-thumbs-up"></i> Ok!',
+            confirmButtonAriaLabel: 'Thumbs up, great!'
+        })
     }
 
     useEffect(() => {
@@ -75,8 +108,47 @@ export default function ControlCards(props) {
 
     return (<>
 
-        <div className="row">
+        <Modal open={modalCards.isOpen} title={modalCards.title} onTop={true} overflowY={true} ModalBodyClass="p-0" closeModal={() => setmodalCards({ ...modalCards, isOpen: false })}>
+            {modalCards.title == "Itens em falta" ? <>
+                <ul className="list-group list-group-flush p-0">
+                    {cardsInfo.itensEmFalta.itens.map((e, i) => {
+                        return <li key={i} className="list-group-item">{e.codigo} - {e.descricao} - {e.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</li>
+                    })}
 
+                </ul>
+
+            </> : modalCards.title = "Caixa" ? <>
+                <div className="list-group p-3">
+
+                    {cardsInfo.caixa.itensHoje.map((e, i) => {
+                        return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
+                            <div className="d-flex w-100 justify-content-between">
+                                <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
+                                <small>{new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
+                            </div>
+                            <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
+                            <hr className="mt-1 mb-1" />
+                            {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
+                                return <p key={ikey} className="small mb-0">{itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                            }) : ""}
+                            <hr className="mb-1 mt-1" />
+                            <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
+                            {e.desconto != "" ? <p className="small mb-0">
+                                <b>Desconto: </b>
+                                <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
+                                : ""}
+                            <p className="small mb-0"><b>Total: </b> <span className="text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                        </a>
+
+                    })}
+
+
+                </div>
+
+            </>
+                : ""}
+        </Modal>
+        <div className="row">
             <div className="col-xl-3 col-md-6 mb-4">
                 <div className="card border-left-primary shadow h-100 py-2">
                     <div className="card-body">
@@ -95,7 +167,7 @@ export default function ControlCards(props) {
             </div>
 
             <div className="col-xl-3 col-md-6 mb-4 ">
-                <div className="card border-left-success shadow h-100 py-2">
+                <div className="card border-left-success shadow h-100 py-2 levitation" onClick={() => openModal("Caixa")}>
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
@@ -132,20 +204,21 @@ export default function ControlCards(props) {
                                 </div>
                             </div>
                             <div className="col-auto">
-                                <i className="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                <i className="fas fa-clipboard-list fa-2x text-gray-300 "></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="col-xl-3 col-md-6 mb-4">
-                <div className="card border-left-warning shadow h-100 py-2">
+            <div className="col-xl-3 col-md-6 mb-4 ">
+                <div className="card border-left-warning shadow h-100 py-2 levitation" onClick={() => openModal("Itens em falta")}>
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
-                                <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Itens em falta</div>
+                                <div className="text-xs  mb-1">
+                                    <a style={{ cursor: "pointer" }} className="font-weight-bold text-warning text-uppercase text-decoration-none"> Itens em falta </a>
+                                </div>
                                 <div className="h5 mb-0 font-weight-bold text-gray-800">{cardsInfo.itensEmFalta.count}</div>
                             </div>
                             <div className="col-auto">

@@ -13,7 +13,7 @@ export default function Modal(props) {
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div style={stl} className="modal-body ">
+                    <div style={stl} className={"modal-body " + (props.ModalBodyClass)}>
                         {props.children}
                     </div>
                 </div>
