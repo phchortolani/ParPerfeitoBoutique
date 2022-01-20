@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Modal from "../modal/Modal";
+import Loading from "../load/Loading";
 
 export default function ControlCards(props) {
 
@@ -19,20 +20,26 @@ export default function ControlCards(props) {
         caixa: {
             totalhoje: 0,
             totalMes: 0,
-            itensHoje: []
+            itensHoje: [],
+            loading: false
         },
         estoque: {
             estoqueTotal: 0,
             quantidadeProd: 0,
-            porcentagem: 0
+            porcentagem: 0,
+            loading: false
         },
         itensEmFalta: {
             itens: [],
-            count: 0
+            count: 0,
+            loading: false
         }
     });
 
     async function get() {
+        setCardsInfo({
+            estoque: { loading: true }, itensEmFalta: { loading: true }, caixa: { loading: true }
+        });
         var estoque = await axios.post('/api/listTable', { table: "produtos" });
         var vendas = await axios.post('/api/listTable', { table: "vendas" });
         if (estoque.data.result && vendas.data.result) {
@@ -45,6 +52,8 @@ export default function ControlCards(props) {
                     return e;
                 }
             })
+
+            let totalItensMes = totalMes;
             totalMes = totalMes.reduce((previousValue, currentValue) =>
                 Number(previousValue) + Number(currentValue.valorVenda) - Number(currentValue?.desconto?.descontado ?? 0), 0
             );
@@ -68,15 +77,23 @@ export default function ControlCards(props) {
             });
 
             setCardsInfo({
-                estoque: { TotalEstoque: 0, TotalQuantidade: 0, porcentagem: Math.floor(TotalQuantidade / TotalEstoque * 100), },
+                estoque: {
+                    TotalEstoque: 0,
+                    TotalQuantidade: 0,
+                    porcentagem: Math.floor(TotalQuantidade / TotalEstoque * 100),
+                    loading: false,
+                },
                 itensEmFalta: {
                     itens: itensEmFalta,
-                    count: itensEmFalta.length
+                    count: itensEmFalta.length,
+                    loading: false,
                 },
                 caixa: {
                     totalhoje: totalVenda,
                     totalMes: totalMes,
-                    itensHoje: totalhj
+                    itensHoje: totalhj,
+                    itensMes: totalItensMes,
+                    loading: false,
                 }
             });
         }
@@ -117,7 +134,7 @@ export default function ControlCards(props) {
 
                 </ul>
 
-            </> : modalCards.title = "Caixa" ? <>
+            </> : modalCards.title == "Caixa" ? <>
                 <div className="list-group p-3">
 
                     {cardsInfo.caixa.itensHoje.map((e, i) => {
@@ -146,17 +163,46 @@ export default function ControlCards(props) {
                 </div>
 
             </>
-                : ""}
+                : modalCards.title == "Ganhos mensais" ? <>
+                    <div className="list-group p-3">
+
+                        {cardsInfo.caixa.itensMes.map((e, i) => {
+                            return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
+                                <div className="d-flex w-100 justify-content-between">
+                                    <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
+                                    <small>{new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
+                                </div>
+                                <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
+                                <hr className="mt-1 mb-1" />
+                                {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
+                                    return <p key={ikey} className="small mb-0">{itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                                }) : ""}
+                                <hr className="mb-1 mt-1" />
+                                <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
+                                {e.desconto != "" ? <p className="small mb-0">
+                                    <b>Desconto: </b>
+                                    <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
+                                    : ""}
+                                <p className="small mb-0"><b>Total: </b> <span className="text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                            </a>
+
+                        })}
+
+
+                    </div>
+
+                </>
+                    : ""}
         </Modal>
         <div className="row">
             <div className="col-xl-3 col-md-6 mb-4">
-                <div className="card border-left-primary shadow h-100 py-2">
+                <div className="card border-left-primary shadow h-100 py-2 levitation" onClick={() => cardsInfo.caixa.totalMes > 0 ? openModal("Ganhos mensais") : ""}>
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
                                 <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                     Ganhos Mensais</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">{cardsInfo.caixa.totalMes.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{!cardsInfo.caixa.loading ? cardsInfo.caixa.totalMes.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' }) : <span className="text-primary"><Loading size={23} /></span>}</div>
                             </div>
                             <div className="col-auto">
                                 <i className="fas fa-calendar fa-2x text-gray-300"></i>
@@ -167,13 +213,13 @@ export default function ControlCards(props) {
             </div>
 
             <div className="col-xl-3 col-md-6 mb-4 ">
-                <div className="card border-left-success shadow h-100 py-2 levitation" onClick={() => openModal("Caixa")}>
+                <div className="card border-left-success shadow h-100 py-2 levitation" onClick={() => cardsInfo.caixa.totalhoje > 0 ? openModal("Caixa") : ""}>
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
                                 <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
                                     Caixa (Hoje)</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">{cardsInfo.caixa.totalhoje.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{!cardsInfo.caixa.loading ? cardsInfo.caixa.totalhoje.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' }) : <span className="text-success"><Loading size={23} /></span>}</div>
                             </div>
                             <div className="col-auto">
                                 <i className="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -192,7 +238,7 @@ export default function ControlCards(props) {
                                 </div>
                                 <div className="row no-gutters align-items-center">
                                     <div className="col-auto">
-                                        <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">{cardsInfo.estoque.porcentagem}%</div>
+                                        <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">{!cardsInfo.estoque.loading ? cardsInfo.estoque.porcentagem + '%' : <span className="text-info"><Loading size={23} /></span>}</div>
                                     </div>
                                     <div className="col">
                                         <div className="progress progress-sm mr-2">
@@ -212,14 +258,14 @@ export default function ControlCards(props) {
             </div>
 
             <div className="col-xl-3 col-md-6 mb-4 ">
-                <div className="card border-left-warning shadow h-100 py-2 levitation" onClick={() => openModal("Itens em falta")}>
+                <div className="card border-left-warning shadow h-100 py-2 levitation" onClick={() => cardsInfo.itensEmFalta.count > 0 ? openModal("Itens em falta") : ""}>
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
                                 <div className="text-xs  mb-1">
                                     <a style={{ cursor: "pointer" }} className="font-weight-bold text-warning text-uppercase text-decoration-none"> Itens em falta </a>
                                 </div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">{cardsInfo.itensEmFalta.count}</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{!cardsInfo.itensEmFalta.loading ? cardsInfo.itensEmFalta.count : <span className="text-warning"><Loading size={23} /></span>}</div>
                             </div>
                             <div className="col-auto">
                                 <i className="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
