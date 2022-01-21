@@ -100,6 +100,15 @@ export default function ControlCards(props) {
 
     }
 
+    function ordenarPorData(arr = []){
+        if(arr.length > 0){
+             return arr.sort(function(a,b) { 
+            return new Date(a.dataCriacao).getTime() - new Date(b.dataCriacao).getTime() 
+        }).reverse(); 
+        }
+     
+    }
+
     function MostrarMaisPagamento(pagamentos) {
         Swal.fire({
             title: '<strong>Pagamentos</strong>',
@@ -137,7 +146,7 @@ export default function ControlCards(props) {
             </> : modalCards.title == "Caixa" ? <>
                 <div className="list-group p-3">
 
-                    {cardsInfo.caixa.itensHoje.map((e, i) => {
+                    {cardsInfo?.caixa?.itensHoje ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
                         return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                             <div className="d-flex w-100 justify-content-between">
                                 <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
@@ -146,7 +155,7 @@ export default function ControlCards(props) {
                             <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
                             <hr className="mt-1 mb-1" />
                             {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
-                                return <p key={ikey} className="small mb-0">{itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                                return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
                             }) : ""}
                             <hr className="mb-1 mt-1" />
                             <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
@@ -157,7 +166,7 @@ export default function ControlCards(props) {
                             <p className="small mb-0"><b>Total: </b> <span className="text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                         </a>
 
-                    })}
+                    }): ""}
 
 
                 </div>
@@ -166,16 +175,18 @@ export default function ControlCards(props) {
                 : modalCards.title == "Ganhos mensais" ? <>
                     <div className="list-group p-3">
 
-                        {cardsInfo.caixa.itensMes.map((e, i) => {
+                        {cardsInfo?.caixa?.itensMes ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
                             return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                                 <div className="d-flex w-100 justify-content-between">
                                     <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
-                                    <small>{new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
+                                    <small>{new Date(e.dataCriacao).toLocaleString()}</small>
                                 </div>
                                 <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
                                 <hr className="mt-1 mb-1" />
-                                {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
-                                    return <p key={ikey} className="small mb-0">{itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                            
+                                {                          
+                                e.itens.length > 0 ? e.itens.map((itens, ikey) => {
+                                    return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })} </b></p>;
                                 }) : ""}
                                 <hr className="mb-1 mt-1" />
                                 <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
@@ -186,7 +197,7 @@ export default function ControlCards(props) {
                                 <p className="small mb-0"><b>Total: </b> <span className="text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                             </a>
 
-                        })}
+                        }) : ""}
 
 
                     </div>
