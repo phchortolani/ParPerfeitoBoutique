@@ -179,7 +179,7 @@ export default function ControlCards(props) {
                             return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                                 <div className="d-flex w-100 justify-content-between">
                                     <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
-                                    <small>{new Date(e.dataCriacao).toLocaleString()}</small>
+                                    <small>{new Date(e.dataCriacao).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' })}</small>
                                 </div>
                                 <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
                                 <hr className="mt-1 mb-1" />
