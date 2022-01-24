@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
-import InitDash from "../../js/charts";
 import axios from "axios";
 import Loading from "../load/Loading";
+import initDash from "../../js/charts";
 export default function Graficos() {
 
     const [graficos, setGraficos] = useState({
@@ -12,6 +12,9 @@ export default function Graficos() {
             loading: false
         }
     });
+    const [firstRender, setFirstRender] = useState(true);
+
+    const [vendas, setVendas] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
     function CalculaPorcentagem(codCateg) {
 
@@ -43,64 +46,207 @@ export default function Graficos() {
                 PorcentagemDoEstoque: { categorias: categorias.data.result, produtos: produtos.data.result, loading: false }
             });
         }
+        var vend = await axios.post('/api/listTable', { table: "vendas" });
+        let temparray = [];
+        if (vend.data.result) {
+            for (let i = 0; i <= 11; i++) {
+                let totalMes = vend.data.result.filter((e) => {
+                    if (new Date(`${e.dataCriacao}`).getMonth() == i &&
+                        new Date(`${e.dataCriacao}`).getFullYear() == new Date().getFullYear()) {
+                        return e;
+                    }
+                });
+
+                totalMes = totalMes.reduce((previousValue, currentValue) =>
+                    Number(previousValue) + Number(currentValue.valorVenda) - Number(currentValue?.desconto?.descontado ?? 0), 0
+                )
+
+                temparray.push(totalMes);
+            }
+            setVendas([
+                temparray[0],
+                temparray[1],
+                temparray[2],
+                temparray[3],
+                temparray[4],
+                temparray[5],
+                temparray[6],
+                temparray[7],
+                temparray[8],
+                temparray[9],
+                temparray[10],
+                temparray[11]
+            ]);
+            setFirstRender(false);
+        }
+    }
+
+    if (!firstRender) {
+        initDash();
+        // Set new default font family and font color to mimic Bootstrap's default styling
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        // Area Chart Example
+        var ctx = document.getElementById("myAreaChart");
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+                datasets: [{
+                    label: "Ganhos",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                    borderColor: "rgba(78, 115, 223, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: [vendas[0], vendas[1], vendas[2], vendas[3], vendas[4], vendas[5], vendas[6], vendas[7], vendas[8], vendas[9], vendas[10], vendas[11]],
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'date'
+                        },
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 7
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            maxTicksLimit: 5,
+                            padding: 10,
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, values) {
+                                return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+                            }
+                        },
+                        gridLines: {
+                            color: "rgb(234, 236, 244)",
+                            zeroLineColor: "rgb(234, 236, 244)",
+                            drawBorder: false,
+                            borderDash: [2],
+                            zeroLineBorderDash: [2]
+                        }
+                    }],
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    titleMarginBottom: 10,
+                    titleFontColor: '#6e707e',
+                    titleFontSize: 14,
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    intersect: false,
+                    mode: 'index',
+                    caretPadding: 10,
+                    callbacks: {
+                        label: function (tooltipItem, chart) {
+                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                            return datasetLabel + ':' + tooltipItem.yLabel.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+                        }
+                    }
+                }
+            }
+        });
+
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        // Pie Chart Example
+        var ctx = document.getElementById("myPieChart");
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ["Sapatilhas", "Roupas", "Bolsas"],
+                datasets: [{
+                    data: [55, 30, 15],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+                legend: {
+                    display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
 
     }
+
+
     useEffect(() => {
         get();
-        InitDash();
     }, []);
 
     return (
 
         <>
-            <div className="row disabled">
+            <div className="row">
                 <div className="col-xl-8 col-lg-7">
                     <div className="card shadow mb-4">
                         <div
                             className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 className="m-0 font-weight-bold text-primary">Visualização de ganhos</h6>
-                            <div className="dropdown no-arrow">
-                                <a className="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i className="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                    aria-labelledby="dropdownMenuLink">
-                                    <div className="dropdown-header">Dropdown Header: </div>
-                                    <a className="dropdown-item" href="#">Action</a>
-                                    <a className="dropdown-item" href="#">Another action</a>
-                                    <div className="dropdown-divider"></div>
-                                    <a className="dropdown-item" href="#">Something else here</a>
-                                </div>
-                            </div>
                         </div>
                         <div className="card-body">
                             <div className="chart-area">
-                                <canvas id="myAreaChart"></canvas>
+                                <div className="text-center text-primary align-self-center">
+                                    {firstRender ? <Loading size={24}/> : ""}
+                                </div>
+
+                                <canvas id="myAreaChart"> </canvas>
+
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="col-xl-4 col-lg-5">
-                    <div className="card shadow mb-4">
+                    <div className="card shadow mb-4 disabled">
                         <div
                             className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 className="m-0 font-weight-bold text-primary">Categorias mais vendidas</h6>
-                            <div className="dropdown no-arrow">
-                                <a className="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i className="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                    aria-labelledby="dropdownMenuLink">
-                                    <div className="dropdown-header">Dropdown Header: </div>
-                                    <a className="dropdown-item" href="#">Action</a>
-                                    <a className="dropdown-item" href="#">Another action</a>
-                                    <div className="dropdown-divider"></div>
-                                    <a className="dropdown-item" href="#">Something else here</a>
-                                </div>
-                            </div>
                         </div>
                         <div className="card-body">
                             <div className="chart-pie pt-4 pb-2">
@@ -129,53 +275,29 @@ export default function Graficos() {
                             <h6 className="m-0 font-weight-bold text-primary">Porcentagem do estoque</h6>
                         </div>
                         <div className="card-body">
-                            {graficos.PorcentagemDoEstoque.loading ? <div className="text-center text-primary"><Loading size={55}/></div> : ""}
-                                {graficos.PorcentagemDoEstoque?.categorias?.length > 0 ?
-                                    graficos.PorcentagemDoEstoque.categorias.map((e, i) => {
-                                        let porcentagem = CalculaPorcentagem(e.codigo);
-                                        let cor = porcentagem <= 20 ? "bg-danger" :
-                                            porcentagem <= 40 ? " bg-warning" :
-                                                porcentagem <= 60 ? "bg-primary" :
-                                                    porcentagem <= 80 ? "bg-info" :
-                                                        porcentagem <= 100 ? "bg-success" : "";
-                                        return <div key={i}>
-                                            <h4 className="small font-weight-bold">{e.descricao} <span
-                                                className="float-right">{porcentagem}%</span></h4>
-                                            <div className="progress mb-4">
-                                                <div className={"progress-bar " + (cor)} role="progressbar" style={{ width: porcentagem + "%" }}
-                                                    aria-valuenow={porcentagem} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
+                            {graficos.PorcentagemDoEstoque.loading ? <div className="text-center text-primary"><Loading size={55} /></div> : ""}
+                            {graficos.PorcentagemDoEstoque?.categorias?.length > 0 ?
+                                graficos.PorcentagemDoEstoque.categorias.map((e, i) => {
+                                    let porcentagem = CalculaPorcentagem(e.codigo);
+                                    let cor = porcentagem <= 20 ? "bg-danger" :
+                                        porcentagem <= 40 ? " bg-warning" :
+                                            porcentagem <= 60 ? "bg-primary" :
+                                                porcentagem <= 80 ? "bg-info" :
+                                                    porcentagem <= 100 ? "bg-success" : "";
+                                    return <div key={i}>
+                                        <h4 className="small font-weight-bold">{e.descricao} <span
+                                            className="float-right">{porcentagem}%</span></h4>
+                                        <div className="progress mb-4">
+                                            <div className={"progress-bar " + (cor)} role="progressbar" style={{ width: porcentagem + "%" }}
+                                                aria-valuenow={porcentagem} aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
-                                    }) : ""}
-                                {/* 
-                            <h4 className="small font-weight-bold">Acessórios <span
-                                className="float-right">40%</span></h4>
-                            <div className="progress mb-4">
-                                <div className="progress-bar bg-warning" role="progressbar" style={{ width: "40%" }}
-                                    aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <h4 className="small font-weight-bold">Chinelos <span
-                                className="float-right">60%</span></h4>
-                            <div className="progress mb-4">
-                                <div className="progress-bar" role="progressbar" style={{ width: "60%" }}
-                                    aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <h4 className="small font-weight-bold">Bolsas <span
-                                className="float-right">80%</span></h4>
-                            <div className="progress mb-4">
-                                <div className="progress-bar bg-info" role="progressbar" style={{ width: "80%" }}
-                                    aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <h4 className="small font-weight-bold">Roupas  <span
-                                className="float-right">50%</span></h4>
-                            <div className="progress">
-                                <div className="progress-bar bg-success" role="progressbar" style={{ width: "50%" }}
-                                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div> */}
-                            </div>
-                            </div>
-                </div>
+                                    </div>
+                                }) : ""}
+                           
+                        </div>
                     </div>
-                </>
-                )
+                </div>
+            </div>
+        </>
+    )
 }
