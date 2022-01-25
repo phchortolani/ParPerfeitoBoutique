@@ -95,7 +95,8 @@ const AddCatg = (props, ref) => {
         if (categ) {
             setEdit(true);
             let valor = String(categ.valorPadrao).includes(".") ? categ.valorPadrao : categ.valorPadrao.toFixed(2);
-            setCategoria({ ...categ, valorPadrao: formatReal(valor.toString().replace(".", "")) });
+            valor = formatReal(valor.toString().replace(".", ""));
+            setCategoria({ ...categ, valorPadrao: valor });
         }
         else setCategoria({ ...defaultCateg, codigo: parseInt(codCateg) });
 

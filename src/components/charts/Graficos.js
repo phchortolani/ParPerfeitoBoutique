@@ -170,7 +170,7 @@ export default function Graficos() {
                     callbacks: {
                         label: function (tooltipItem, chart) {
                             var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                            return datasetLabel + ':' + tooltipItem.yLabel.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+                            return datasetLabel + ': ' + tooltipItem.yLabel.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
                         }
                     }
                 }

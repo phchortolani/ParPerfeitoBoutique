@@ -63,9 +63,10 @@ const AddProd = (props, ref) => {
     function editProd(Produto) {
 
         setUpdateProd(Produto ? true : false);
-        let valor = String(Produto?.valor).includes(".") ? Produto?.valor : Produto?.valor.toFixed(2);
-        let valorDeCompra = String(Produto?.valorDeCompra).includes(".") ? Produto?.valorDeCompra : Produto?.valorDeCompra.toFixed(2);
-        setProduto(Produto ? { ...Produto, valor: formatReal(valor.toString().replace(".", "")), valorDeCompra: formatReal(valorDeCompra.toString().replace(".", "")) } : defaultProd);
+        let valor = Produto?.valor?.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' }).replace("R$", "").trim();
+        let valorDeCompra = Produto?.valorDeCompra?.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' }).replace("R$", "").trim();
+
+        setProduto(Produto ? { ...Produto, valor: valor, valorDeCompra: valorDeCompra } : defaultProd);
     }
 
     function formataDecimal(valorStg) {
