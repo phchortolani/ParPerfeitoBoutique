@@ -54,7 +54,9 @@ export default function Pagamento(props) {
                 total -= desconto;
             }
             else {
-                if (itensDesc >= Voucher.valorDesconto) {
+                if (Voucher.minimoCompra > itensDesc) {
+                    msgVoucher = `Valor mínimo de ${Voucher.minimoCompra.toLocaleString('pt-BR', { style: 'currency', currency: "BRL" })}`;
+                } else if (itensDesc >= Voucher.valorDesconto) {
                     total -= desconto = Voucher.valorDesconto;
                 } else msgVoucher = "O total é inferior ao desconto.";
 

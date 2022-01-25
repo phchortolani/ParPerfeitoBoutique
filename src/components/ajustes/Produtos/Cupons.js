@@ -19,7 +19,8 @@ export default function Cupons(props) {
         periodofim: "",
         tipoPorcentagem: true,
         valorDesconto: "",
-        codCategoria: 0
+        codCategoria: 0,
+        minimoCompra: 0
     };
     const [cupom, setCupom] = useState(defaultCupom);
 
@@ -55,6 +56,11 @@ export default function Cupons(props) {
         }
     }
 
+    function AlterarMinimoCompra(value) {
+        let semcaracteres = Number(value.replace(/[\D]+/g, ''));
+        setCupom({ ...cupom, minimoCompra: formatReal(semcaracteres) });
+    }
+
     function formatReal(int) {
         var tmp = int + '';
         tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
@@ -67,13 +73,12 @@ export default function Cupons(props) {
         setLoading(true);
         let erroslist = [];
         for (var prop in cupom) {
-            if (cupom[prop].toString().trim() == "" && prop != "tipoPorcentagem" && prop != "dataModificacao" && prop != "alteradoPor") {
+            if (cupom[prop]?.toString().trim() == "" && prop != "tipoPorcentagem" && prop != "dataModificacao" && prop != "alteradoPor") {
                 erroslist.push(prop);
             }
         }
         setValidatelist(erroslist);
         if (erroslist.length > 0) {
-            console.log(erroslist);
             setLoading(false);
             return setValidateErros("Preencha corretamente todos os campos obrigatórios.")
         }
@@ -90,14 +95,16 @@ export default function Cupons(props) {
             setLoading(false);
             return setValidateErros("A data inicial deve ser maior ou igual a data atual.");
         }
-
+        
         let objtoSave = {
             ...cupom,
             codigo: cupom.codigo.trim(),
-            valorDesconto: cupom.tipoPorcentagem ? cupom.valorDesconto : formataDecimal(cupom.valorDesconto),
+            valorDesconto: cupom.tipoPorcentagem ? cupom.valorDesconto : formataDecimal(cupom.valorDesconto.replace("R$","").trim()),
             periodoini: dataini,
-            periodofim: datafim
+            periodofim: datafim,
+            minimoCompra: formataDecimal(cupom.minimoCompra.replace("R$","").trim())
         };
+       
 
         let update = false;
         if (cupons.data.find(e => e.codigo.trim().toUpperCase() == cupom.codigo.trim().toUpperCase())) update = true;
@@ -124,7 +131,13 @@ export default function Cupons(props) {
     function Edit(e) {
         var obj = cupons.data.find(x => x.codigo == e.codigo);
         if (obj) {
-            obj = { ...obj, periodoini: new Date(obj.periodoini).toISOString(), periodofim: new Date(obj.periodofim).toISOString() };
+            obj = {
+                ...obj,
+                periodoini: new Date(obj.periodoini).toISOString(),
+                periodofim: new Date(obj.periodofim).toISOString(),
+                minimoCompra: obj.minimoCompra?.toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' }),
+                valorDesconto: obj.tipoPorcentagem ? obj.valorDesconto : obj.valorDesconto?.toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' })
+            };
             setCupom({ ...obj, periodoini: obj.periodoini.split("T")[0], periodofim: obj.periodofim.split("T")[0] });
         }
     }
@@ -156,11 +169,12 @@ export default function Cupons(props) {
         var ret = await axios.post('/api/deleteone', { table: "vouchers", where: { codigo: cupom.codigo } });
         if (ret.data.result) await GetCupons();
         setLoadingRemove(false);
+        setCupom(defaultCupom);
     }
 
     function formataDecimal(valorStg) {
-        let valorpuro = valorStg.toString().replace(".", '');
-        valorpuro = valorpuro.replace(",", ".");
+        let valorpuro = valorStg?.toString().replace(".", '');
+        valorpuro = valorpuro?.replace(",", ".");
         return parseFloat(valorpuro);
     }
     return (
@@ -183,12 +197,16 @@ export default function Cupons(props) {
                         <label htmlFor="datafim">Período final</label>
                         <input onChange={(e) => { setCupom({ ...cupom, periodofim: e.target.value }) }} value={cupom.periodofim} className={"form-control mb-2 form-control-sm " + (validatelist.includes(("periodofim")) ? "border-danger" : "")} id="datafim" type="date" name="datafim"></input>
                     </div>
-                    <div className="col-md-12">
+                    <div className="col-md-6">
                         <label htmlFor="categs">Categorias</label>
                         <select id="categs" onChange={(e) => { setCupom({ ...cupom, codCategoria: Number(e.target.value) }) }} value={cupom.codCategoria} className="form-control form-control-sm">
                             <option value={0}>Todas</option>
                             {props.categorias ? props.categorias.map(((e, i) => <option key={i} value={e.codigo}>{e.codigo} - {e.descricao}</option>)) : ""}
                         </select>
+                    </div>
+                    <div className="col-md-6">
+                        <label htmlFor="minCompra">Mínimo de compra</label>
+                        <input value={cupom.minimoCompra} onChange={(e) => AlterarMinimoCompra(e.target.value)} className={"form-control form-control-sm " + (validatelist.includes(("minimoCompra")) ? "border-danger" : "")} id="minCompra" typeof="text" maxLength={10} name="minCompra" />
                     </div>
                     <div className="col-md-3 pt-3">
                         <div className="form-check">
@@ -229,22 +247,25 @@ export default function Cupons(props) {
                     {cupons.data?.length > 0 ? cupons.data?.map((e, i) => {
                         let ca = props.categorias.find(x => x.codigo == e.codCategoria);
 
-                        return <div className="row" key={i}>
+                        return <div className="row small border-bottom mb-2" key={i}>
                             <div className="col-md-5">
                                 <button onClick={() => Edit(e)} type="button" className="text-primary p-0 btn btn-sm btn-link text-decoration-none">{e.codigo}</button>
                             </div>
-                            <div className="col-md-7">
-
-                                <span>Periodo: {new Date(new Date(e.periodoini).toISOString().split("T")[0]).toLocaleDateString()} - {new Date(new Date(e.periodofim).toISOString().split("T")[0]).toLocaleDateString()}</span>
+                            <div className="col-md-7 text-primary">
+                                <span>{e.tipoPorcentagem ? `${e.valorDesconto} %` : e.valorDesconto?.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                             </div>
                             <div className="col-md-5">
-                                <span>Tipo: {e.tipoPorcentagem ? "Porcentagem" : "Valor"}</span>
+                                <span><b>Tipo: </b>{e.tipoPorcentagem ? "Porcentagem" : "Valor"}</span>
                             </div>
-                            <div className="col-md-7 ">
-                                <span>{e.tipoPorcentagem ? `${e.valorDesconto} %` : e.valorDesconto.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
+
+                            <div className="col-md-7">
+                                <span><b>Periodo: </b>{new Date(e.periodoini).toLocaleDateString("pt-BR")} - {new Date(e.periodofim).toLocaleDateString("pt-BR")}</span>
+                            </div>
+                            <div className="col-md-5 ">
+                                <span><b>Valor mínimo: </b>{e.minimoCompra?.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                             </div>
                             <div className="col-md-5 pb-3">
-                                <span>Categoria: {ca ? ca.descricao : "Todas"}</span>
+                                <span><b>Categoria: </b>{ca ? ca.descricao : "Todas"}</span>
                             </div>
                         </div>
                     }) : ""}
