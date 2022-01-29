@@ -102,7 +102,7 @@ export default function Cupons(props) {
             valorDesconto: cupom.tipoPorcentagem ? cupom.valorDesconto : formataDecimal(cupom.valorDesconto.replace("R$","").trim()),
             periodoini: dataini,
             periodofim: datafim,
-            minimoCompra: formataDecimal(cupom.minimoCompra.replace("R$","").trim())
+            minimoCompra: formataDecimal(cupom.minimoCompra.toString().replace("R$","").trim())
         };
        
 
@@ -186,7 +186,7 @@ export default function Cupons(props) {
                 closeModal={() => setModalCupons({ ...modalCupons, isOpen: false })}>
 
                 <label htmlFor="cupom">Crie o código promocional</label>
-                <input onBlur={() => checkCodPro()} onChange={(e) => { setCupom({ ...cupom, codigo: e.target.value }) }} value={cupom.codigo} className={"form-control mb-2 form-control-sm " + (validatelist.includes(("codigo")) ? "border-danger" : "")} id="cupom" typeof="text" maxLength={15} name="cupom"></input>
+                <input onBlur={() => checkCodPro()} onChange={(e) => { setCupom({ ...cupom, codigo: e.target.value.toUpperCase() }) }} value={cupom.codigo} className={"form-control mb-2 form-control-sm " + (validatelist.includes(("codigo")) ? "border-danger" : "")} id="cupom" typeof="text" maxLength={15} name="cupom"></input>
 
                 <div className="row">
                     <div className="col-6">

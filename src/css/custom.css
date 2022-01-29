@@ -11655,6 +11655,7 @@ input:checked+.slider:before {
 .OverFlowYMax150 {
     max-height: calc(100vh - 180px);
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* .levitation:hover{

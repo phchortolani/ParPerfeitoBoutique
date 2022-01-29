@@ -5,6 +5,9 @@ import { useState, useContext } from "react";
 export default function Pagamento(props) {
 
     const { login } = useContext(AuthContext);
+
+    const [VoucherUpper, setVoucherUpper] = useState("");
+
     const [valorPago, setvalorPago] = useState({
         debito: 0,
         credito: 0,
@@ -246,7 +249,7 @@ export default function Pagamento(props) {
                 <label>Voucher</label>
                 <div className="row">
                     <div className="col-md-12">
-                        <input type="text" onBlur={(e) => checkVoucher(e.target.value)} maxLength={10} className={"form-control  form-control-sm " + (Voucher ? "text-success border-success shadow-sm" : "")} />
+                        <input type="text" value={VoucherUpper} onChange={(e)=> setVoucherUpper(e.target.value.toUpperCase())}  onBlur={(e) => checkVoucher(e.target.value)} maxLength={11} className={"form-control  form-control-sm " + (Voucher ? "text-success border-success shadow-sm" : "")} />
                         <span className="text-danger pl-0 badge">{msgVoucher != "" ? msgVoucher : ""}</span>
                     </div>
                 </div>
