@@ -83,7 +83,7 @@ export default function Pagamento(props) {
         if (e.trim().length > 0) {
             var ret = await axios.post('/api/checkVoucher', { codigoVoucher: e });
             if (ret.data.result) {
-                return setVoucher(ret.data.result);
+                if (!ret.data.result.individual) return setVoucher(ret.data.result);
             }
         }
         setVoucher(null);
@@ -249,7 +249,7 @@ export default function Pagamento(props) {
                 <label>Voucher</label>
                 <div className="row">
                     <div className="col-md-12">
-                        <input type="text" value={VoucherUpper} onChange={(e)=> setVoucherUpper(e.target.value.toUpperCase())}  onBlur={(e) => checkVoucher(e.target.value)} maxLength={11} className={"form-control  form-control-sm " + (Voucher ? "text-success border-success shadow-sm" : "")} />
+                        <input type="text" value={VoucherUpper} onChange={(e) => setVoucherUpper(e.target.value.toUpperCase())} onBlur={(e) => checkVoucher(e.target.value)} maxLength={11} className={"form-control  form-control-sm " + (Voucher ? "text-success border-success shadow-sm" : "")} />
                         <span className="text-danger pl-0 badge">{msgVoucher != "" ? msgVoucher : ""}</span>
                     </div>
                 </div>

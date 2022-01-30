@@ -12,6 +12,7 @@ export default function Cupons(props) {
     const [firstRender, setFirstRender] = useState(true);
     const [loadingRemove, setLoadingRemove] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [addPorProduto, setAddPorProduto] = useState(false);
 
     const defaultCupom = {
         codigo: "",
@@ -20,7 +21,8 @@ export default function Cupons(props) {
         tipoPorcentagem: true,
         valorDesconto: "",
         codCategoria: 0,
-        minimoCompra: 0
+        minimoCompra: 0,
+        individual: false
     };
     const [cupom, setCupom] = useState(defaultCupom);
 
@@ -33,6 +35,11 @@ export default function Cupons(props) {
     if (firstRender) {
         setFirstRender(false);
         GetCupons();
+    }
+
+    function setProdutoIndividual() {
+        setCupom({ ...cupom, codCategoria: 0 })
+        setAddPorProduto(!addPorProduto);
     }
 
     function openModal() {
@@ -95,16 +102,17 @@ export default function Cupons(props) {
             setLoading(false);
             return setValidateErros("A data inicial deve ser maior ou igual a data atual.");
         }
-        
+
         let objtoSave = {
             ...cupom,
             codigo: cupom.codigo.trim(),
-            valorDesconto: cupom.tipoPorcentagem ? cupom.valorDesconto : formataDecimal(cupom.valorDesconto.replace("R$","").trim()),
+            valorDesconto: cupom.tipoPorcentagem ? cupom.valorDesconto : formataDecimal(cupom.valorDesconto.toString().replace("R$", "").trim()),
             periodoini: dataini,
             periodofim: datafim,
-            minimoCompra: formataDecimal(cupom.minimoCompra.toString().replace("R$","").trim())
+            minimoCompra: formataDecimal(cupom.minimoCompra.toString().replace("R$", "").trim()),
+            individual: addPorProduto
         };
-       
+
 
         let update = false;
         if (cupons.data.find(e => e.codigo.trim().toUpperCase() == cupom.codigo.trim().toUpperCase())) update = true;
@@ -138,6 +146,7 @@ export default function Cupons(props) {
                 minimoCompra: obj.minimoCompra?.toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' }),
                 valorDesconto: obj.tipoPorcentagem ? obj.valorDesconto : obj.valorDesconto?.toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' })
             };
+            setAddPorProduto(obj.individual);
             setCupom({ ...obj, periodoini: obj.periodoini.split("T")[0], periodofim: obj.periodofim.split("T")[0] });
         }
     }
@@ -170,6 +179,7 @@ export default function Cupons(props) {
         if (ret.data.result) await GetCupons();
         setLoadingRemove(false);
         setCupom(defaultCupom);
+        setAddPorProduto(false);
     }
 
     function formataDecimal(valorStg) {
@@ -185,6 +195,16 @@ export default function Cupons(props) {
                 title={modalCupons.title}
                 closeModal={() => setModalCupons({ ...modalCupons, isOpen: false })}>
 
+
+
+                <label id="individual" className="switch" >
+                    <input   checked={addPorProduto} type="checkbox" />
+                    <span className="slider round" onClick={() => { setProdutoIndividual() }}></span>
+                </label>
+                <span>  Adiciona por produto </span>
+                <hr></hr>
+
+
                 <label htmlFor="cupom">Crie o código promocional</label>
                 <input onBlur={() => checkCodPro()} onChange={(e) => { setCupom({ ...cupom, codigo: e.target.value.toUpperCase() }) }} value={cupom.codigo} className={"form-control mb-2 form-control-sm " + (validatelist.includes(("codigo")) ? "border-danger" : "")} id="cupom" typeof="text" maxLength={15} name="cupom"></input>
 
@@ -197,7 +217,7 @@ export default function Cupons(props) {
                         <label htmlFor="datafim">Período final</label>
                         <input onChange={(e) => { setCupom({ ...cupom, periodofim: e.target.value }) }} value={cupom.periodofim} className={"form-control mb-2 form-control-sm " + (validatelist.includes(("periodofim")) ? "border-danger" : "")} id="datafim" type="date" name="datafim"></input>
                     </div>
-                    <div className="col-md-6">
+                    <div className={"col-md-6 " + (addPorProduto ? "disabled" : "")} >
                         <label htmlFor="categs">Categorias</label>
                         <select id="categs" onChange={(e) => { setCupom({ ...cupom, codCategoria: Number(e.target.value) }) }} value={cupom.codCategoria} className="form-control form-control-sm">
                             <option value={0}>Todas</option>
@@ -243,7 +263,7 @@ export default function Cupons(props) {
 
                 <h5 className="text-primary">Cupons ativos</h5>
                 <hr />
-                <div style={{ maxHeight: "20vh" }}>
+                <div style={{ maxHeight: "6vh" }}>
                     {cupons.data?.length > 0 ? cupons.data?.map((e, i) => {
                         let ca = props.categorias.find(x => x.codigo == e.codCategoria);
 
@@ -264,8 +284,14 @@ export default function Cupons(props) {
                             <div className="col-md-5 ">
                                 <span><b>Valor mínimo: </b>{e.minimoCompra?.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                             </div>
-                            <div className="col-md-5 pb-3">
+                            <div className="col-md-5">
                                 <span><b>Categoria: </b>{ca ? ca.descricao : "Todas"}</span>
+                            </div>
+                            <div className="col-md-5 pb-3">
+                                <span><b>Individual: </b>{e.individual ? "Sim" : "Não"}</span>
+                            </div>
+                            <div className="col-md-7">
+                                <span className="text-capitalize"><b>Criado por: </b>{e.criadoPor}</span>
                             </div>
                         </div>
                     }) : ""}
