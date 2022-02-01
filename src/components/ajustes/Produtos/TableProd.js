@@ -101,7 +101,7 @@ export default function TableProd(props) {
                         </td>
                         {LoadingRemove.loading && e.codigo == LoadingRemove.codigo ? <td colSpan="3" className="text-center" ><span className="text-danger badge"><Loading /> Excluindo </span> </td> : <>
                             <td className="text-center">
-                                <span className={"badge text-white px-md-2 bg-" + (e.quantidade <= 0 ? "danger" : e.quantidade <= 10 ? "warning" : "success")}>{e.quantidade} </span>
+                                <span className={"badge text-white px-md-2 bg-" + (e.quantidade <= 0 ? "danger" : e.quantidade / e.qtEstoque * 100 <= 10 ? "warning" : "success")}>{e.quantidade} </span>
                             </td>
                             <td className="text-center align-middle p-0 ">
                                 <a style={{ fontSize: 'x-small' }} onClick={() => openModal(e)} href="#" className="btn btn-sm btn-info btn-icon-split">
