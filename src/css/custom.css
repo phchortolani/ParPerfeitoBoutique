@@ -11709,3 +11709,7 @@ input:checked+.slider:before {
 
 
 }
+
+.max-modal-tela{
+    max-height: calc(100vh - 100px) !important;
+}

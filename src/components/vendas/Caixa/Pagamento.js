@@ -155,7 +155,8 @@ export default function Pagamento(props) {
 
         if (vendaSave.data.result) {
             await carrinho.forEach(e => {
-                var ret = axios.post('/api/saveone', { obj: { ...e.item, quantidade: e.item.quantidade - parseInt(e.qt) }, table: "produtos", login: login, update: true });
+                let vlr = e.VoucherDescontado ? e.item.valor + e.VoucherDescontado : e.item.valor;
+                var ret = axios.post('/api/saveone', { obj: { ...e.item, quantidade: e.item.quantidade - parseInt(e.qt), valor: vlr }, table: "produtos", login: login, update: true });
             });
         }
 
@@ -279,8 +280,7 @@ export default function Pagamento(props) {
                     </span>
                     <span className="text">Reservar</span>
                 </a>
-
-                <a onClick={() => Finalizar()} className={"btn btn-success btn-sm btn-icon-split " + (total == 0 ? "" : "disabled")}>
+                <a onClick={() => Finalizar()} className={"btn btn-success btn-sm btn-icon-split " + (Number(total.toFixed(2)) == 0 ? "" : "disabled")}>
                     <span className="icon text-white-50">
                         <i className="fas fa-check"></i>
                     </span>

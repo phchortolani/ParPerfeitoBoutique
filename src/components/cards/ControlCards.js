@@ -134,7 +134,7 @@ export default function ControlCards(props) {
 
     return (<>
 
-        <Modal open={modalCards.isOpen} title={modalCards.title} onTop={true} overflowY={true} ModalBodyClass="p-0" closeModal={() => setmodalCards({ ...modalCards, isOpen: false })}>
+        <Modal open={modalCards.isOpen} title={modalCards.title} onTop={true} overflowY={true} ModalBodyClass="p-0 max-modal-tela" closeModal={() => setmodalCards({ ...modalCards, isOpen: false })}>
             {modalCards.title == "Itens em falta" ? <>
                 <ul className="list-group list-group-flush p-0">
                     {cardsInfo.itensEmFalta.itens.map((e, i) => {
@@ -154,8 +154,14 @@ export default function ControlCards(props) {
                             </div>
                             <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
                             <hr className="mt-1 mb-1" />
+
                             {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
-                                return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                                let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado +  itens.item.valor : null;
+                                let voucherdescont = null;
+                                if(valortotal) voucherdescont = itens.voucher.codigo;
+                                let valor = itens.item.valor;
+                                return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} 
+                                {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</>: ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : "" }  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
                             }) : ""}
                             <hr className="mb-1 mt-1" />
                             <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
@@ -163,7 +169,10 @@ export default function ControlCards(props) {
                                 <b>Desconto: </b>
                                 <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
                                 : ""}
-                            <p className="small mb-0"><b>Total: </b> <span className="text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                            
+                            <p className="small mb-0"><b>Total: </b> <span className="text-success font-weight-bold">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                            <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                            <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                         </a>
 
                     }): ""}
@@ -184,18 +193,24 @@ export default function ControlCards(props) {
                                 <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
                                 <hr className="mt-1 mb-1" />
                             
-                                {                          
-                                e.itens.length > 0 ? e.itens.map((itens, ikey) => {
-                                    return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} - <b className="text-success">{itens.item.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })} </b></p>;
-                                }) : ""}
+                                {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
+                                let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado +  itens.item.valor : null;
+                                let voucherdescont = null;
+                                if(valortotal) voucherdescont = itens.voucher.codigo;
+                                let valor = itens.item.valor;
+                                return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} 
+                                {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</>: ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : "" }  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                            }) : ""}
                                 <hr className="mb-1 mt-1" />
                                 <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
-                                {e.desconto != "" ? <p className="small mb-0">
-                                    <b>Desconto: </b>
-                                    <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
-                                    : ""}
-                                <p className="small mb-0"><b>Total: </b> <span className="text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
-                            </a>
+                            {e.desconto != "" ? <p className="small mb-0">
+                                <b>Desconto: </b>
+                                <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
+                                : ""}
+                            
+                            <p className="small mb-0"><b>Total: </b> <span className="text-success font-weight-bold">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                            <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                            <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p> </a>
 
                         }) : ""}
 
