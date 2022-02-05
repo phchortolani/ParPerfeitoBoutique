@@ -7,6 +7,8 @@ import axios from "axios";
 import Loading from "../load/Loading";
 import Cupons from "./Produtos/Cupons";
 
+let totalList = [];
+
 export default function Produtos() {
 
     const [list, setList] = useState({ data: [] });
@@ -20,6 +22,7 @@ export default function Produtos() {
         let ret = await axios.post('/api/listTable', { table: "categorias" });
         if (ret.data.result) {
             setCategorias({ data: ret.data.result });
+            
         }
     }
 
@@ -29,6 +32,7 @@ export default function Produtos() {
         var ret = await axios.post('/api/listTable', { table: "produtos" });
         if (ret.data.result) {
             setList({ data: orderByCodigo(ret.data.result) });
+            totalList = orderByCodigo(ret.data.result);
         }
 
         setLoadingList(false);
@@ -61,6 +65,31 @@ export default function Produtos() {
         });
     }
 
+  async function SearchFilters(filters) {
+        let tempList = totalList;
+
+        if (filters.codCategoria > 0) {
+            tempList = tempList.filter((e) => e.codCategoria == filters.codCategoria);  
+        }
+        if (filters.criterio > 0) {
+
+            if (filters.criterio == 1) {
+                tempList = tempList.filter((e) => e.quantidade > filters.qt);  
+            }
+            if (filters.criterio == 2) {
+                tempList = tempList.filter((e) => e.quantidade == filters.qt);  
+            }
+            if (filters.criterio == 3) {
+                tempList = tempList.filter((e) => e.quantidade < filters.qt);  
+            }
+        }
+
+        if (filters.termo != "") {
+            tempList = tempList.filter((e) => e.descricao.toUpperCase().includes(filters.termo.toUpperCase()));
+        }
+        setList({ data: tempList });
+    }
+
     if (firstRender) {
         getList();
         getCateg();
@@ -72,14 +101,14 @@ export default function Produtos() {
             </DefaultCard>
             <DefaultCard title="Lista de produtos" class="col-md-9" cardBodyClass="OverFlowYMax150">
                 <div className="row">
-                    <div className="col-md-10">
-                        {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd categorias={categorias.data} />}
+                    <div className="col-md-12">
+                        {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <FilterProd SearchFilters={SearchFilters} categorias={categorias.data} />}
                     </div>
-                    <div className="col-md-2 align-self-md-center pt-3">
+                    <div className="col">
+                        <hr></hr>
                         <Cupons categorias={categorias.data} />
                     </div>
                 </div>
-
                 <hr />
                 {loadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <TableProd categorias={categorias} editProd={editProd} removeFromList={removeFromList} list={list.data} />}
             </DefaultCard>
