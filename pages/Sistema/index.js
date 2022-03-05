@@ -10,6 +10,8 @@ import jwt from "jsonwebtoken";
 import Usuarios from "../../src/components/ajustes/Usuarios";
 import { AuthContext } from "../../context/Auth2Context";
 import Loading from "../../src/components/load/Loading";
+import Modal from "../../src/components/modal/Modal";
+import AlterPassword from "../../src/components/ajustes/Usuarios/AlterPassword";
 
 export async function getServerSideProps(ctx) {
 
@@ -33,13 +35,29 @@ export async function getServerSideProps(ctx) {
 export default function Index(props) {
     const [SideBarMini, setSideBarMini] = useState(true);
     const [ActualPanel, setActualPanel] = useState("");
+    const { signOut } = useContext(AuthContext);
+
+    const [modalCards, setmodalCards] = useState({
+        isOpen: false,
+        title: "Redefinir senha"
+    });
+
+
+    function CloseModalRedef() {
+        signOut();
+    }
 
     if (props.token) {
         if (ActualPanel == "") setActualPanel(props.token.tipo == "administrador" ? "Painel" : "Vendas")
+        if (props.token.redefinirSenha && !modalCards.isOpen) setmodalCards({ ...modalCards, isOpen: true });
     }
     return (
         <div id="wrapper">
             {props.token?.tipo ? <>
+                <Modal open={modalCards.isOpen} title={modalCards.title} closeModal={() => signOut()}>
+                    <AlterPassword token={props.token} CloseModalRedef={CloseModalRedef} />
+                </Modal>
+
                 <SideBar Permissao={props.token?.tipo} SideBarMini={SideBarMini} SetActualPanel={setActualPanel} SetSideBarMini={setSideBarMini} />
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">

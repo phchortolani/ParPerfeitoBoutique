@@ -21,7 +21,8 @@ export default async (request, response) => {
                 username: usuario.usuario,
                 id: usuario._id,
                 email: usuario.email,
-                tipo: usuario.tipo
+                tipo: usuario.tipo,
+                redefinirSenha: usuario.redefinirSenha
             }, process.env.JWT_KEY),
             login: usuario.usuario
         }

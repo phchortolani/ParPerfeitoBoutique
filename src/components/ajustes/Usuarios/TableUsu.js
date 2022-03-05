@@ -17,6 +17,17 @@ export default function TableUsu(props, refresh) {
             setExcluirLoad(false);
         }
     }
+
+    async function ChangeAlterPass(e) {
+        var ret = await axios.post('/api/requestAlterPass', { user: e });
+        if (ret.data) {
+            if (ret.data.result) {
+                Swal.fire("", ret.data.msg, "success");
+            } else {
+                Swal.fire("Atenção!", ret.data.msg, "error");
+            }
+        }
+    }
     return (<>
 
         {props.list ? <table style={{ whiteSpace: "nowrap" }} className="table table-bordered table-sm table-responsive-sm dataTable" id="dataTable" width="100%" cellSpacing="0" role="grid" >
@@ -25,7 +36,9 @@ export default function TableUsu(props, refresh) {
                     <th scope="col" className="fitCol">Usuário</th>
                     <th scope="col">Nome</th>
                     <th scope="col">E-mail</th>
+                    <th scope="col" className="fitCol">Redefinir senha</th>
                     <th scope="col" className="fitCol">Tipo</th>
+
                     <th scope="col" colSpan="2" className="text-center">Ações</th>
                 </tr>
             </thead>
@@ -36,10 +49,10 @@ export default function TableUsu(props, refresh) {
                         <td>{e.nome}</td>
                         <td>{e.email}</td>
 
-                        {e.usuario == "phchortolani" ? <td>Full access</td> : <>
-
+                        {e.usuario == "phchortolani" ? <td colSpan="4"></td> : <>
                             {excluirLoad && e.usuario == UltimoUsuarioExluido ? <td colSpan="3" className="text-danger text-center">Excluindo <span style={{ height: "17px", width: "17px" }} className="spinner-border"></span></td> :
                                 <>
+                                    <td className="text-center align-middle p-0"><input type="checkbox" className="text-center" onChange={() => ChangeAlterPass(e)} defaultChecked={e.redefinirSenha} /></td>
                                     <td>{e.tipo}</td>
                                     <td className="text-center align-middle p-0 ">
                                         <a onClick={() => { props.editUser(e) }} style={{ fontSize: 'x-small' }} href="#" className={"btn btn-sm btn-outline-secondary border-0  " + (tipoUsuario == "colaborador" ? "disabled" : "")}>

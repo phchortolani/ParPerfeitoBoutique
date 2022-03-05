@@ -64,15 +64,15 @@ export default function Caixa() {
 
                     if (periodoinicial <= dataatual && periodofinal >= dataatual) {
                         let desconto = 0;
-                        if (cupom.tipoPorcentagem){
+                        if (cupom.tipoPorcentagem) {
                             if (cupom.minimoCompra > temp[index].item.valor) {
                                 Swal.fire('Atenção!'
                                     , `O valor de compra mínimo do cupom ${cupom.codigo} é de ${cupom.minimoCompra.toLocaleString('pt-BR', { style: 'currency', currency: "BRL" })}.`, 'warning');
-                            } else{
-                                 desconto = (cupom.valorDesconto * (temp[index].item.valor / 100));
+                            } else {
+                                desconto = (cupom.valorDesconto * (temp[index].item.valor / 100));
                             }
-                           
-                        } 
+
+                        }
                         else {
 
                             if (cupom.minimoCompra > temp[index].item.valor) {
@@ -87,7 +87,7 @@ export default function Caixa() {
                         temp[index] = { ...temp[index], voucher: cupom, VoucherDescontado: desconto, item: { ...temp[index].item, valor: temp[index].item.valor - desconto } };
                     } else {
                         Swal.fire('Atenção!'
-                        , `Este cupom está fora do período de utilização!`, 'warning')
+                            , `Este cupom está fora do período de utilização!`, 'warning')
                     }
                 }
             }
