@@ -107,6 +107,10 @@ export default function Pagamento(props) {
         props.clearCart();
     }
 
+    function Real(value) {
+        return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+    }
+
     async function Finalizar() {
 
         /*  var printContent = document.getElementById('teste'); */
@@ -218,7 +222,7 @@ export default function Pagamento(props) {
                         </label>
                     </div>
                     <div className="col-md-9">
-                        <input maxLength={10} value={valorPago.dinheiro} onChange={(e) => CalculaValorPago(e.target.value, "dinheiro")} maxLength={10} id="vlrpago" className={"form-control form-control-sm " + (formaPagamento.dinheiro ? "border-primary shadow-sm" : "disabled")} />
+                        <input maxLength={10} value={valorPago.dinheiro} onChange={(e) => CalculaValorPago(e.target.value, "dinheiro")} id="vlrpago" className={"form-control form-control-sm " + (formaPagamento.dinheiro ? "border-primary shadow-sm" : "disabled")} />
                     </div>
                 </div>
             </div>
@@ -258,12 +262,13 @@ export default function Pagamento(props) {
         </div>
         <hr />
 
-        <h6 className="text-center text-gray-900">Sub-total: {totalCarrinho.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })} </h6>
+        <h6 className="text-center text-gray-900">Sub-total: {Real(totalCarrinho)} </h6>
         {desconto ? <>
-            <h6 className="text-center"><span>Desconto: {Voucher.codigo}</span> <span className="text-success"> - {desconto.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span> </h6></> : ""}
+            <h6 className="text-center"><span>Desconto: {Voucher.codigo}</span> <span className="text-success"> - {Real(desconto)}</span> </h6></> : ""}
 
-        {troco > 0 ? <h5 className="text-center text-gray-900">Troco: {troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5> : ""}
-        <h4 className="text-center text-gray-900">Total: {total.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h4>
+        {troco > 0 ? <h5 className="text-center text-gray-900">Troco: {Real(troco)}</h5> : ""}
+        <h4 className="text-center text-gray-900">Total: {Real(totalCarrinho - desconto)}</h4>
+        <h4 className="text-center text-gray-900">Total Restante: {Real(total)}</h4>
         <hr />
 
         {props.cart.length > 0 ?
