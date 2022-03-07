@@ -30,7 +30,6 @@ const AddProd = (props, ref) => {
         }
         setValidatelist(erroslist);
         if (erroslist.length > 0) {
-            console.log(erroslist);
             setValidateErros("Preencha todos os campos obrigatórios.")
         } else updateProd ? updateProduto() : SaveProd();
     }
@@ -90,7 +89,7 @@ const AddProd = (props, ref) => {
 
     async function SaveProd() {
         let RetultimoProd = await axios.post('/api/getlast', { table: "produtos", where: { codCategoria: Number(Produto.codCategoria) } });
-
+        console.log(RetultimoProd);
         if (RetultimoProd) {
             let ultimoCod = RetultimoProd.data?.result[0]?.codigo ?? 0;
             ultimoCod = RemoveCategFromCod(ultimoCod);
@@ -150,7 +149,7 @@ const AddProd = (props, ref) => {
         <label htmlFor="qt">Qtd. Total Estoque</label>
         <input value={Produto?.qtEstoque} onChange={(e) => setProduto({ ...Produto, qtEstoque: e.target.value })} type="number" id="qt" className={"form-control form-control-sm  mb-2 " + (validatelist.includes(("qtEstoque")) ? "border-danger" : "")} />
         <hr />
-        <button type="button" onClick={() => InputsIsValid()} className="btn btn-sm btn-primary">Adicionar</button>
+        <button type="button" onClick={() => InputsIsValid()} className="btn btn-sm btn-primary">{updateProd ? "Alterar Produto" : "Adicionar"}</button>
         {validatelist.length > 1 ? <p className={"text-danger badge d-flex pt-2 pl-0 pb-2"}>{validateerros}</p> : ""}
     </>)
 }

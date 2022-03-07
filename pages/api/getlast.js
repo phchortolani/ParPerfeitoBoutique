@@ -12,7 +12,7 @@ export default async (request, response) => {
     if (table) {
         const db = await connectToDataBase(process.env.MONGODB_URI);
 
-        const retorno = await db.collection(table).find(where).sort({ '_id': -1 }).limit(1).toArray();
+        const retorno = await db.collection(table).find(where).sort({ 'codigo': -1 }).limit(1).toArray();
 
         response.json({
             result: retorno ? retorno : null
