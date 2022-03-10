@@ -1,5 +1,6 @@
 /* import { useEffect } from "react"; */
 import ControlCards from "../cards/ControlCards";
+import UserInfoCard from "../cards/UserInfoCard";
 import Graficos from "../charts/Graficos";
 
 export default function ControlPanel() {
@@ -12,6 +13,12 @@ export default function ControlPanel() {
         </div> */}
 
         <ControlCards />
+        
+        <div className="row mb-2">
+            <UserInfoCard usuario="Laura"/>
+            <UserInfoCard usuario="rita"/>
+        </div>
+
         <Graficos />
     </>)
 }

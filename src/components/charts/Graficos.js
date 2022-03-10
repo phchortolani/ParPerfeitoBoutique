@@ -274,7 +274,8 @@ export default function Graficos() {
                         <div className="card-header py-3">
                             <h6 className="m-0 font-weight-bold text-primary">Porcentagem do estoque</h6>
                         </div>
-                        <div className="card-body">
+                        <div className="card-body" style={{maxHeight: '300px',
+    overflow:"auto"}}>
                             {graficos.PorcentagemDoEstoque.loading ? <div className="text-center text-primary"><Loading size={55} /></div> : ""}
                             {graficos.PorcentagemDoEstoque?.categorias?.length > 0 ?
                                 graficos.PorcentagemDoEstoque.categorias.map((e, i) => {
