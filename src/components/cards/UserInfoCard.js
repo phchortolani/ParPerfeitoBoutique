@@ -82,9 +82,6 @@ export default function UserInfoCard(props) {
                     </div>
                     <div className={"more-info" + (isMobile ? "position-static" : "") } >
                         <h4 className="elipsar">{dados.userinfo.nome}</h4>
-                        <div className="coords elipsar">
-                            <span >{dados.userinfo.email}</span>
-                        </div>
                         <div className="coords">
                             <b>Comissão: {porcentagem}%</b>
                         </div>
@@ -115,8 +112,8 @@ export default function UserInfoCard(props) {
                         </div>
                     </div>
                 </div>
-                <div className="general">
-                    <h2>{props.usuario}</h2>
+                <div className="general pt-2">
+                    <h3 style={{textTransform:"capitalize"}}>{props.usuario}</h3>
                     <p>Resumo das vendas do(a) {props.usuario}</p>
                     <span className="more">Passe o mouse para mais detalhes</span>
                 </div>

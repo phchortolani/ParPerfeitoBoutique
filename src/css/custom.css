@@ -12811,7 +12811,7 @@ input:checked+.slider:before {
 
 
 .cardUserInfo {
-    height          : 250px;
+    height          : 230px;
     background-color: #fff;
     background      : linear-gradient(#f8f8f8, #fff);
     border-radius   : 6px;
@@ -12915,7 +12915,8 @@ input:checked+.slider:before {
 }
 
 .cardUserInfo .additional .stats {
-    font-size: 2rem;
+    font-size: 1.5rem;
+
     display  : flex;
     position : absolute;
     bottom   : 1rem;
@@ -12945,7 +12946,7 @@ input:checked+.slider:before {
 }
 
 .cardUserInfo .additional .stats div.value {
-    font-size  : 1.5rem;
+    font-size  : 1.0rem;
     font-weight: bold;
     line-height: 1.5rem;
 }
