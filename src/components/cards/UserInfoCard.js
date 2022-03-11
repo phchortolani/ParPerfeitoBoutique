@@ -1,11 +1,13 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import Loading from "../load/Loading";
-
+import { AuthContext } from "../../../context/Auth2Context";
 
 export default function UserInfoCard(props) {
     const [dados, setDados] = useState(null);
     const [firstRender, setFirstRender] = useState(true);
+   
+    const {isMobile} = useContext(AuthContext);
 
     let qtMes = 0;
     let porcentagem = 10;
@@ -61,9 +63,9 @@ export default function UserInfoCard(props) {
     if (!dados && firstRender) get();
     return (
         dados ? <div className="col-sm-12 col-md-3 mb-2">
-            <div className="cardUserInfo shadow">
-                <div className="additional">
-                    <div className="user-cardUserInfo">
+            <div className="cardUserInfo shadow ">
+                <div className={"additional " + (isMobile ? "w-100" : "")}>
+                    <div className={"user-cardUserInfo " + (isMobile ? "d-none" : "") }>
                         <div style={{ display: "grid", placeContent: "center", height: "100%" }} className="text-center justify-content-center align-content-between p-2">
                             <div className="level center">
                                 {new Date().toLocaleString('default', { month: 'long' }).toLocaleUpperCase()}
@@ -78,10 +80,10 @@ export default function UserInfoCard(props) {
                             </div>
                         </div>
                     </div>
-                    <div className="more-info">
-                        <h4>{dados.userinfo.nome}</h4>
-                        <div className="coords">
-                            <span>{dados.userinfo.email}</span>
+                    <div className={"more-info" + (isMobile ? "position-static" : "") } >
+                        <h4 className="elipsar">{dados.userinfo.nome}</h4>
+                        <div className="coords elipsar">
+                            <span >{dados.userinfo.email}</span>
                         </div>
                         <div className="coords">
                             <b>Comissão: {porcentagem}%</b>

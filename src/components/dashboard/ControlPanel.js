@@ -1,9 +1,37 @@
 /* import { useEffect } from "react"; */
+import axios from "axios";
+import { useState, useContext } from "react";
 import ControlCards from "../cards/ControlCards";
 import UserInfoCard from "../cards/UserInfoCard";
 import Graficos from "../charts/Graficos";
 
 export default function ControlPanel() {
+
+    const [firstRender, setFirstRender] = useState(true);
+    const [list, setList] = useState(null);
+
+
+    async function Get() {
+        setFirstRender(false);
+
+        try {
+            var ret = await axios.post('/api/listTable', { table: "usuarios" });
+            if (ret.data.result) {
+                var data = ret.data.result;
+                data = data.filter((e) => {
+                    if (e.usuario != "phchortolani") {
+                        return e;
+                    }
+                })
+                setList(data);
+            }
+        } catch (error) {
+            
+        }
+
+    }
+
+    if (firstRender) Get();
 
     return (<>
         {/* <div className="d-sm-flex align-items-center justify-content-between mb-4 disabled">
@@ -13,10 +41,11 @@ export default function ControlPanel() {
         </div> */}
 
         <ControlCards />
-        
+
         <div className="row mb-2">
-            <UserInfoCard usuario="Laura"/>
-            <UserInfoCard usuario="rita"/>
+            {list ? list.map((e) => {
+                return <UserInfoCard usuario={e.usuario} />
+            }) : ""}
         </div>
 
         <Graficos />
