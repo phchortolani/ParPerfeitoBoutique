@@ -213,8 +213,6 @@ export default function Graficos() {
         Chart.defaults.global.defaultFontColor = '#858796';
 
         // Pie Chart Example
-        console.log(CatMaisVendidas);
-
         if (CatMaisVendidas) {
             var ctx = document.getElementById("myPieChart");
             var myPieChart = new Chart(ctx, {
