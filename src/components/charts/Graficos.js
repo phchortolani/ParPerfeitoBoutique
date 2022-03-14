@@ -15,6 +15,7 @@ export default function Graficos() {
     const [firstRender, setFirstRender] = useState(true);
 
     const [vendas, setVendas] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    const [CatMaisVendidas, setCatMaisVendidas] = useState(null);
 
     function CalculaPorcentagem(codCateg) {
 
@@ -35,6 +36,15 @@ export default function Graficos() {
         }
         return 0;
     }
+
+
+    function gerarCor() {
+        return '#' + parseInt((Math.random() * 0xFFFFFF))
+            .toString(16)
+            .padStart(6, '0');
+    }
+
+
     async function get() {
         setGraficos({
             PorcentagemDoEstoque: { loading: true }
@@ -49,6 +59,7 @@ export default function Graficos() {
         var vend = await axios.post('/api/listTable', { table: "vendas" });
         let temparray = [];
         if (vend.data.result) {
+
             for (let i = 0; i <= 11; i++) {
                 let totalMes = vend.data.result.filter((e) => {
                     if (new Date(`${e.dataCriacao}`).getMonth() == i &&
@@ -60,9 +71,30 @@ export default function Graficos() {
                 totalMes = totalMes.reduce((previousValue, currentValue) =>
                     Number(previousValue) + Number(currentValue.valorVenda) - Number(currentValue?.desconto?.descontado ?? 0), 0
                 )
-
                 temparray.push(totalMes);
             }
+
+
+            let CategsMaisVendidas = [];
+
+            vend.data.result.forEach(sell => {
+                sell.itens.forEach((e) => {
+
+                    let catego = categorias.data.result.find((x) => x.codigo == e.item?.codCategoria)?.descricao.trim();
+                    let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego);
+                    let cor = gerarCor();
+                    if (indexExiste && indexExiste > -1) {
+                        CategsMaisVendidas[indexExiste] = { codCateg: catego, qt: indexExiste ? Number(e.qt) + 1 : e.qt, cor };
+                    } else {
+                        CategsMaisVendidas.push({ codCateg: catego, qt: Number(e.qt), cor })
+                    }
+                });
+
+            });
+
+            let cats = CategsMaisVendidas?.sort((a, b) => b.qt - a.qt);
+
+            setCatMaisVendidas(cats);
             setVendas([
                 temparray[0],
                 temparray[1],
@@ -181,36 +213,41 @@ export default function Graficos() {
         Chart.defaults.global.defaultFontColor = '#858796';
 
         // Pie Chart Example
-        var ctx = document.getElementById("myPieChart");
-        var myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ["Sapatilhas", "Roupas", "Bolsas"],
-                datasets: [{
-                    data: [55, 30, 15],
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-                    hoverBorderColor: "rgba(234, 236, 244, 1)",
-                }],
-            },
-            options: {
-                maintainAspectRatio: false,
-                tooltips: {
-                    backgroundColor: "rgb(255,255,255)",
-                    bodyFontColor: "#858796",
-                    borderColor: '#dddfeb',
-                    borderWidth: 1,
-                    xPadding: 15,
-                    yPadding: 15,
-                    displayColors: false,
-                    caretPadding: 10,
+        console.log(CatMaisVendidas);
+
+        if (CatMaisVendidas) {
+            var ctx = document.getElementById("myPieChart");
+            var myPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: CatMaisVendidas.map((e) => e.codCateg),
+                    datasets: [{
+                        data: CatMaisVendidas.map((e) => e.qt),
+                        backgroundColor: CatMaisVendidas.map((e) => e.cor),
+                        hoverBackgroundColor: CatMaisVendidas.map((e) => e.cor),
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
                 },
-                legend: {
-                    display: false
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                    },
+                    legend: {
+                        display: false
+                    },
+                    cutoutPercentage: 80,
                 },
-                cutoutPercentage: 80,
-            },
-        });
+            });
+        }
+
 
     }
 
@@ -232,7 +269,7 @@ export default function Graficos() {
                         <div className="card-body">
                             <div className="chart-area">
                                 <div className="text-center text-primary align-self-center">
-                                    {firstRender ? <Loading size={24}/> : ""}
+                                    {firstRender ? <Loading size={24} /> : ""}
                                 </div>
 
                                 <canvas id="myAreaChart"> </canvas>
@@ -243,7 +280,7 @@ export default function Graficos() {
                 </div>
 
                 <div className="col-xl-4 col-lg-5">
-                    <div className="card shadow mb-4 disabled">
+                    <div className="card shadow mb-4">
                         <div
                             className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 className="m-0 font-weight-bold text-primary">Categorias mais vendidas</h6>
@@ -253,15 +290,13 @@ export default function Graficos() {
                                 <canvas id="myPieChart"></canvas>
                             </div>
                             <div className="mt-4 text-center small">
-                                <span className="mr-2">
-                                    <i className="fas fa-circle text-primary"></i> Sapatilhas
+                                {CatMaisVendidas ? CatMaisVendidas.map((e,i) => {
+                                    return   <span className="mr-2">
+                                    <i style={{color:e.cor}} className="fas fa-circle"></i> {e.codCateg}
                                 </span>
-                                <span className="mr-2">
-                                    <i className="fas fa-circle text-success"></i> Roupas
-                                </span>
-                                <span className="mr-2">
-                                    <i className="fas fa-circle text-info"></i> Bolsas
-                                </span>
+                                }) : ""}
+                              
+                               
                             </div>
                         </div>
                     </div>
@@ -274,8 +309,10 @@ export default function Graficos() {
                         <div className="card-header py-3">
                             <h6 className="m-0 font-weight-bold text-primary">Porcentagem do estoque</h6>
                         </div>
-                        <div className="card-body" style={{maxHeight: '300px',
-    overflow:"auto"}}>
+                        <div className="card-body" style={{
+                            maxHeight: '300px',
+                            overflow: "auto"
+                        }}>
                             {graficos.PorcentagemDoEstoque.loading ? <div className="text-center text-primary"><Loading size={55} /></div> : ""}
                             {graficos.PorcentagemDoEstoque?.categorias?.length > 0 ?
                                 graficos.PorcentagemDoEstoque.categorias.map((e, i) => {
@@ -294,7 +331,7 @@ export default function Graficos() {
                                         </div>
                                     </div>
                                 }) : ""}
-                           
+
                         </div>
                     </div>
                 </div>

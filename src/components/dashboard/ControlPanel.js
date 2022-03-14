@@ -31,7 +31,12 @@ export default function ControlPanel() {
 
     }
 
-    if (firstRender) Get();
+    if (firstRender){
+        Get();
+    } 
+
+  
+    
 
     return (<>
         {/* <div className="d-sm-flex align-items-center justify-content-between mb-4 disabled">
@@ -41,7 +46,6 @@ export default function ControlPanel() {
         </div> */}
 
         <ControlCards />
-
         <div className="row mb-2">
             {list ? list.map((e) => {
                 return <UserInfoCard usuario={e.usuario} />
