@@ -41,7 +41,9 @@ export default function SideBar(props) {
                 <div id="collapseTwo" className={"collapse " + (AccordionCadastros ? "show" : "")} aria-labelledby="headingTwo" data-bs-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Cadastros disponíveis</h6>
-                        <a className="collapse-item" onClick={() => updateMenu("Categorias")} href="#">Categorias</a>
+                        {props.Permissao == "administrador" ? <>
+                            <a className="collapse-item" onClick={() => updateMenu("Categorias")} href="#">Categorias</a>
+                        </> : ""}
                         <a className="collapse-item" onClick={() => updateMenu("Produtos")} href="#">Produtos</a>
                         {props.Permissao == "administrador" ? <>
                             <a className="collapse-item" onClick={() => updateMenu("Usuários")} href="#">Usuários</a>

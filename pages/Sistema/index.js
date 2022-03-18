@@ -66,7 +66,7 @@ export default function Index(props) {
                             {ActualPanel == "Painel" ? <ControlPanel /> : ""}
                             {ActualPanel == "Vendas" ? <Caixa /> : ""}
                             {ActualPanel == "Categorias" ? <Categorias /> : ""}
-                            {ActualPanel == "Produtos" ? <Produtos /> : ""}
+                            {ActualPanel == "Produtos" ? <Produtos Permissao={props.token?.tipo} /> : ""}
                             {ActualPanel == "Usuários" ? <Usuarios /> : ""}
                         </div>
                     </div>

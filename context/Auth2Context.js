@@ -10,7 +10,7 @@ export const AuthProvider = (props) => {
     const [login, setLogin] = useState(undefined);
     const [isMobile, setisMobile] = useState(false);
     const isAuthenticated = !!login;
-    const [tipoUsuario, setTipoUsuario] = useState();
+    const [tipoUsuario, setTipoUsuario] = useState(null);
 
     useEffect(() => {
         const { token } = parseCookies();
@@ -41,6 +41,7 @@ export const AuthProvider = (props) => {
     async function signOut() {
         destroyCookie(null, "token", { path: '/' });
         setLogin(undefined);
+        setTipoUsuario(null);
         Router.push("./");
     }
 
