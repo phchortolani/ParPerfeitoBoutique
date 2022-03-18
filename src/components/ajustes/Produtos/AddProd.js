@@ -74,12 +74,24 @@ const AddProd = (props, ref) => {
         return parseFloat(valorpuro);
     }
 
-    function RemoveCategFromCod(codProduto) {
-        return parseInt(`${codProduto}`.split("").reverse().join("").substring(0, Produto.codCategoria.length).split("").reverse().join(""));
-    }
+    /*  function RemoveCategFromCod(codProduto) {
+         return parseInt(`${codProduto}`.split("").reverse().join("").substring(0, Produto.codCategoria.length).split("").reverse().join(""));
+     } */
 
     async function updateProduto() {
-        let ret = await axios.post('/api/saveone', { obj: { ...Produto, valor: formataDecimal(Produto.valor), valorDeCompra: formataDecimal(Produto.valorDeCompra), quantidade: parseInt(Produto.quantidade), qtEstoque: parseInt(Produto.qtEstoque) }, table: "produtos", login: login, update: true });
+        let ret = await axios.post('/api/saveone', {
+            obj:
+            {
+                ...Produto,
+                valor: formataDecimal(Produto.valor),
+                valorDeCompra: formataDecimal(Produto.valorDeCompra),
+                quantidade: parseInt(Produto.quantidade),
+                qtEstoque: parseInt(Produto.qtEstoque)
+            },
+            table: "produtos",
+            login: login,
+            update: true
+        });
         if (ret.data.result) {
             setProduto(defaultProd);
             setUpdateProd(false);
@@ -88,14 +100,14 @@ const AddProd = (props, ref) => {
     }
 
     async function SaveProd() {
-        let RetultimoProd = await axios.post('/api/getlast', { table: "produtos", where: { codCategoria: Number(Produto.codCategoria) } });
-        console.log(RetultimoProd);
+        let RetultimoProd = await axios.post('/api/getlast', { table: "produtos" });
+
         if (RetultimoProd) {
             let ultimoCod = RetultimoProd.data?.result[0]?.codigo ?? 0;
-            ultimoCod = RemoveCategFromCod(ultimoCod);
+            /*    ultimoCod = RemoveCategFromCod(ultimoCod); */
             let tempProduto = {
                 ...Produto,
-                codigo: parseInt(`${Produto.codCategoria}${(ultimoCod + 1)}`),
+                codigo: parseInt(ultimoCod + 1),
                 codCategoria: parseInt(Produto.codCategoria),
                 quantidade: parseInt(Produto.quantidade),
                 qtEstoque: parseInt(Produto.qtEstoque),
