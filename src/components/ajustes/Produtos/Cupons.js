@@ -198,7 +198,7 @@ export default function Cupons(props) {
 
 
                 <label id="individual" className="switch" >
-                    <input   checked={addPorProduto} type="checkbox" />
+                    <input checked={addPorProduto} type="checkbox" />
                     <span className="slider round" onClick={() => { setProdutoIndividual() }}></span>
                 </label>
                 <span>  Adiciona por produto </span>

@@ -1,4 +1,4 @@
-import { connectToDataBase } from '../../config/mongodb';
+/* import { connectToDataBase } from '../../config/mongodb';
 
 export default async (request, response) => {
 
@@ -10,10 +10,10 @@ export default async (request, response) => {
         (async () => await db.collection("produtos").updateOne({ _id: element._id }, { $set: { codigo: i + 1 } }))();
     });
 
-    let a = await db.collection("produtos").find({}).sort('dataCriacao').toArray();
+    let a = await db.collection("produtos").find({}).sort('dataCriacao').toArray(); 
 
     response.json({
         result: a ? a : null
     })
 
-}
+} */

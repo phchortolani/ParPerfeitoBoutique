@@ -83,6 +83,7 @@ export default function TableProd(props) {
                 <tr>
                     <th scope="col" className="fitCol">Código</th>
                     <th scope="col">Descrição</th>
+                    <th scope="col" className="fit">Lucro</th>
                     <th scope="col" style={{ width: "7rem" }}>Valor</th>
                     <th scope="col" style={{ width: "12rem" }}>Categoria</th>
                     <th scope="col" style={{ width: "6rem" }}>Quantidade</th>
@@ -95,6 +96,7 @@ export default function TableProd(props) {
                     return <tr className={"animated--grow-in " + (ProdSelecionado?.codigo == e.codigo ? "shadow text-primary" : "")} key={i}>
                         <th onClick={() => editProd(e)} scope="row" className="text-center"> <a className="btn py-0 btn-sm btn-link font-weight-bolder text-decoration-none" >{e.codigo}</a> </th>
                         <td>{e.descricao}</td>
+                        <td className="text-center fitCol">{Math.floor((e.valor - e.valorDeCompra) / e.valor * 100)}%</td>
                         <td>{e.valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</td>
                         <td>
                             {searchCategoria(e.codCategoria)?.descricao}

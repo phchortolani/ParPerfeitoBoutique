@@ -8,9 +8,13 @@ export default function AddProdutos(props) {
         setProdSear(null);
     }
 
+    function Real(value) {
+        return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+    }
+
     return (<>
         <div className="row">
-        {/*     <div className="col-md-12">
+            {/*     <div className="col-md-12">
                 <label htmlFor="sele">Produtos</label>
                 <select className="form-control form-control-sm" id="sele">
                     <option value="">Selecione...</option>
@@ -24,12 +28,12 @@ export default function AddProdutos(props) {
                 </select>
             </div> */}
             <div className="col-md-12">
-                <div onKeyPress={(e) => {`${e.key}` == 'Enter' ? AddProd() : ""}} className="mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div onKeyPress={(e) => { `${e.key}` == 'Enter' ? AddProd() : "" }} className="mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div className="input-group">
                         <input placeholder="Adicionar Produto" value={prodSear ? prodSear : ""} onChange={(e) => setProdSear(e.target.value)} className="form-control bg-light border-0 small" list="sear" id="pesq" />
                         <datalist id="sear">
                             {props.produtos ? props.produtos.map((e, i) => {
-                                return <option key={i} value={e.codigo}>{e.descricao}</option>
+                                return <option key={i} value={e.codigo}>{e.codigo} - {e.descricao} - {Real(e.valor)} - Qnt. {e.quantidade}</option>
                             }) : ""}
                         </datalist>
                         <div className="input-group-append">
