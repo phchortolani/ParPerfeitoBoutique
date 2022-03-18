@@ -85,7 +85,13 @@ export default function Produtos() {
         }
 
         if (filters.termo != "") {
-            tempList = tempList.filter((e) => e.descricao.toUpperCase().includes(filters.termo.toUpperCase()));
+
+            if(Number(filters.termo) > 0){
+                tempList = tempList.filter((e) => e.codigo == Number(filters.termo));
+            }else{
+                tempList = tempList.filter((e) => e.descricao.toUpperCase().includes(filters.termo.toUpperCase()));
+            }
+            
         }
         setList({ data: tempList });
     }

@@ -45,16 +45,16 @@ export default function FilterProd(props) {
                 </div>
             </div>
             <div className="col-md-4">
-                <form id="search" className="d-inline form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div id="search" className="d-inline form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div className="input-group">
-                        <input onChange={(e) => setFilters({ ...filters, termo: e.target.value })} type="text" className="form-control bg-light border-0 small" placeholder="Pesquisar descrição" aria-label="Search" aria-describedby="basic-addon2" />
+                        <input onKeyDown={(e) => e.key == 'Enter' ? props.SearchFilters(filters) : ""} onChange={(e) => setFilters({ ...filters, termo: e.target.value })} type="text" className="form-control bg-light border-0 small" placeholder="Pesquisar código ou descrição" aria-label="Search" aria-describedby="basic-addon2" />
                         <div className="input-group-append">
                             <button className="btn btn-primary" type="button" onClick={() => props.SearchFilters(filters)} >
                                 <i className="fas fa-search fa-sm"></i>
                             </button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
 
         </div>
