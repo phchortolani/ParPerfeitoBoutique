@@ -81,10 +81,11 @@ export default function Graficos() {
                 sell.itens.forEach((e) => {
 
                     let catego = categorias.data.result.find((x) => x.codigo == e.item?.codCategoria)?.descricao.trim();
-                    let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego);
+                    console.log(catego);
+                    let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego.trim());
                     let cor = gerarCor();
                     if (indexExiste && indexExiste > -1) {
-                        CategsMaisVendidas[indexExiste] = { codCateg: catego, qt: indexExiste ? Number(e.qt) + 1 : e.qt, cor };
+                        CategsMaisVendidas[indexExiste] = { codCateg: catego, qt: indexExiste > -1 ? CategsMaisVendidas[indexExiste].qt = CategsMaisVendidas[indexExiste].qt + 1 : e.qt, cor };
                     } else {
                         CategsMaisVendidas.push({ codCateg: catego, qt: Number(e.qt), cor })
                     }
@@ -93,6 +94,8 @@ export default function Graficos() {
             });
 
             let cats = CategsMaisVendidas?.sort((a, b) => b.qt - a.qt);
+
+            console.log(cats);
 
             setCatMaisVendidas(cats);
             setVendas([
