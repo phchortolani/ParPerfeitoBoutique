@@ -2,15 +2,17 @@ import DefaultCard from "../cards/DefaultCard";
 import AddProdutos from "./Caixa/AddProdutos";
 import Pagamento from "./Caixa/Pagamento";
 import TableSelecionados from "./Caixa/TableSelecionados";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { useState } from "react";
 import Loading from "../load/Loading";
 
 export default function Caixa() {
     const [produtos, setProdutos] = useState({ data: [] });
+    const [reservas, setReservas] = useState(null);
     const [firstRender, setFirstRender] = useState(true);
     const [LoadingList, setLoadingList] = useState(false);
     const [cart, setCart] = useState({ data: [] });
+    const [numberReserva, setNumberReserva] = useState(0);
     const [cuponsIndividuais, setCuponsIndividuais] = useState({ data: [] });
 
     async function getList() {
@@ -18,18 +20,36 @@ export default function Caixa() {
         setFirstRender(false);
         var ret = await axios.post('/api/listTable', { table: "produtos" });
         var retVouchers = await axios.post('/api/listTable', { table: "vouchers" });
+        var retReservas = await axios.post('/api/listTable', { table: "reservas" });
         if (ret.data.result) {
             setProdutos({ data: ret.data.result });
+        }
+        if (retReservas.data.result) {
+            setReservas(retReservas.data.result)
         }
         if (retVouchers.data.result) setCuponsIndividuais({ data: retVouchers.data.result })
         setLoadingList(false);
     }
     let msgVoucherindividual = "";
 
-    function EditQt(item, qt) {
+    async function getCountProd(codprod) {
+        var ret = await axios.post("/api/getCountProd", { codprod: codprod });
+        return ret.data.result;
+    }
+
+    async function EditQt(item, qt) {
+        let quantidade = await getCountProd(item.codigo);
+
+        if (numberReserva > 0) {
+            let reser = reservas.find(e => e.reserva == numberReserva);
+            let qtReserva = reser?.carrinho.find((e) => e.item.codigo == item.codigo);
+            quantidade += qtReserva?.qt;
+        }
+
         if (qt <= 0) qt = 1;
-        if (qt > item.quantidade) qt = parseInt(item.quantidade);
+        if (qt > quantidade) qt = parseInt(quantidade);
         let temp = cart.data;
+
         let index = cart.data.findIndex((e) => e.item.codigo == item.codigo);
         if (index != null || index != undefined) {
             temp[index] = { item: item, qt: qt };
@@ -103,6 +123,11 @@ export default function Caixa() {
     function clearCart() {
         setCart({ data: [] });
     }
+
+    function addReserva(produtos, numreserva) {
+        setNumberReserva(numreserva);
+        setCart({ data: produtos });
+    }
     function addRemoveCart(cod, addToCart) {
         if (addToCart) {
             var prod = produtos.data.find((e => e.codigo == cod));
@@ -147,10 +172,10 @@ export default function Caixa() {
             </div>
             <div className="col-md-4">
                 <DefaultCard title="Produtos" icoTitle="fas fa-shopping-cart" cardBodyClass="p-2">
-                    {LoadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProdutos AddItem={addRemoveCart} produtos={produtos.data} />}
+                    {LoadingList ? <div className="text-center text-primary"><Loading size="2em" /></div> : <AddProdutos clearCart={clearCart} addReserva={addReserva} AddItem={addRemoveCart} reservas={reservas} produtos={produtos.data} />}
                 </DefaultCard>
                 {cart.data.length > 0 ? <DefaultCard title="Pagamento" icoTitle="fas fa-cash-register" cardBodyClass="p-2">
-                    <Pagamento clearCart={clearCart} GetList={getList} cart={cart.data} />
+                    <Pagamento clearCart={clearCart} numberReserva={numberReserva} GetList={getList} cart={cart.data} />
                 </DefaultCard> : ""}
 
             </div>

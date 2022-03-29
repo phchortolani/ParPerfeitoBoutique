@@ -81,7 +81,7 @@ export default function Graficos() {
                 sell.itens.forEach((e) => {
 
                     let catego = categorias.data.result.find((x) => x.codigo == e.item?.codCategoria)?.descricao.trim();
-                    console.log(catego);
+                   
                     let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego.trim());
                     let cor = gerarCor();
                     if (indexExiste && indexExiste > -1) {
@@ -95,7 +95,7 @@ export default function Graficos() {
 
             let cats = CategsMaisVendidas?.sort((a, b) => b.qt - a.qt);
 
-            console.log(cats);
+          
 
             setCatMaisVendidas(cats);
             setVendas([
@@ -292,8 +292,8 @@ export default function Graficos() {
                             </div>
                             <div className="mt-4 text-center small">
                                 {CatMaisVendidas ? CatMaisVendidas.map((e,i) => {
-                                    return   <span className="mr-2">
-                                    <i style={{color:e.cor}} className="fas fa-circle"></i> {e.codCateg}
+                                    return   <span className="mr-2 animated--grow-in" key={i}>
+                                    <i  style={{color:e.cor}} className="fas fa-circle"></i> {e.codCateg} ({e.qt})
                                 </span>
                                 }) : ""}
                               

@@ -134,6 +134,7 @@ export default function Pagamento(props) {
 
     }
 
+
     async function BaixaNoEstoque(carrinho) {
 
         let venda = {
@@ -162,10 +163,83 @@ export default function Pagamento(props) {
                 let vlr = e.VoucherDescontado ? e.item.valor + e.VoucherDescontado : e.item.valor;
                 var ret = axios.post('/api/saveone', { obj: { ...e.item, quantidade: e.item.quantidade - parseInt(e.qt), valor: vlr }, table: "produtos", login: login, update: true });
             });
+
+            if (props.numberReserva > 0) {
+                var deletereserv = await axios.post('/api/deleteone', { table: "reservas", where: { reserva: Number(props.numberReserva) } });
+            }
         }
 
         await props.GetList();
     }
+
+
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    async function saveReserv(numDaReserva, nome, telefone) {
+        try {
+
+            let cart = await props.cart.map(e => {
+                return { item: e.item, qt: Number(e.qt) }
+            })
+
+            let ret = await axios.post('/api/saveone', {
+                obj:
+                {
+                    carrinho: cart, reserva: numDaReserva, nome, telefone
+                },
+                table: "reservas",
+                login: login,
+                update: false
+            });
+
+            await props.cart.forEach(e => {
+                let retor = axios.post('/api/saveone', { obj: { ...e.item, quantidade: e.item.quantidade - parseInt(e.qt) }, table: "produtos", login: login, update: true });
+            });
+
+            if (ret.data.result) return numDaReserva;
+            else return false;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async function ReservarProdutos() {
+        const { value: reserva } = await Swal.fire({
+            title: 'Reservar itens do carrinho',
+            html:
+                '<hr/><input id="swal-input1" placeholder="Nome" class="swal2-input">' +
+                '<input id="swal-input2" placeholder="Telefone" maxLength="15" class="swal2-input">' +
+                `<p>Obs.:  Os itens desse carrinho serão removidos do estoque até que seja efetuada a venda ou cancelada a reserva.</p>`
+            ,
+            focusConfirm: false,
+            confirmButtonText: "Reservar",
+            cancelButtonText: 'Cancelar',
+            showCancelButton: true,
+            preConfirm: () => {
+                var Nome = document.getElementById("swal-input1").value;
+                var Telefone = document.getElementById("swal-input2").value;
+
+                if (Nome && Telefone) {
+                    let numreserva = getRandomInt(0, 5000);
+
+                    return saveReserv(numreserva, Nome, Telefone);
+
+                }
+                else return false;
+            }
+        })
+
+        if (reserva) {
+            Swal.fire("Reserva Nº " + reserva);
+            Limpar();
+        }
+
+    }
+
 
     function MsgFinalizado() {
         const Toast = Swal.mixin({
@@ -279,7 +353,7 @@ export default function Pagamento(props) {
                     </span>
                     <span onClick={() => Limpar()} className="text">Cancelar</span>
                 </a>
-                <a className="btn btn-primary btn-sm btn-icon-split">
+                <a onClick={() => ReservarProdutos()} className="btn btn-primary btn-sm btn-icon-split">
                     <span className="icon text-white-50">
                         <i className="fas fa-people-carry"></i>
                     </span>
