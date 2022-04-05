@@ -9,8 +9,17 @@ export default function ControlPanel() {
 
     const [firstRender, setFirstRender] = useState(true);
     const [list, setList] = useState(null);
+    const [dataPeriodo, setDataPeriodo] = useState(null);
 
+    function ChangePeriodo(value) {
+        let valor = String(value).split('-', 10);
+        let mes = valor[1];
+        let ano = valor[0];
 
+        let date = [Number(ano), (Number(mes) - 1)];
+
+        setDataPeriodo(date)
+    }
     async function Get() {
         setFirstRender(false);
 
@@ -26,17 +35,17 @@ export default function ControlPanel() {
                 setList(data);
             }
         } catch (error) {
-            
+
         }
 
     }
 
-    if (firstRender){
+    if (firstRender) {
         Get();
-    } 
+    }
 
-  
-    
+
+
 
     return (<>
         {/* <div className="d-sm-flex align-items-center justify-content-between mb-4 disabled">
@@ -45,10 +54,17 @@ export default function ControlPanel() {
                 className="fas fa-download fa-sm text-white-50"></i> Baixar relatório</a>
         </div> */}
 
-        <ControlCards />
+        <div className="col-md-3 pl-0 pr-0 pr-md-3">
+            <label>Selecionar período </label>
+            <input id="date" className="form-control mr-0 mb-2" type="month" onChange={(e) => ChangePeriodo(e.target.value)} />
+        </div>
+
+
+
+        <ControlCards dataPeriodo={dataPeriodo} />
         <div className="row mb-2">
-            {list ? list.map((e) => {
-                return <UserInfoCard usuario={e.usuario} />
+            {list ? list.map((e,i) => {
+                return <UserInfoCard key={i} dataPeriodo={dataPeriodo} usuario={e.usuario} />
             }) : ""}
         </div>
 

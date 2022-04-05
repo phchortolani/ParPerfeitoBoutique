@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Modal from "../modal/Modal";
 import Loading from "../load/Loading";
 
+var dataConsultada = new Date();
+
 export default function ControlCards(props) {
 
     const [modalCards, setmodalCards] = useState({
@@ -36,6 +38,18 @@ export default function ControlCards(props) {
         }
     });
 
+    let DataConsulta = new Date();
+    if (props.dataPeriodo) {
+        DataConsulta = new Date(String(props.dataPeriodo[0]), String(props.dataPeriodo[1]));
+    }
+
+    if (props.dataPeriodo != null) {
+        if (dataConsultada != props.dataPeriodo) {
+            dataConsultada = props.dataPeriodo;
+            get();
+        }
+    }
+
     async function get() {
         setCardsInfo({
             estoque: { loading: true }, itensEmFalta: { loading: true }, caixa: { loading: true }
@@ -47,8 +61,8 @@ export default function ControlCards(props) {
             let TotalQuantidade = estoque.data.result.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.quantidade), 0);
 
             let totalMes = vendas.data.result.filter((e) => {
-                if (new Date(`${e.dataCriacao}`).getMonth() == new Date().getMonth() &&
-                    new Date(`${e.dataCriacao}`).getFullYear() == new Date().getFullYear()) {
+                if (new Date(`${e.dataCriacao}`).getMonth() == DataConsulta.getMonth() &&
+                    new Date(`${e.dataCriacao}`).getFullYear() == DataConsulta.getFullYear()) {
                     return e;
                 }
             })
@@ -100,13 +114,14 @@ export default function ControlCards(props) {
 
     }
 
-    function ordenarPorData(arr = []){
-        if(arr.length > 0){
-             return arr.sort(function(a,b) { 
-            return new Date(a.dataCriacao).getTime() - new Date(b.dataCriacao).getTime() 
-        }).reverse(); 
+    function ordenarPorData(arr = []) {
+
+        if (arr.length > 0) {
+            return arr.sort(function (a, b) {
+                return new Date(a.dataCriacao).getTime() - new Date(b.dataCriacao).getTime()
+            }).reverse();
         }
-     
+
     }
 
     function MostrarMaisPagamento(pagamentos) {
@@ -146,7 +161,7 @@ export default function ControlCards(props) {
             </> : modalCards.title == "Caixa" ? <>
                 <div className="list-group p-3">
 
-                    {cardsInfo?.caixa?.itensHoje ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
+                    {cardsInfo?.caixa?.itensHoje.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
                         return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                             <div className="d-flex w-100 justify-content-between">
                                 <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
@@ -156,12 +171,12 @@ export default function ControlCards(props) {
                             <hr className="mt-1 mb-1" />
 
                             {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
-                                let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado +  itens.item.valor : null;
+                                let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado + itens.item.valor : null;
                                 let voucherdescont = null;
-                                if(valortotal) voucherdescont = itens.voucher.codigo;
+                                if (valortotal) voucherdescont = itens.voucher.codigo;
                                 let valor = itens.item.valor;
-                                return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} 
-                                {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</>: ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : "" }  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                                return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao}
+                                    {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</> : ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : ""}  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
                             }) : ""}
                             <hr className="mb-1 mt-1" />
                             <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
@@ -169,13 +184,13 @@ export default function ControlCards(props) {
                                 <b>Desconto: </b>
                                 <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
                                 : ""}
-                            
+
                             <p className="small mb-0"><b>Total: </b> <span className="text-success font-weight-bold">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                             <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                             <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                         </a>
 
-                    }): ""}
+                    }) : ""}
 
 
                 </div>
@@ -184,7 +199,7 @@ export default function ControlCards(props) {
                 : modalCards.title == "Ganhos mensais" ? <>
                     <div className="list-group p-3">
 
-                        {cardsInfo?.caixa?.itensMes ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
+                        {cardsInfo?.caixa?.itensMes.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
                             return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                                 <div className="d-flex w-100 justify-content-between">
                                     <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
@@ -192,25 +207,25 @@ export default function ControlCards(props) {
                                 </div>
                                 <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
                                 <hr className="mt-1 mb-1" />
-                            
+
                                 {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
-                                let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado +  itens.item.valor : null;
-                                let voucherdescont = null;
-                                if(valortotal) voucherdescont = itens.voucher.codigo;
-                                let valor = itens.item.valor;
-                                return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao} 
-                                {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</>: ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : "" }  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
-                            }) : ""}
+                                    let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado + itens.item.valor : null;
+                                    let voucherdescont = null;
+                                    if (valortotal) voucherdescont = itens.voucher.codigo;
+                                    let valor = itens.item.valor;
+                                    return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao}
+                                        {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</> : ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : ""}  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                                }) : ""}
                                 <hr className="mb-1 mt-1" />
                                 <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
-                            {e.desconto != "" ? <p className="small mb-0">
-                                <b>Desconto: </b>
-                                <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
-                                : ""}
-                            
-                            <p className="small mb-0"><b>Total: </b> <span className="text-success font-weight-bold">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
-                            <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
-                            <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p> </a>
+                                {e.desconto != "" ? <p className="small mb-0">
+                                    <b>Desconto: </b>
+                                    <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
+                                    : ""}
+
+                                <p className="small mb-0"><b>Total: </b> <span className="text-success font-weight-bold">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                                <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                                <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p> </a>
 
                         }) : ""}
 
@@ -227,7 +242,7 @@ export default function ControlCards(props) {
                         <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
                                 <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Ganhos Mensais</div>
+                                    Ganhos Mensais- {DataConsulta.toLocaleString('pt-BR', { month: 'long', year: "2-digit" }).toLocaleUpperCase()}</div>
                                 <div className="h5 mb-0 font-weight-bold text-gray-800">{!cardsInfo.caixa.loading ? cardsInfo.caixa.totalMes.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' }) : <span className="text-primary"><Loading size={23} /></span>}</div>
                             </div>
                             <div className="col-auto">
