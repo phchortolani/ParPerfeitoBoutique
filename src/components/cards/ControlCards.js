@@ -161,7 +161,7 @@ export default function ControlCards(props) {
             </> : modalCards.title == "Caixa" ? <>
                 <div className="list-group p-3">
 
-                    {cardsInfo?.caixa?.itensHoje.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
+                    {cardsInfo?.caixa?.itensHoje?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
                         return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                             <div className="d-flex w-100 justify-content-between">
                                 <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
@@ -199,7 +199,7 @@ export default function ControlCards(props) {
                 : modalCards.title == "Ganhos mensais" ? <>
                     <div className="list-group p-3">
 
-                        {cardsInfo?.caixa?.itensMes.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
+                        {cardsInfo?.caixa?.itensMes?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
                             return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                                 <div className="d-flex w-100 justify-content-between">
                                     <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
@@ -253,7 +253,8 @@ export default function ControlCards(props) {
                 </div>
             </div>
 
-            <div className="col-xl-3 col-md-6 mb-4 ">
+      
+            <div className={"col-xl-3 col-md-6 mb-4 " + (DataConsulta.toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase() == new Date().toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase() ? "" : "disabled")}>
                 <div className="card border-left-success shadow h-100 py-2 levitation" onClick={() => cardsInfo.caixa.totalhoje > 0 ? openModal("Caixa") : ""}>
                     <div className="card-body">
                         <div className="row no-gutters align-items-center">

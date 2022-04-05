@@ -56,14 +56,14 @@ export default function ControlPanel() {
 
         <div className="col-md-3 pl-0 pr-0 pr-md-3">
             <label>Selecionar período </label>
-            <input id="date" className="form-control mr-0 mb-2" type="month" onChange={(e) => ChangePeriodo(e.target.value)} />
+            <input id="date" className="form-control mr-0 mb-2"  type="month" onChange={(e) => ChangePeriodo(e.target.value)} />
         </div>
 
 
 
         <ControlCards dataPeriodo={dataPeriodo} />
         <div className="row mb-2">
-            {list ? list.map((e,i) => {
+            {list ? list.map((e, i) => {
                 return <UserInfoCard key={i} dataPeriodo={dataPeriodo} usuario={e.usuario} />
             }) : ""}
         </div>
