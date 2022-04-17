@@ -29,6 +29,14 @@ export default function login() {
             <button onClick={() => handleSignIn()} type="button" className="btn btn-primary btn-block btn-large w-100">Entrar</button>
             <p className="text-danger text-center badge">{authError}</p>
         </form>
+
+        <footer className="pt-5 mt-5" style={{ color: "black", textAlign: "center" }}>
+            <hr className="mt-0"></hr>
+            <span className="text-center">
+                Powered by{' '}
+                <a target={'_blank'} href="https://lanisystems.vercel.app"><b className="text-black text-decoration-none" >Lani Systems</b> <img width={10} src='./lani-Icon.svg'></img></a>
+            </span>
+        </footer>
     </div>
     )
 
