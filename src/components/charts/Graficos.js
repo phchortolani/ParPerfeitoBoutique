@@ -81,12 +81,19 @@ export default function Graficos() {
                 sell.itens.forEach((e) => {
 
                     let catego = categorias.data.result.find((x) => x.codigo == e.item?.codCategoria)?.descricao.trim();
+
                    
-                    let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego.trim());
+                    let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego.trim());     
+
                     let cor = gerarCor();
-                    if (indexExiste && indexExiste > -1) {
-                        CategsMaisVendidas[indexExiste] = { codCateg: catego, qt: indexExiste > -1 ? CategsMaisVendidas[indexExiste].qt = CategsMaisVendidas[indexExiste].qt + 1 : e.qt, cor };
+                    if (indexExiste != null && indexExiste != undefined && indexExiste > -1) {
+                        CategsMaisVendidas[indexExiste] = {
+                            codCateg: catego,
+                            qt: indexExiste > -1 ? CategsMaisVendidas[indexExiste].qt = CategsMaisVendidas[indexExiste].qt + 1 : e.qt,
+                            cor
+                        };
                     } else {
+                        
                         CategsMaisVendidas.push({ codCateg: catego, qt: Number(e.qt), cor })
                     }
                 });
@@ -95,7 +102,7 @@ export default function Graficos() {
 
             let cats = CategsMaisVendidas?.sort((a, b) => b.qt - a.qt);
 
-          
+
 
             setCatMaisVendidas(cats);
             setVendas([
@@ -291,13 +298,13 @@ export default function Graficos() {
                                 <canvas id="myPieChart"></canvas>
                             </div>
                             <div className="mt-4 text-center small">
-                                {CatMaisVendidas ? CatMaisVendidas.map((e,i) => {
-                                    return   <span className="mr-2 animated--grow-in" key={i}>
-                                    <i  style={{color:e.cor}} className="fas fa-circle"></i> {e.codCateg} ({e.qt})
-                                </span>
+                                {CatMaisVendidas ? CatMaisVendidas.map((e, i) => {
+                                    return <span className="mr-2 animated--grow-in" key={i}>
+                                        <i style={{ color: e.cor }} className="fas fa-circle"></i> {e.codCateg} ({e.qt})
+                                    </span>
                                 }) : ""}
-                              
-                               
+
+
                             </div>
                         </div>
                     </div>
