@@ -56,7 +56,7 @@ export default function ControlPanel() {
 
         <div className="col-md-3 pl-0 pr-0 pr-md-3">
             <label>Selecionar período </label>
-            <input id="date" className="form-control mr-0 mb-2"  type="month" onChange={(e) => ChangePeriodo(e.target.value)} />
+            <input id="date" className="form-control mr-0 mb-2" type="month" onChange={(e) => ChangePeriodo(e.target.value)} />
         </div>
 
 
@@ -69,5 +69,11 @@ export default function ControlPanel() {
         </div>
 
         <Graficos />
+        
+        <footer className="mt-2 mb-3" style={{ color: "black", textAlign: "center" }}>
+            <span className="text-center text-muted ">
+                <a href="https://lanisystems.vercel.app" target={'_blank'}> <img className="animated--fade-in" src="/lani-5andar1.svg" width={110}></img></a>
+            </span>
+        </footer>
     </>)
 }

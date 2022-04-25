@@ -14,7 +14,7 @@ export default function SideBar(props) {
     return (
         <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion " + (SideBarMini && props.SideBarMini ? "toggled" : "")} id="accordionSidebar">
             <a className="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-                <div className="sidebar-brand-text mx-3">Par Perfeito</div>
+                <div className="sidebar-brand-text"><img src="./Par_Perfeito2.svg" className="w-100"></img></div>
             </a>
             <hr className="sidebar-divider my-0" />
             {

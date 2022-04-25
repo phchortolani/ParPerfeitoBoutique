@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="lani_systems.svg"
+   id="svg44"
+   version="1.1"
+   stroke="null"
+   height="326.00571"
+   width="326.00571">
+  <metadata
+     id="metadata48">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     inkscape:current-layer="Layer_1"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="160.57812"
+     inkscape:cx="476.39821"
+     inkscape:zoom="1.2239814"
+     showgrid="false"
+     id="namedview46"
+     inkscape:window-height="1027"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <defs
+     id="defs42">
+    <linearGradient
+       id="svg_3"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="0">
+      <stop
+         id="stop37"
+         stop-color="#2780c2"
+         stop-opacity="0.99609"
+         offset="0" />
+      <stop
+         id="stop39"
+         stop-color="#03baa4"
+         stop-opacity="0.99609"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="33.913631"
+       x2="512.97638"
+       y1="33.913631"
+       x1="254.56281"
+       id="linearGradient79"
+       xlink:href="#svg_3"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.6732506,0,0,0.59763909,-3.1269505,0)"
+       y2="208.5506"
+       x2="295.47696"
+       y1="208.5506"
+       x1="166.7036"
+       id="linearGradient81"
+       xlink:href="#svg_3"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.93044186,0.93044186,-0.53737907,0.53737907,167.47684,-247.27978)"
+       y2="83.159691"
+       x2="316.8028"
+       y1="83.159691"
+       x1="266.54193"
+       id="linearGradient83"
+       xlink:href="#svg_3"
+       inkscape:collect="always" />
+  </defs>
+  <g
+     transform="matrix(1.2615656,0,0,1.2615656,-321.14768,-42.784271)"
+     id="Layer_1">
+    <title
+       id="title30">Layer 1</title>
+    <rect
+       style="stroke:url(#linearGradient79)"
+       id="svg_10"
+       height="252.41359"
+       width="252.41359"
+       y="36.913631"
+       x="257.56281"
+       stroke-width="6"
+       stroke="url(#svg_3)"
+       fill="url(#svg_19)" />
+    <text
+       style="fill:url(#linearGradient81)"
+       stroke="#000000"
+       font-weight="bold"
+       xml:space="preserve"
+       text-anchor="start"
+       font-family="Exo"
+       font-size="104px"
+       id="svg_1"
+       y="201.59799"
+       x="269.15396"
+       stroke-width="0"
+       fill="url(#svg_3)">LANI</text>
+    <text
+       transform="scale(0.98418901,1.016065)"
+       stroke="#000000"
+       font-style="normal"
+       xml:space="preserve"
+       text-anchor="start"
+       font-family="Exo"
+       font-size="36.415px"
+       id="svg_2"
+       y="243.35008"
+       x="279.75363"
+       stroke-width="0"
+       fill="#a8a8a8">S Y S T E M S</text>
+    <path
+       style="fill:url(#linearGradient83)"
+       stroke="#000000"
+       id="svg_8"
+       d="m 384.29132,58.911261 -27.00682,0.0048 -10e-4,27.005568 9.82206,9.2e-5 -0.001,-17.185891 17.18411,-5.52e-4 0.003,-9.82404 v 0 z m 19.75976,19.75976 -9.81976,0.0047 -5.1e-4,17.18413 -17.18309,-5.31e-4 -0.003,9.81849 27.00861,-5e-4 z"
+       stroke-width="0"
+       fill="url(#svg_3)" />
+  </g>
+</svg>

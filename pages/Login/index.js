@@ -9,6 +9,7 @@ export default function login() {
     const [authError, setAuthError] = useState('');
     const { signIn } = useContext(AuthContext);
 
+
     async function handleSignIn() {
         setAuthError("");
         if (usuario != "" && senha != "") {
@@ -22,7 +23,7 @@ export default function login() {
     return (<div className="login">
         <img src={Par_Perfeito} className="w-100"></img>
         <hr />
-        <form >
+        <form>
             <input onChange={(e) => setUsuario(e.target.value)} autoComplete="username" className="loginbtns form-control mb-3" type="text" name="u" placeholder="Usuário" required="required" />
             <input onChange={(e) => setSenha(e.target.value)} className="loginbtns form-control mb-3" type="password" name="p" autoComplete="current-password" placeholder="Senha" required="required" />
             <hr />
@@ -30,11 +31,11 @@ export default function login() {
             <p className="text-danger text-center badge">{authError}</p>
         </form>
 
-        <footer className="pt-5 mt-5" style={{ color: "black", textAlign: "center" }}>
+        <footer className="pt-5 mt-5 " style={{ color: "black", textAlign: "center" }}>
             <hr className="mt-0"></hr>
-            <span className="text-center">
-                Powered by{' '}
-                <a target={'_blank'} href="https://lanisystems.vercel.app"><b className="text-black text-decoration-none" >Lani Systems</b> <img width={10} src='./lani-Icon.svg'></img></a>
+            <span className="text-center text-muted ">
+                {"Powered by"}{' '}
+                <a href="https://lanisystems.vercel.app" target={'_blank'}> <img className="animated--fade-in" src="/lani-5andar1.svg" width={110}></img></a>
             </span>
         </footer>
     </div>

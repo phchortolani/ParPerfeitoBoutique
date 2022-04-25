@@ -179,6 +179,7 @@ export default function Caixa() {
                 </DefaultCard> : ""}
 
             </div>
+
         </div>
     )
 }
