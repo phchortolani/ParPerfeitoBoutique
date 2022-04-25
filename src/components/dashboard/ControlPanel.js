@@ -69,7 +69,7 @@ export default function ControlPanel() {
         </div>
 
         <Graficos />
-        
+
         <footer className="mt-2 mb-3" style={{ color: "black", textAlign: "center" }}>
             <span className="text-center text-muted ">
                 <a href="https://lanisystems.vercel.app" target={'_blank'}> <img className="animated--fade-in" src="/lani-5andar1.svg" width={110}></img></a>
