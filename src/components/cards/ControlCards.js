@@ -62,7 +62,7 @@ export default function ControlCards(props) {
 
             let totalMes = vendas.data.result.filter((e) => {
                 if (new Date(`${e.dataCriacao}`).getMonth() == DataConsulta.getMonth() &&
-                    new Date(`${e.dataCriacao}`).getFullYear() == DataConsulta.getFullYear()) {
+                    new Date(`${e.dataCriacao}`).getFullYear() == DataConsulta.getFullYear() && !e.cancelada) {
                     return e;
                 }
             })
@@ -137,12 +137,30 @@ export default function ControlCards(props) {
             ,
             showCloseButton: true,
             focusConfirm: false,
-            confirmButtonText:
-                '<i class="fa fa-thumbs-up"></i> Ok!',
+            confirmButtonText: 'Voltar',
             confirmButtonAriaLabel: 'Thumbs up, great!'
         })
     }
-
+    async function CancelarVenda(idVenda) {
+        Swal.fire({
+            title: 'Deseja cancelar esta venda?',
+            showCancelButton: true,
+            confirmButtonText: 'Sim',
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                (async () => {
+                    let ret = await axios.post('/api/cancelarVenda', { idVenda: idVenda });
+                    if (ret.data.status) {
+                        Swal.fire("Venda cancelada!", '', 'success')
+                        get()
+                    } else {
+                        Swal.fire("Venda não cancelada!", '', 'danger')
+                    }
+                })();
+            }
+        })
+    }
     useEffect(() => {
         get();
     }, []);
@@ -162,7 +180,7 @@ export default function ControlCards(props) {
                 <div className="list-group p-3">
 
                     {cardsInfo?.caixa?.itensHoje?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
-                        return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
+                        return <a key={i} href="#" className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")} onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                             <div className="d-flex w-100 justify-content-between">
                                 <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
                                 <small>{new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
@@ -189,10 +207,7 @@ export default function ControlCards(props) {
                             <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                             <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
                         </a>
-
                     }) : ""}
-
-
                 </div>
 
             </>
@@ -200,33 +215,39 @@ export default function ControlCards(props) {
                     <div className="list-group p-3">
 
                         {cardsInfo?.caixa?.itensMes?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
-                            return <a key={i} href="#" className="list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
-                                <div className="d-flex w-100 justify-content-between">
-                                    <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
-                                    <small>{new Date(e.dataCriacao).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' })} - {new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
-                                </div>
-                                <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
-                                <hr className="mt-1 mb-1" />
+                            return <div key={i} className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")}>
+                                <a href="#" className="text-decoration-none text-body" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
+                                    <div className="d-flex w-100 justify-content-between">
+                                        <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
+                                        <small>{new Date(e.dataCriacao).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' })} - {new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
+                                    </div>
+                                    <p style={{ textTransform: "capitalize" }} className="mb-1">Vendedor: <b>{e.criadoPor}</b></p>
+                                    <hr className="mt-1 mb-1" />
 
-                                {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
-                                    let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado + itens.item.valor : null;
-                                    let voucherdescont = null;
-                                    if (valortotal) voucherdescont = itens.voucher.codigo;
-                                    let valor = itens.item.valor;
-                                    return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao}
-                                        {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</> : ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : ""}  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
-                                }) : ""}
-                                <hr className="mb-1 mt-1" />
-                                <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
-                                {e.desconto != "" ? <p className="small mb-0">
-                                    <b>Desconto: </b>
-                                    <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
-                                    : ""}
+                                    {e.itens.length > 0 ? e.itens.map((itens, ikey) => {
+                                        let valortotal = itens.VoucherDescontado ? itens.VoucherDescontado + itens.item.valor : null;
+                                        let voucherdescont = null;
+                                        if (valortotal) voucherdescont = itens.voucher.codigo;
+                                        let valor = itens.item.valor;
+                                        return <p key={ikey} className="small mb-0"><b>{itens.qt}x</b> - {itens.item.codigo} - {itens.item.descricao}
+                                            {voucherdescont ? <> (Cupom: <b className="text-primary">{voucherdescont}</b>)</> : ""}  {valortotal ? <b className="sublinhar"> {valortotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> : ""}  - <b className="text-success">{valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</b> </p>;
+                                    }) : ""}
+                                    <hr className="mb-1 mt-1" />
+                                    <p className="small mb-0"><b>Sub-Total: </b> {e.valorVenda.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
+                                    {e.desconto != "" ? <p className="small mb-0">
+                                        <b>Desconto: </b>
+                                        <span className="text-danger">{e.desconto.descontado.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>  - {e.desconto.cupom}</p>
+                                        : ""}
 
-                                <p className="small mb-0"><b>Total: </b> <span className="text-success font-weight-bold">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
-                                <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
-                                <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p> </a>
+                                    <p className="small mb-0"><b>Total: </b> <span className="text-success font-weight-bold">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                                    <p className="small mb-0"><b>Valor Pago: </b> <span >{(Number(e.troco) + Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
+                                    <p className="small mb-0"><b>Troco: </b> <span >{e.troco.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span></p>
 
+                                </a>
+
+                                {!e.cancelada && <><hr /><button onClick={() => CancelarVenda(e._id)} type="buttton" className="btn btn-outline-danger btn-sm">Cancelar Venda</button></>}
+
+                            </div>
                         }) : ""}
 
 
@@ -253,7 +274,7 @@ export default function ControlCards(props) {
                 </div>
             </div>
 
-      
+
             <div className={"col-xl-3 col-md-6 mb-4 " + (DataConsulta.toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase() == new Date().toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase() ? "" : "disabled")}>
                 <div className="card border-left-success shadow h-100 py-2 levitation" onClick={() => cardsInfo.caixa.totalhoje > 0 ? openModal("Caixa") : ""}>
                     <div className="card-body">

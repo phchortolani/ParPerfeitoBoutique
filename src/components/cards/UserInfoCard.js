@@ -29,7 +29,7 @@ export default function UserInfoCard(props) {
 
         let _qtMes = vendas.filter((e) => {
             if (new Date(`${e.dataCriacao}`).getMonth() == DataConsulta.getMonth() &&
-                new Date(`${e.dataCriacao}`).getFullYear() == DataConsulta.getFullYear()) {
+                new Date(`${e.dataCriacao}`).getFullYear() == DataConsulta.getFullYear() && !e.cancelada) {
                 return e;
             }
         })
@@ -39,7 +39,7 @@ export default function UserInfoCard(props) {
         );
 
         let _qtHoje = vendas.filter((e) => {
-            if (new Date(`${e.dataCriacao}`).toLocaleDateString() == new Date().toLocaleDateString()) {
+            if (new Date(`${e.dataCriacao}`).toLocaleDateString() == new Date().toLocaleDateString() && !e.cancelada) {
                 return e;
             }
         });
@@ -97,8 +97,8 @@ export default function UserInfoCard(props) {
                                 <h5 className="text-xs font-weight-bold text-primary text-uppercase mb-1">{dados.userinfo?.nome} - {DataConsulta.toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase()}</h5>
                                 <ul style={{ listStyle: "none" }} className="d-flex justify-content-between mt-2 pl-0">
                                     <li>Mês: <b className="text-success">{Real(stats.valorMes)}</b> </li>
-                                    {DataConsulta.toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase() == new Date().toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase()  ?  <li>Hoje:  <b className="text-success">{Real(stats.valorHoje)}</b></li> : ""}
-                                   
+                                    {DataConsulta.toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase() == new Date().toLocaleString('pt-BR', { month: 'long' }).toLocaleUpperCase() ? <li>Hoje:  <b className="text-success">{Real(stats.valorHoje)}</b></li> : ""}
+
                                 </ul>
                                 <hr></hr>
                                 <ul style={{ listStyle: "none" }} className="d-flex justify-content-between pl-0">
@@ -111,12 +111,12 @@ export default function UserInfoCard(props) {
                                     <li><input type="range" min={0} max={100} onChange={(e) => setPorcentagem(e.target.value)} value={porcentagem} /></li>
                                     <li><b>{porcentagem}%</b></li>
                                 </ul>
-                                <hr/>
+                                <hr />
                                 <ul style={{ listStyle: "none" }} className=" pl-0 mb-0 pl-0">
                                     <li> Comissão: <b className="text-success text-lg"> {Real(stats.valorAReceber)} </b> </li>
                                 </ul>
-                            
-                               
+
+
 
 
                                 {/*  <div className="h5 mb-0 font-weight-bold text-gray-800">{<Loading size={23} />}</div> */}
