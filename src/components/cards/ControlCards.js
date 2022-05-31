@@ -13,6 +13,25 @@ export default function ControlCards(props) {
         children: ""
     });
 
+    const [filterVenda, setFilterVenda] = useState(
+        {
+            todos: [],
+            selecionados: []
+        })
+
+    function filtraVendedor(selecionado) {
+        let temparray = filterVenda.selecionados;
+        let index = temparray.findIndex(e => e == selecionado);
+
+        if (index == -1) {
+            temparray.push(selecionado)
+            setFilterVenda({ todos: filterVenda.todos, selecionados: temparray })
+        }
+        else {
+            temparray.splice(index, 1)
+            setFilterVenda({ todos: filterVenda.todos, selecionados: temparray })
+        }
+    }
     function openModal(card) {
         setmodalCards({ isOpen: true, title: card });
     }
@@ -114,6 +133,15 @@ export default function ControlCards(props) {
 
     }
 
+    async function getFilters() {
+        var usuarios = await axios.post('/api/listTable', { table: "usuarios" });
+        let tArray = []
+        if (usuarios.data.result) {
+            usuarios.data.result.map(e => e.usuario != "phchortolani" && tArray.push(e.usuario));
+            setFilterVenda({ todos: [...tArray], selecionados: [...tArray] });
+        }
+    }
+
     function ordenarPorData(arr = []) {
 
         if (arr.length > 0) {
@@ -141,6 +169,24 @@ export default function ControlCards(props) {
             confirmButtonAriaLabel: 'Thumbs up, great!'
         })
     }
+
+    let filter = <div className="card-sm shadow m-3">
+        <div className="card-title pt-2 px-2 p-0"><i className="fa fa-filter"></i> Filtrar </div>
+        <div className="card-body">
+            <div className="d-flex small row">
+                {
+                    filterVenda.todos.map((e, i) => {
+                        return <div key={i} className="form-group col d-flex justify-content-start">
+                            <input onChange={() => filtraVendedor(e)} id={"selectVendedor_" + (e)} defaultChecked="checked" type="checkbox" className="form-check mr-1" />
+                            <label htmlFor={"selectVendedor_" + (e)}>{e}</label>
+                        </div>
+                    })
+                }
+
+
+            </div>
+        </div>
+    </div>
     async function CancelarVenda(idVenda) {
         Swal.fire({
             title: 'Deseja cancelar esta venda?',
@@ -163,6 +209,7 @@ export default function ControlCards(props) {
     }
     useEffect(() => {
         get();
+        getFilters();
     }, []);
 
     return (<>
@@ -177,10 +224,10 @@ export default function ControlCards(props) {
                 </ul>
 
             </> : modalCards.title == "Caixa" ? <>
+                {filter}
                 <div className="list-group p-3">
-
                     {cardsInfo?.caixa?.itensHoje?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
-                        return <a key={i} href="#" className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")} onClick={() => MostrarMaisPagamento(e.pagamentos)}>
+                        if (filterVenda.selecionados.find(ele => ele == e.criadoPor)) return <a key={i} href="#" className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")} onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                             <div className="d-flex w-100 justify-content-between">
                                 <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
                                 <small>{new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
@@ -212,10 +259,11 @@ export default function ControlCards(props) {
 
             </>
                 : modalCards.title == "Ganhos mensais" ? <>
+                    {filter}
                     <div className="list-group p-3">
 
                         {cardsInfo?.caixa?.itensMes?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
-                            return <div key={i} className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")}>
+                            if (filterVenda.selecionados.find(ele => ele == e.criadoPor)) return <div key={i} className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")}>
                                 <a href="#" className="text-decoration-none text-body" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                                     <div className="d-flex w-100 justify-content-between">
                                         <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
