@@ -198,7 +198,7 @@ export default function Cupons(props) {
 
 
                 <label id="individual" className="switch" >
-                    <input checked={addPorProduto} type="checkbox" />
+                    <input readOnly checked={addPorProduto} type="checkbox" />
                     <span className="slider round" onClick={() => { setProdutoIndividual() }}></span>
                 </label>
                 <span>  Adiciona por produto </span>
@@ -245,7 +245,7 @@ export default function Cupons(props) {
 
                     <div className="col-md-4">
                         <label htmlFor="datafim">{cupom.tipoPorcentagem ? "Porcentagem %" : "Valor R$"}</label>
-                        <input value={cupom.valorDesconto} onChange={(e) => AlterarInputDesconto(e.target.value)} className={"form-control form-control-sm " + (validatelist.includes(("valorDesconto")) ? "border-danger" : "")} id="cupom" typeof="text" maxLength={10} name="cupom"></input>
+                        <input value={cupom.valorDesconto} onChange={(e) => AlterarInputDesconto(e.target.value)} className={"form-control form-control-sm " + (validatelist.includes(("valorDesconto")) ? "border-danger" : "")}  typeof="text" maxLength={10} ></input>
                     </div>
                     <div className="col-md-5 align-self-end pt-2 pt-md-0">
                         {cupons.data.find(x => x.codigo == cupom.codigo) ?
