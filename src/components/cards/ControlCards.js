@@ -13,23 +13,17 @@ export default function ControlCards(props) {
         children: ""
     });
 
-    const [filterVenda, setFilterVenda] = useState(
-        {
-            todos: [],
-            selecionados: []
-        })
-
     function filtraVendedor(selecionado) {
-        let temparray = filterVenda.selecionados;
+        let temparray = cardsInfo?.filterVenda.selecionados;
         let index = temparray.findIndex(e => e == selecionado);
 
         if (index == -1) {
             temparray.push(selecionado)
-            setFilterVenda({ todos: filterVenda.todos, selecionados: temparray })
+            setCardsInfo({...cardsInfo, todos: cardsInfo?.filterVenda.todos, selecionados: temparray })
         }
         else {
             temparray.splice(index, 1)
-            setFilterVenda({ todos: filterVenda.todos, selecionados: temparray })
+            setCardsInfo({...cardsInfo, todos: cardsInfo?.filterVenda.todos, selecionados: temparray })
         }
     }
     function openModal(card) {
@@ -37,6 +31,7 @@ export default function ControlCards(props) {
     }
 
     const [cardsInfo, setCardsInfo] = useState({
+        vendedoras: [],
         ganhosMensais: 0,
         caixa: {
             totalhoje: 0,
@@ -54,6 +49,9 @@ export default function ControlCards(props) {
             itens: [],
             count: 0,
             loading: false
+        },filterVenda: {
+            todos: [],
+            selecionados: []
         }
     });
 
@@ -78,8 +76,13 @@ export default function ControlCards(props) {
         if (estoque.data.result && vendas.data.result) {
             let TotalEstoque = estoque.data.result.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.qtEstoque), 0);
             let TotalQuantidade = estoque.data.result.reduce((previousValue, currentValue) => Number(previousValue) + Number(currentValue.quantidade), 0);
-
+            let listaVendedores = []
+           
             let totalMes = vendas.data.result.filter((e) => {
+
+                if(!listaVendedores.find(v => v == e.criadoPor)){
+                    listaVendedores.push(e.criadoPor)
+                }
                 if (new Date(`${e.dataCriacao}`).getMonth() == DataConsulta.getMonth() &&
                     new Date(`${e.dataCriacao}`).getFullYear() == DataConsulta.getFullYear() && !e.cancelada) {
                     return e;
@@ -109,7 +112,15 @@ export default function ControlCards(props) {
                 if (e.quantidade == 0) itensEmFalta.push(e);
             });
 
+            let tArray = []
+            let objFilterRetorno;
+            if (listaVendedores.length > 0) {
+                listaVendedores.map(e => e != "phchortolani" && tArray.push(e));
+                objFilterRetorno = { todos: [...tArray], selecionados: [...tArray] };
+            }
+
             setCardsInfo({
+                vendedoras:listaVendedores,
                 estoque: {
                     TotalEstoque: 0,
                     TotalQuantidade: 0,
@@ -127,20 +138,14 @@ export default function ControlCards(props) {
                     itensHoje: totalhj,
                     itensMes: totalItensMes,
                     loading: false,
-                }
+                },
+                filterVenda:objFilterRetorno
             });
         }
 
     }
 
-    async function getFilters() {
-        var usuarios = await axios.post('/api/listTable', { table: "usuarios" });
-        let tArray = []
-        if (usuarios.data.result) {
-            usuarios.data.result.map(e => e.usuario != "phchortolani" && tArray.push(e.usuario));
-            setFilterVenda({ todos: [...tArray], selecionados: [...tArray] });
-        }
-    }
+  
 
     function ordenarPorData(arr = []) {
 
@@ -175,7 +180,7 @@ export default function ControlCards(props) {
         <div className="card-body">
             <div className="d-flex small row">
                 {
-                    filterVenda.todos.map((e, i) => {
+                    cardsInfo?.filterVenda?.todos.map((e, i) => {
                         return <div key={i} className="form-group col d-flex justify-content-start">
                             <input onChange={() => filtraVendedor(e)} id={"selectVendedor_" + (e)} defaultChecked="checked" type="checkbox" className="form-check mr-1" />
                             <label htmlFor={"selectVendedor_" + (e)}>{e}</label>
@@ -209,7 +214,6 @@ export default function ControlCards(props) {
     }
     useEffect(() => {
         get();
-        getFilters();
     }, []);
 
     return (<>
@@ -227,7 +231,7 @@ export default function ControlCards(props) {
                 {filter}
                 <div className="list-group p-3">
                     {cardsInfo?.caixa?.itensHoje?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensHoje).map((e, i) => {
-                        if (filterVenda.selecionados.find(ele => ele == e.criadoPor)) return <a key={i} href="#" className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")} onClick={() => MostrarMaisPagamento(e.pagamentos)}>
+                        if (cardsInfo?.filterVenda?.selecionados.find(ele => ele == e.criadoPor)) return <a key={i} href="#" className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")} onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                             <div className="d-flex w-100 justify-content-between">
                                 <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>
                                 <small>{new Date(e.dataCriacao).toTimeString().split(' ')[0]}</small>
@@ -263,7 +267,7 @@ export default function ControlCards(props) {
                     <div className="list-group p-3">
 
                         {cardsInfo?.caixa?.itensMes?.length > 0 ? ordenarPorData(cardsInfo?.caixa?.itensMes).map((e, i) => {
-                            if (filterVenda.selecionados.find(ele => ele == e.criadoPor)) return <div key={i} className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")}>
+                            if (cardsInfo?.filterVenda?.selecionados.find(ele => ele == e.criadoPor)) return <div key={i} className={"list-group-item list-group-item-action border-0 shadow mb-2 p-3 levitation " + (e.cancelada ? "disabled" : "")}>
                                 <a href="#" className="text-decoration-none text-body" onClick={() => MostrarMaisPagamento(e.pagamentos)}>
                                     <div className="d-flex w-100 justify-content-between">
                                         <h5 className="mb-1 text-success">{(Number(e.valorVenda) - Number(e.desconto?.descontado ?? 0)).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</h5>

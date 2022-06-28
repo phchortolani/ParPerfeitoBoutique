@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useContext } from "react";
 import Loading from "../load/Loading";
-import { AuthContext } from "../../../context/Auth2Context";
+//import { AuthContext } from "../../../context/Auth2Context";
 
 
 var dataConsultada = new Date();
@@ -9,7 +9,7 @@ var dataConsultada = new Date();
 export default function UserInfoCard(props) {
     const [dados, setDados] = useState(null);
     const [firstRender, setFirstRender] = useState(true);
-    const { isMobile } = useContext(AuthContext);
+    //const { isMobile } = useContext(AuthContext);
     const [porcentagem, setPorcentagem] = useState(10);
 
     let stats = {
