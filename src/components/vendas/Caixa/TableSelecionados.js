@@ -26,7 +26,7 @@ export default function TableSelecionados(props) {
                     <th scope="col" className="text-center fitCol">Ação</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody  >  
                 {list.length > 0 ? list.map((element, i) => {
                     var e = element.item;
                     var qt = element.qt;

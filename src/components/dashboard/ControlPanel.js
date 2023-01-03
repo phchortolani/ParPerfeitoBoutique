@@ -67,7 +67,7 @@ export default function ControlPanel() {
                 return <UserInfoCard key={i} dataPeriodo={dataPeriodo} usuario={e.usuario} />
             }) : ""}
         </div>
-        <Graficos />
+        <Graficos dataPeriodo={dataPeriodo} />
 
         <footer className="mt-2 mb-3" style={{ color: "black", textAlign: "center" }}>
             <span className="text-center text-muted ">

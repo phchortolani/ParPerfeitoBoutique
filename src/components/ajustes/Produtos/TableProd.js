@@ -9,6 +9,7 @@ export default function TableProd(props) {
         title: "",
         children: ""
     });
+
     const [ProdSelecionado, setProdSelecionado] = useState();
 
     const [LoadingRemove, setLoadingRemove] = useState({ loading: false, codigo: 0 });

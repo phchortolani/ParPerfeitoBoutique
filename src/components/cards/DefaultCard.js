@@ -6,7 +6,7 @@ export default function DefaultCard(props) {
                     {props.icoTitle ? <i className={"pr-2 " + props.icoTitle}></i> : ""}
                     {props.title}</h6>
             </div>
-            <div className={"card-body " + props.cardBodyClass}>
+            <div  className={"card-body " + props.cardBodyClass}>
                 {props.children}
             </div>
         </div>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "../load/Loading";
 import initDash from "../../js/charts";
-export default function Graficos() {
+export default function Graficos(props) {
 
     const [graficos, setGraficos] = useState({
         PorcentagemDoEstoque: {
@@ -63,7 +63,7 @@ export default function Graficos() {
             for (let i = 0; i <= 11; i++) {
                 let totalMes = vend.data.result.filter((e) => {
                     if (new Date(`${e.dataCriacao}`).getMonth() == i &&
-                        new Date(`${e.dataCriacao}`).getFullYear() == new Date().getFullYear()) {
+                        new Date(`${e.dataCriacao}`).getFullYear() == (props.dataPeriodo ? props.dataPeriodo[0] : new Date().getFullYear())) {
                         return e;
                     }
                 });
@@ -82,8 +82,8 @@ export default function Graficos() {
 
                     let catego = categorias.data.result.find((x) => x.codigo == e.item?.codCategoria)?.descricao.trim();
 
-                   
-                    let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego.trim());     
+
+                    let indexExiste = CategsMaisVendidas.findIndex((y) => y.codCateg.trim() == catego.trim());
 
                     let cor = gerarCor();
                     if (indexExiste != null && indexExiste != undefined && indexExiste > -1) {
@@ -93,7 +93,7 @@ export default function Graficos() {
                             cor
                         };
                     } else {
-                        
+
                         CategsMaisVendidas.push({ codCateg: catego, qt: Number(e.qt), cor })
                     }
                 });
@@ -101,8 +101,6 @@ export default function Graficos() {
             });
 
             let cats = CategsMaisVendidas?.sort((a, b) => b.qt - a.qt);
-
-
 
             setCatMaisVendidas(cats);
             setVendas([
@@ -262,7 +260,7 @@ export default function Graficos() {
 
     useEffect(() => {
         get();
-    }, []);
+    }, [props.dataPeriodo]);
 
     return (
 
@@ -272,7 +270,7 @@ export default function Graficos() {
                     <div className="card shadow mb-4">
                         <div
                             className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 className="m-0 font-weight-bold text-primary">Visualização de ganhos</h6>
+                            <h6 className="m-0 font-weight-bold text-primary">Visualização de ganhos - {(props.dataPeriodo ? props.dataPeriodo[0] : new Date().getFullYear())}</h6>
                         </div>
                         <div className="card-body">
                             <div className="chart-area">
@@ -291,7 +289,7 @@ export default function Graficos() {
                     <div className="card shadow mb-4">
                         <div
                             className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 className="m-0 font-weight-bold text-primary">Categorias mais vendidas</h6>
+                            <h6 className="m-0 font-weight-bold text-primary">Categorias mais vendidas - Desde o inicio</h6>
                         </div>
                         <div className="card-body">
                             <div className="chart-pie pt-4 pb-2">
@@ -299,6 +297,7 @@ export default function Graficos() {
                             </div>
                             <div className="mt-4 text-center small">
                                 {CatMaisVendidas ? CatMaisVendidas.map((e, i) => {
+
                                     return <span className="mr-2 animated--grow-in" key={i}>
                                         <i style={{ color: e.cor }} className="fas fa-circle"></i> {e.codCateg} ({e.qt})
                                     </span>
